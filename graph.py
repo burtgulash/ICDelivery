@@ -53,13 +53,40 @@ def prettyPrint(graph):
 		print v, ":", graph[v]
 	print
 
+
+def treeToGraph(graph, limit, newEdges):
+	for i in range(newEdges):
+		addRandomEdge(graph, limit)
+	return graph
+	
+
+def addRandomEdge(graph, limit):
+	''' Tries to insert random edge into undirected graph, vertex degrees will
+ 		not exceed "limit" '''
+	vertex1 = random.randint(0, len(graph) - 1)
+	vertex2 = random.randint(0, len(graph) - 1)
+	if vertex1 != vertex2:
+		vertex1 = graph.keys()[vertex1]
+		vertex2 = graph.keys()[vertex2]
+		if vertex1 not in graph[vertex2]:
+			if len(graph[vertex1]) < limit and len(graph[vertex2]) < limit:
+				graph[vertex1].append(vertex2)
+				graph[vertex2].append(vertex1)
+				return True
+	return False
+
+
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
 		print usage()
 		sys.exit(1)
 
-	limit = int(sys.argv[1])
+	limit = int(sys.argv[1]) - 1
+	numVertices = len(sys.argv[2:])
 	vertices = sys.argv[2:]
-	
-	resultGraph = makeUndirected(randomTree(vertices, limit))
+
+	resultGraph = randomTree(vertices, 15)
+	resultGraph = makeUndirected(resultGraph)
+	prettyPrint(resultGraph)
+	resultGraph = treeToGraph(resultGraph, limit, 2*numVertices)
 	prettyPrint(resultGraph)
