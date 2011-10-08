@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
-import sys, random
+'''Prints undirected weighted graph in JSON with |V| = length(VERTICES...) 
+and |E| < 3 * |V|.  MAXDEGREE and MAXWEIGHT are exclusive upper bounds. 
+(use MAXWEIGHT + 1, if want to include MAXWEIGHT)'''
+
+
+import sys, random, json
 
 
 def factorRandomSubset(sset, limit):
@@ -74,17 +79,16 @@ def addWeights(graph, maxWeight):
 			if not isinstance(newE, tuple):
 				randomWeight = random.randint(1, maxWeight)
 				newE = (e, randomWeight)
-				graph[e][graph[e].index(v)] = (v, randomWeight) # add weight in other direction aswell
+				# add weight in other direction as well
+				graph[e][graph[e].index(v)] = (v, randomWeight) 
 			weightedList.append(newE)
 		graph[v] = weightedList
 	return graph
 
-def usage():
-	return '''Prints undirected weighted graph in JSON with |V| = length(VERTICES...) and |E| < 3 * |V|.
-MAXDEGREE and MAXWEIGHT are exclusive upper bounds. (use MAXWEIGHT + 1, if want to include MAXWEIGHT)
 
-usage: graph MAXDEGREE MAXWEIGHT VERTICES...
-	eg. graph 2 10 A B C D E F'''
+def usage():
+	return '''usage: %s MAXDEGREE MAXWEIGHT VERTICES...
+	eg. %s 2 10 A B C D E F''' % (sys.argv[0], sys.argv[0])
 
 
 if __name__ == "__main__":
@@ -97,13 +101,19 @@ if __name__ == "__main__":
 		maxWeight = int(sys.argv[2]) - 1
 	except ValueError:
 		print "%s: MAXDEGREE and MAXWEIGHT must be integers" % sys.argv[0]
+		sys.exit(1)
 
 	numVertices = len(sys.argv[3:])
 	vertices = sys.argv[3:]
+	try: # to convert integral vertices to ints
+		vertices = map(int, vertices)
+	except ValueError:
+		pass
 
 	graph = randomTree(vertices, 15) # 15 = maxDegree for initial spanning tree, keep low
 	graph = makeUndirected(graph)
 	graph = treeToGraph(graph, maxDegree, 2 * numVertices) # 2*|V| can be changed
 	graph = addWeights(graph, maxWeight)
 
-	print graph          # python prints dicts directly into JSON
+	print graph
+	# print json.dumps(graph, sort_keys=True, indent=4)
