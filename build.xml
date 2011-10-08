@@ -1,7 +1,37 @@
-<project name="ICDelivery" basedir=".">
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="ICDelivery" basedir="." default="compile">
+	<property name="classes" value="build/classes" />
+
+	<path id="project_classpath">
+		<pathelement location="lib/junit-4.10.jar" />
+		<pathelement location="${classes}" />
+	</path>
+
 	<target name="compile">
-		<mkdir dir="build" />
-		<javac srcdir="src" destdir="build" includeantruntime="false" />
+		<mkdir dir="${classes}" />
+		<javac srcdir="src" destdir="${classes}" 
+			includeantruntime="false" />
+	</target>
+
+	<target name="compile-tests" depends="compile">
+		<mkdir dir="${classes}" />
+		<javac srcdir="test" destdir="${classes}"
+			includeantruntime="false">
+			<classpath refid="project_classpath" />
+		</javac>
+	</target>
+
+	<target name="test" depends="compile-tests">
+		<junit fork="yes" haltonfailure="yes">
+			<formatter type="brief" usefile="false" />
+			<classpath refid="project_classpath" />
+			<batchtest>
+				<fileset dir="test">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
 	</target>
 
 	<target name="clean">
