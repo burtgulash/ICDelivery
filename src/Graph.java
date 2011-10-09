@@ -2,8 +2,7 @@ public class Graph {
 	private Edge[][] v;
 	
 	public Graph(int vertices) {
-		for (int i = 0; i < vertices; i++)
-			v[i] = new Edge[0];
+		v = new Edge[vertices][];
 	}
 	
 
