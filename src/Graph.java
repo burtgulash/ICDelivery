@@ -6,8 +6,17 @@ public class Graph {
 			v[i] = new Edge[0];
 	}
 	
+
 	public int vertices() {
 		return v.length;
+	}
+
+
+	public Path edge(int src, int dst) {
+		for (int i = 0; i < src; i++)
+			if (v[src][i].destination == dst)
+				return new Path(dst, v[src][i].weight, null);
+		return null;
 	}
 }
 
