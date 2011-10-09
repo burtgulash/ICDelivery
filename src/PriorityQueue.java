@@ -38,6 +38,16 @@ public class PriorityQueue<T extends Queable> {
 	}
 	
 
+	public boolean empty() {
+		return used == 0;
+	}
+	
+
+	public int length() {
+		return used;
+	}
+
+
 	private void swap(int pos1, int pos2) {
 		T tmp = ar[pos1];
 		ar[pos1] = ar[pos2];
@@ -48,21 +58,27 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 
-	// Bubbles element on position pos down and returns its new position.
+	// Bubbles element on position pos down
 	private void down(int pos) {
 		int old = pos;
 		pos *= 2;
-		while(pos < ar.length) {
+
+		while(pos < 1 + used) {
 			if (pos + 1 < ar.length && 
-					ar[pos + 1].priority() < ar[pos].priority())
+					ar[pos + 1].priority() < ar[pos].priority()) {
 				pos++;
+			}
+			if (ar[pos].priority() >= ar[old].priority())
+				break;
 			swap(old, pos);	
 
 			old = pos;
-			pos += pos;
+			pos *= 2;
 		}
 	}
 
+
+	// Bubbles element on position pos up
 	private void up(int pos) {
 		int old = pos;
 		pos /= 2;
@@ -99,12 +115,15 @@ public class PriorityQueue<T extends Queable> {
 		
 		T ret = ar[1];
 		ar[1] = ar[used];
+		used--;
+
 		position.put(ar[1].id(), 1);
 		position.remove(ret.id());
 
-		down(used);
+		down(1);
 		return ret;
 	}
+
 
 	public boolean changePriority(long elemId, int newPriority) {
 		Integer elemPos_ob = position.get(elemId);
@@ -123,6 +142,7 @@ public class PriorityQueue<T extends Queable> {
 		return true;
 	}
 
+
 	public T remove(long elemId) {
 		if(changePriority(elemId, Integer.MIN_VALUE))
 			return extractMin();
@@ -136,7 +156,8 @@ public class PriorityQueue<T extends Queable> {
 	public boolean checkMinHeapProperty() {
 		for (int i = 1 + 1; i < 1 + used; i++)
 			if (ar[i].priority() < ar[i / 2].priority()) {
-				System.out.println(i + ", " + ar[i].priority()+", "
+				System.out.println("MinHeapProperty failed: " + 
+                                   i + ", " + ar[i].priority()+", " 
 						        	+ ar[i / 2].priority());
 				return false;
 			}
