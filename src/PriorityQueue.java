@@ -1,19 +1,45 @@
 import java.util.Map;
 import java.util.TreeMap;
 
+
+import java.util.Arrays;
+
 public class PriorityQueue<T extends Queable> {
 	private int used, alloc;
 	private T[] ar;
 	private Map<Long, Integer> position;
 	
+
 	@SuppressWarnings("unchecked")
 	public PriorityQueue() {
 		used = 0;
 		alloc = 4;
-		ar = (T[]) new Object[1 + 4];
+
+		ar = (T[]) new Queable[1 + 4];
 		position = new TreeMap<Long, Integer>();
 	}
+
+
+	@SuppressWarnings("unchecked")
+	private void resize(int newSize) {
+		T[] oldAr = ar;
+		ar = (T[]) new Queable[1 + newSize];
+		for (int i = 1; i < used + 1; i++) 
+			ar[i] = oldAr[i];
+		alloc = newSize;
+	}
+
 	
+	public String toString() {
+		if (used < 1)
+			return "";
+ 		String res = ar[0 + 1].toString();
+ 		for (int i = 1; i < used; i++)
+ 			res += ", " + ar[i + 1].toString();
+ 		return res;
+	}
+	
+
 	private void swap(int pos1, int pos2) {
 		T tmp = ar[pos1];
 		ar[pos1] = ar[pos2];
@@ -24,43 +50,40 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 
-	@SuppressWarnings("unchecked")
-	private void resize(int newSize) {
-		T[] oldAr = ar;
-		ar = (T[]) new Object[1 + newSize];
-		for (int i = 1; i < used + 1; i++) 
-			ar[i] = oldAr[i];
-		alloc = newSize;
-	}
-
 	// Bubbles element on position pos down and returns its new position.
 	private void down(int pos) {
 		int old = pos;
 		pos *= 2;
-		for (; pos < ar.length; pos += pos) {
-			old = pos;
+		while(pos < ar.length) {
 			if (pos + 1 < ar.length && 
 					ar[pos + 1].priority() < ar[pos].priority())
 				pos++;
 			swap(old, pos);	
+
+			old = pos;
+			pos += pos;
 		}
 	}
 
 	private void up(int pos) {
 		int old = pos;
 		pos /= 2;
-		for (; pos > 0 && ar[pos].priority() > ar[old].priority(); pos /= 2)
+		while(pos > 0 && ar[pos].priority() > ar[old].priority()) {
 			swap(old, pos);
+
+			old = pos;
+			pos /= 2;
+		}
 	}
 
 	public void insert(T elem) {
 		if (used >= alloc)
 			resize(2 * alloc);
-		ar[used] = elem;
-		position.put(elem.id(), used);
+		ar[1 + used] = elem;
+		position.put(elem.id(), 1 + used);
 
-		up(used);
 		used++;
+		up(used);
 	}
 
 	public T min() {
@@ -105,6 +128,20 @@ public class PriorityQueue<T extends Queable> {
 		if(changePriority(elemId, Integer.MIN_VALUE))
 			return extractMin();
 		return null;
+	}
+
+
+
+
+	// Remove after testing
+	public boolean checkMinHeapProperty() {
+		for (int i = 1 + 1; i < 1 + used; i++)
+			if (ar[i].priority() < ar[i / 2].priority()) {
+				System.out.println(i + ", " + ar[i].priority()+", "
+						        	+ ar[i / 2].priority());
+				return false;
+			}
+		return true;
 	}
 }
 
