@@ -2,12 +2,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class PriorityQueue<T extends Comparable<T>> {
+	private int used, alloc;
 	private T[] ar;
 	private Map<Long, Integer> pos;
 	
 	@SuppressWarnings("unchecked")
 	public PriorityQueue() {
-		ar = (T[]) new Object[1];
+		used = 0;
+		alloc = 4;
+		ar = (T[]) new Object[1 + 4];
 		pos = new TreeMap<Long, Integer>();
 	}
 	
@@ -16,6 +19,11 @@ public class PriorityQueue<T extends Comparable<T>> {
 		ar[pos1] = ar[pos2];
 		ar[pos2] = tmp;
 		tmp = null;
+	}
+
+
+	private void resize(int newSize) {
+		// TODO
 	}
 
 	// Bubbles element on position pos down and returns its new position.
@@ -31,20 +39,44 @@ public class PriorityQueue<T extends Comparable<T>> {
 		return old;
 	}
 
-	public void insert(T elem, int priority) {
+	private int up(int pos) {
+		int old = pos;
+		pos /= 2;
+		for (; pos > 0 && ar[pos].compareTo(ar[old]) > 0 ; pos /= 2)
+			swap(old, pos);
+		return old;
+	}
+
+	public void insert(T elem) {
+		if (used >= alloc)
+			resize(2 * alloc);
+		ar[used] = elem;
+		up(used);
+		used++;
 	}
 
 	public T min() {
-		return null;
+		if (used < 1)
+			throw new EmptyQueueException();
+		return ar[1];
 	}
 	
 	public T extractMin() {
+		// TODO
 		return null;
 	}
 
 	public void decreaseKey(T elem) {
+		// TODO
 	}
 
 	public void remove(T elem) {
+		// TODO
+	}
+}
+
+class EmptyQueueException extends RuntimeException {
+	public EmptyQueueException() {
+		super();
 	}
 }
