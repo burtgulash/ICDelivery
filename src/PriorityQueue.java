@@ -2,8 +2,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-import java.util.Arrays;
-
 public class PriorityQueue<T extends Queable> {
 	private int used, alloc;
 	private T[] ar;
@@ -79,10 +77,11 @@ public class PriorityQueue<T extends Queable> {
 	public void insert(T elem) {
 		if (used >= alloc)
 			resize(2 * alloc);
-		ar[1 + used] = elem;
-		position.put(elem.id(), 1 + used);
-
 		used++;
+
+		ar[used] = elem;
+		position.put(elem.id(), used);
+
 		up(used);
 	}
 
