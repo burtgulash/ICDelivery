@@ -1,56 +1,64 @@
 import java.util.Map;
 import java.util.TreeMap;
 
-public class PriorityQueue<T extends Comparable<T>> {
+public class PriorityQueue<T extends Queable> {
 	private int used, alloc;
 	private T[] ar;
-	private Map<Long, Integer> pos;
+	private Map<Long, Integer> position;
 	
 	@SuppressWarnings("unchecked")
 	public PriorityQueue() {
 		used = 0;
 		alloc = 4;
 		ar = (T[]) new Object[1 + 4];
-		pos = new TreeMap<Long, Integer>();
+		position = new TreeMap<Long, Integer>();
 	}
 	
 	private void swap(int pos1, int pos2) {
 		T tmp = ar[pos1];
 		ar[pos1] = ar[pos2];
 		ar[pos2] = tmp;
-		tmp = null;
+
+		position.put(ar[pos1].id(), pos1);
+		position.put(ar[pos2].id(), pos2);
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private void resize(int newSize) {
-		// TODO
+		T[] oldAr = ar;
+		ar = (T[]) new Object[1 + newSize];
+		for (int i = 1; i < used + 1; i++) 
+			ar[i] = oldAr[i];
+		alloc = newSize;
 	}
 
 	// Bubbles element on position pos down and returns its new position.
-	private int down(int pos) {
+	private void down(int pos) {
 		int old = pos;
 		pos *= 2;
 		for (; pos < ar.length; pos += pos) {
 			old = pos;
-			if (pos + 1 < ar.length && ar[pos + 1].compareTo(ar[pos]) < 0)
+			if (pos + 1 < ar.length && 
+					ar[pos + 1].priority() < ar[pos].priority())
 				pos++;
 			swap(old, pos);	
 		}
-		return old;
 	}
 
-	private int up(int pos) {
+	private void up(int pos) {
 		int old = pos;
 		pos /= 2;
-		for (; pos > 0 && ar[pos].compareTo(ar[old]) > 0 ; pos /= 2)
+		for (; pos > 0 && ar[pos].priority() > ar[old].priority(); pos /= 2)
 			swap(old, pos);
-		return old;
 	}
 
 	public void insert(T elem) {
 		if (used >= alloc)
 			resize(2 * alloc);
 		ar[used] = elem;
+		position.put(elem.id(), used);
+
 		up(used);
 		used++;
 	}
@@ -62,16 +70,41 @@ public class PriorityQueue<T extends Comparable<T>> {
 	}
 	
 	public T extractMin() {
-		// TODO
+		if (used < 1)
+			throw new EmptyQueueException();
+		if (used < alloc / 2)
+			resize(alloc / 2);
+		
+		T ret = ar[1];
+		ar[1] = ar[used];
+		position.put(ar[1].id(), 1);
+		position.remove(ret.id());
+
+		down(used);
+		return ret;
+	}
+
+	public boolean changePriority(long elemId, int newPriority) {
+		Integer elemPos_ob = position.get(elemId);
+		if (elemPos_ob == null)
+			return false;
+		int elemPos = elemPos_ob.intValue();
+
+		int oldPriority = ar[elemPos].priority();
+		ar[elemPos].setPriority(newPriority);
+
+		if (oldPriority < newPriority) 
+			down(elemPos);
+		else 
+			up(elemPos);
+
+		return true;
+	}
+
+	public T remove(long elemId) {
+		if(changePriority(elemId, Integer.MIN_VALUE))
+			return extractMin();
 		return null;
-	}
-
-	public void decreaseKey(T elem) {
-		// TODO
-	}
-
-	public void remove(T elem) {
-		// TODO
 	}
 }
 
