@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="ICDelivery" basedir="." default="compile">
-	<property name="classes" value="build/classes" />
+	<property name="classes.dir" value="build/classes" />
+	<property name="jar.dir" value="build/jar" />
 
 	<path id="project_classpath">
 		<pathelement location="lib/junit-4.10.jar" />
-		<pathelement location="${classes}" />
+		<pathelement location="${classes.dir}" />
 	</path>
 
+
+
 	<target name="compile">
-		<mkdir dir="${classes}" />
-		<javac srcdir="src" destdir="${classes}" 
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="src" destdir="${classes.dir}" 
 			includeantruntime="false" />
 	</target>
 
+
 	<target name="compile-tests" depends="compile">
-		<mkdir dir="${classes}" />
-		<javac srcdir="test" destdir="${classes}"
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="test" destdir="${classes.dir}"
 			includeantruntime="false">
 			<classpath refid="project_classpath" />
 		</javac>
 	</target>
+
 
 	<target name="test" depends="compile-tests">
 		<junit fork="yes" haltonfailure="yes">
@@ -33,6 +38,22 @@
 			</batchtest>
 		</junit>
 	</target>
+
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="Main" />
+			</manifest>
+		</jar>
+	</target>
+
+
+	<target name="run" depends="jar">
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
+	</target>
+	
 
 	<target name="clean">
 		<delete dir="build" />
