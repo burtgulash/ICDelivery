@@ -26,7 +26,7 @@ public class Main {
 		while (simRunning){
 			
 			//System.out.println(currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
-		//	lw.writeLog(currentTime,currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
+			lw.writeLog(currentTime,currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
 			
 			if(currentTime == pauseTime || currentTime == TOTAL_TIME)
 				simRunning = false;
