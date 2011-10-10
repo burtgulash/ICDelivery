@@ -9,14 +9,6 @@ public class Graph {
 		return v.length;
 	}
 	
-	public void addEdge(int start, int dst,int w){
-		
-		v[start][v[start].length] = new Edge(dst,w);
-	}
-	
-	public void addEdge(int start, Edge e){
-		v[start][v[start].length-1] = e;
-	}
 	
 	public Path edge(int src, int dst) {
 		for (int i = 0; i < src; i++)
