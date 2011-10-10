@@ -1,15 +1,20 @@
 public class Graph {
 	private Edge[][] v;
-	
+
 	public Graph(int vertices) {
 		v = new Edge[vertices][];
 	}
 	
+	public Graph(Edge[][] v) {
+		this.v = v;
+	}
+
+
 	public int vertices() {
 		return v.length;
 	}
-	
-	
+
+
 	public Path edge(int src, int dst) {
 		for (int i = 0; i < src; i++)
 			if (v[src][i].destination == dst)
@@ -24,10 +29,4 @@ class Edge {
 		destination = dst;
 		weight = w;
 	}
-	
-	public String toString(){
-		return destination + " " + weight;
-	}
 }
-
-
