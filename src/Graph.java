@@ -1,10 +1,14 @@
 public class Graph {
 	private Edge[][] v;
-	
+
 	public Graph(int vertices) {
 		v = new Edge[vertices][];
 	}
 	
+	public Graph(Edge[][] v) {
+		this.v = v;
+	}
+
 
 	public int vertices() {
 		return v.length;
