@@ -98,7 +98,7 @@ def dump(graph):
 		return "%d:%d" % edge
 
 	for v in sorted(graph.keys()):
-		adjListStr = ";".join(map(edgeStr, graph[v]))
+		adjListStr = "; ".join(map(edgeStr, graph[v]))
 		print "%s {%s}" % (str(v), adjListStr)
 
 
