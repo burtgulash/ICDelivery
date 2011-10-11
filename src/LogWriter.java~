@@ -61,6 +61,7 @@ public class LogWriter {
 				bfr.append(sb);
 				bfr.close();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

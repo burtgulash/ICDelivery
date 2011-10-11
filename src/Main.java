@@ -20,13 +20,13 @@ public class Main {
 				
 		parseCmdArgs(args);
 		LogWriter lw = new LogWriter(true);
-		JSONLoader jl = new JSONLoader();
+		GraphLoader jl = new GraphLoader();
 		
 		lw.writeLog(currentTime,"test");
 		while (simRunning){
 			
 			//System.out.println(currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
-			lw.writeLog(currentTime,currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
+		//	lw.writeLog(currentTime,currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
 			
 			if(currentTime == pauseTime || currentTime == TOTAL_TIME)
 				simRunning = false;
