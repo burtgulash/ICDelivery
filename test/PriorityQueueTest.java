@@ -1,6 +1,8 @@
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import priorityQueue.*;
+
 public class PriorityQueueTest {
 
 	@Test

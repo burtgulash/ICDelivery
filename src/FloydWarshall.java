@@ -1,3 +1,5 @@
+package graph;
+
 public class FloydWarshall implements ShortestPaths {
 	private Path[][] mat;
 
