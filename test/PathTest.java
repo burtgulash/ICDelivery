@@ -1,6 +1,8 @@
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import graph.*;
+
 public class PathTest {
 	@Test
 	public void testConcat() {

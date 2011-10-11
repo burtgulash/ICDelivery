@@ -1,3 +1,5 @@
+
+import graph.GraphLoader;
 import java.io.IOException;
 
 
@@ -20,7 +22,7 @@ public class Main {
 				
 		parseCmdArgs(args);
 		LogWriter lw = new LogWriter(true);
-		GraphLoader jl = new GraphLoader();
+		GraphLoader gl = new GraphLoader();
 		
 		lw.writeLog(currentTime,"test");
 		while (simRunning){

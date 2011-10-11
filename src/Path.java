@@ -1,14 +1,16 @@
+package graph;
+
 public class Path {
 	int vertex, weight;
 	Path rest;
-
+	
 
 	public Path(int v, int w, Path rest) {
 		vertex = v;
 		weight = w;
 		this.rest = rest;
 	}
-
+	
 
 	public String toString() {
 		String res = "(" + this.vertex + ", " + this.weight + ")";
@@ -16,7 +18,7 @@ public class Path {
 			res += ", (" + iter.vertex + ", " + iter.weight + ")";
 		return res;
 	}
-
+	
 
 	private static Path prepend(int v, int w, Path p) {
 		return new Path(v, w + p.weight, p);
