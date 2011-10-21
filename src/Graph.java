@@ -7,6 +7,10 @@ public class Graph {
 		v = new Edge[vertices][];
 	}
 	
+	public Graph(Edge[][] v) {
+		this.v = v;
+	}
+	
 
 	public int vertices() {
 		return v.length;
