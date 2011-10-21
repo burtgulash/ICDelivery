@@ -1,27 +1,36 @@
 package events;
 
-public class Event {
+import priorityQueue.Queable;
+
+public class Event implements Queable {
 	private static int eventCount;
-	private int startTime;
-	private int endTime;
-	private int id;
+	long id;
+	int priority;
+	public int eventType;
+	
+	/*
+	 * 1 - ORDER event
+	 * 2 - STOP event
+	 * 3 - TRUCK event
+	 * 4 - TRUCKSEND event
+	 * 5 - TRUCKLOAD event
+	 */
 	
 	Event(){
 		eventCount++;
 		id = eventCount;
+	}
 		
+	public int priority(){
+		return priority;
 	}
 	
-	public int getId(){
+	public void setPriority(int newPriority){
+		this.priority = newPriority;
+	}
+	
+	public long id(){
 		return id;
-	}
-	
-	public int getStartTimet(){
-		return startTime;
-	}
-	
-	public int getEndTimet(){
-		return endTime;
 	}
 
 }

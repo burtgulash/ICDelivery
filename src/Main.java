@@ -1,41 +1,20 @@
-
-import graph.GraphLoader;
-import java.io.IOException;
-
-
 public class Main {
 	
 	public static final String HELP = "Pan Zmrzlík, syn a vnukové - diskretni simulace rozvozu zmrzliny\n" +
 			"";
-	public static final int TOTAL_TIME = 7200;
-	
-	public static int pauseTime = TOTAL_TIME;
-	public static int currentTime = 0;
+	public static final int SIM_TIME = 7200;
+	public static int pauseTime = SIM_TIME;
+	public static int startOrderCount;
 	
 	/**
 	 * @param args
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
-		
-		boolean simRunning = true;
-				
+	
 		parseCmdArgs(args);
-		LogWriter lw = new LogWriter(true);
-		GraphLoader gl = new GraphLoader();
 		
-		lw.writeLog(currentTime,"test");
-		while (simRunning){
-			
-			//System.out.println(currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
-		//	lw.writeLog(currentTime,currentTime/1440 + ". den " + (currentTime%1440)/60 + ":" + (currentTime%1440)%60);
-			
-			if(currentTime == pauseTime || currentTime == TOTAL_TIME)
-				simRunning = false;
-			currentTime++;
-		}
-		
-	lw.closeLog();
+	
 		
 	}
 	
@@ -50,12 +29,12 @@ public class Main {
 				switch (option){
 					case 'p': pauseTime = setPauseTime(args[i+1]); break;
 					case 'h': System.out.println(HELP); break;
-					case 't': System.out.println("zapis do souboru"); break;
+					case 'n': startOrderCount = Integer.parseInt(args[i+1]); break;
 				}
 			}
 		}
 		else{
-			System.out.println("Nebyly zadany zadne argumenty programu, simulace je spustena s vychozimi hodnotami.\n");
+			System.out.println("\n");
 		}
 		
 	}

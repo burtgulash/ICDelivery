@@ -7,14 +7,18 @@ public class Order extends Event {
 	
 	Random r = new Random();
 	
-	private int iceCreamTons;
-	private int destination;
+	private int cargoTons;
+	private int dest;
+	private int timeEstimate;
 	private final int MAX_TONS = 6;
 	private final int SHOP_COUNT = 3000;
 	
 	Order(){
-		iceCreamTons = r.nextInt(MAX_TONS);
-		destination = r.nextInt(SHOP_COUNT);
+		cargoTons = r.nextInt(MAX_TONS);
+		dest = r.nextInt(SHOP_COUNT);
+		
 	}
+	
+	
 
 }

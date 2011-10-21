@@ -8,14 +8,11 @@ import java.io.IOException;
 public class LogWriter {
 	
 	final private File LOG = new File("log.txt");
-	private BufferedWriter bfr;
-	private StringBuffer sb = new StringBuffer();
-	boolean toFile = false;
+	private static BufferedWriter bfr;
+	private static StringBuffer sb = new StringBuffer();
 	
-	LogWriter(boolean toFile){
-		if (toFile){
-			this.toFile = toFile;
-			try {
+	LogWriter(){
+		try {
 				if (!(LOG.isFile())){
 					System.out.println("Vytvářím nový soubor log.txt");
 					LOG.createNewFile();
@@ -30,7 +27,7 @@ public class LogWriter {
 		}
 		
 		
-	}
+	
 	
 	public void writeLog(int time,String entry){
 		int timeOld = 0;
@@ -41,13 +38,12 @@ public class LogWriter {
 		else{
 			
 			System.out.print(sb);
-			if(toFile){
-				try {
-					bfr.append(sb);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				bfr.append(sb);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			
 			sb.setLength(0);
 			timeOld = time;
 			sb.append(entry + "\n");
@@ -56,14 +52,12 @@ public class LogWriter {
 	}
 	
 	public void closeLog(){
-		if(toFile){ 
-			try {
-				bfr.append(sb);
-				bfr.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		System.out.print(sb);
+		try {
+			bfr.append(sb);
+			bfr.close();
+		} catch (IOException e) {
+			e.printStackTrace();	
 		}
 	}
 }
