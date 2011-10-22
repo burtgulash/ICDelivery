@@ -4,6 +4,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+/**
+ * Priority Queue implemented by binary heap
+ * Used as EventHandler in simulation 
+ * Or later as helper structure for Dijkstra's
+ */
 public class PriorityQueue<T extends Queable> {
 	private int used, alloc;
 	private T[] ar;
@@ -11,6 +16,9 @@ public class PriorityQueue<T extends Queable> {
 	
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Plain constructor
+	 */
 	public PriorityQueue() {
 		used = 0;
 		alloc = 4;
@@ -21,6 +29,8 @@ public class PriorityQueue<T extends Queable> {
 
 
 	@SuppressWarnings("unchecked")
+	// Resizes underlying array to new size
+	// Works as doubling vector
 	private void resize(int newSize) {
 		T[] oldAr = ar;
 		ar = (T[]) new Queable[1 + newSize];
@@ -30,6 +40,7 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 	
+	// Remove after testing
 	public String toString() {
 		if (used < 1)
 			return "";
@@ -40,16 +51,23 @@ public class PriorityQueue<T extends Queable> {
 	}
 	
 
+	/**
+	 * Test for emptiness of queue
+	 */
 	public boolean empty() {
 		return used == 0;
 	}
 	
 
+	/**
+	 * Returns number of elements in queue
+	 */
 	public int length() {
 		return used;
 	}
 
 
+	// swaps two elements in queue and updates their positions in map
 	private void swap(int pos1, int pos2) {
 		T tmp = ar[pos1];
 		ar[pos1] = ar[pos2];
@@ -92,6 +110,9 @@ public class PriorityQueue<T extends Queable> {
 		}
 	}
 
+	/**
+	 * Inserts element to the queue
+	 */
 	public void insert(T elem) {
 		if (used >= alloc)
 			resize(2 * alloc);
@@ -103,12 +124,18 @@ public class PriorityQueue<T extends Queable> {
 		up(used);
 	}
 
+	/**
+	 * Peeks for element to be taken next by extractMin
+	 */
 	public T min() {
 		if (used < 1)
 			throw new EmptyQueueException();
 		return ar[1];
 	}
 	
+	/**
+	 * Removes element with least weight from queue
+	 */
 	public T extractMin() {
 		if (used < 1)
 			throw new EmptyQueueException();
@@ -127,6 +154,12 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 
+	/**
+	 * Changes weight of element with elemId to newPriority
+	 * Don't use INTEGER.MIN_VALUE as newPriority
+	 *
+	 * true if element was present in queue or false if not
+	 */
 	public boolean changePriority(long elemId, int newPriority) {
 		Integer elemPos_ob = position.get(elemId);
 		if (elemPos_ob == null)
@@ -145,6 +178,10 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 
+	/**
+	 * Removes and returns element with elemId from queue
+	 * or null if it wasn't present
+	 */
 	public T remove(long elemId) {
 		if(changePriority(elemId, Integer.MIN_VALUE))
 			return extractMin();

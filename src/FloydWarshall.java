@@ -4,6 +4,10 @@ package graph;
 public class FloydWarshall implements ShortestPaths {
 	private Path[][] mat;
 
+
+	/**
+	 * Public constructor for ShortestPaths for graph g
+	 */
 	public FloydWarshall(Graph g) {
 		initMat(g);
 		allPairsShortestPaths();
