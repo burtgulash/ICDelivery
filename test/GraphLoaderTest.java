@@ -13,9 +13,8 @@ public class GraphLoaderTest {
 	
 	@Test
 	public void testLoader(){
-		if (f.isFile()&& f.canRead()){
-			g = GraphLoader.getGraph("test.graph");
-		}
+		g = GraphLoader.getGraph("test.graph");
+		
 		
 		assertTrue(g.vertices() != 0);
 	}
