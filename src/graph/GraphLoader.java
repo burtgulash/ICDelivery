@@ -14,30 +14,20 @@ import java.util.regex.Pattern;
 
 
 public class GraphLoader {
-	final private File GRAPHFILE = new File("test.graph"); // Soubor s definici grafu
-	private BufferedReader br;
-	private final int MAX_EDGES = 500;
-	private Edge[][] v;
+	private static File graphFile; // Soubor s definici grafu
+	private static BufferedReader br;
+	private final static int MAX_EDGES = 500;
+	private static Edge[][] v;
 	
 	
-	
-	public GraphLoader(){
-		try {
-			br = new BufferedReader(new FileReader(GRAPHFILE));
-			parseGraphFile(loadGraphFile());
-		} catch (IOException e) {
-			System.out.println("Chyba při čtení souboru grafu!");
-			e.printStackTrace();
-		}		
-	}
 	
 	/**
-	 * Metoda nacte ze souboru data o grafu v JSON formatu
-	 * a rozdeli data na jednotlive retezce pro kazdy vrchol
+	 * 
+	 * Loads graph definition from CSS-like formated file, 
 	 * @throws IOException
 	 */
 	
-	private List<String> loadGraphFile() throws IOException{
+	private static List<String> loadGraphFile() throws IOException{
 		List<String> nodeList = new ArrayList<String>();
 		String s;	
 		
@@ -50,7 +40,7 @@ public class GraphLoader {
 	
 
 	
-	private void parseGraphFile(List<String> nodeList){
+	private static void parseGraphFile(List<String> nodeList){
 		
 		v = new Edge[nodeList.size()][];
 		Iterator<String> i = nodeList.iterator();
@@ -75,12 +65,12 @@ public class GraphLoader {
 		
 	}
 	
-	private Edge parseEdge(String s){
+	private static Edge parseEdge(String s){
 		String[] tmp = s.split(":");
 		return new Edge(Integer.parseInt(tmp[0]),Integer.parseInt(tmp[1]));
 	}	
 	
-	private Edge[] parseEdgeList(String s){
+	private static Edge[] parseEdgeList(String s){
 		Edge [] edgeList = new Edge[MAX_EDGES];
 		Pattern edges = Pattern.compile("\\d+:\\d+");
 		Matcher mEdges = edges.matcher(s);
@@ -94,7 +84,16 @@ public class GraphLoader {
 	}
 		
 	
-	public Graph getGraph(){
+	public static Graph getGraph(String file){
+		graphFile = new File(file);
+		try {
+			br = new BufferedReader(new FileReader(graphFile));
+			parseGraphFile(loadGraphFile());
+		} catch (IOException e) {
+			System.out.println("Error, couldn't read graph file!");
+			e.printStackTrace();
+		}		
+		
 		return new Graph(v);	
 	}
 	
