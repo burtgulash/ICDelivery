@@ -35,7 +35,7 @@ public class FloydWarshall implements ShortestPaths {
 					if (mat[i][k] == null || mat[k][j] == null)
 						continue;
 					int alternatePath = mat[i][k].weight + mat[k][j].weight;
-					if (alternatePath < mat[i][j].weight) {
+					if (mat[i][j] == null || alternatePath < mat[i][j].weight) {
 						mat[i][j] = Path.concat(mat[i][k], mat[k][j]);
 					}
 				}
