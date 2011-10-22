@@ -2,6 +2,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import priorityQueue.*;
+import java.util.ArrayList;
 
 public class PriorityQueueTest {
 
@@ -14,8 +15,6 @@ public class PriorityQueueTest {
 
 	// ---------------------------------------------- \\
 
-		System.out.println("Test correctness of inserting into queue...");
-
 		for (int i = 0; i < numInsertions; i++) {
 			int priority = i * 171 % 993; // Random nums
 			pq.insert(new Testing(priority));
@@ -24,7 +23,6 @@ public class PriorityQueueTest {
 		assertTrue(pq.checkMinHeapProperty());
 
 
-		System.out.println("Test correctness of extracting min from queue...");
 		int lastPriority = pq.extractMin().priority();
 		for (int i = 1; i < numExtracts; i++) {
 			int curPriority = pq.extractMin().priority();
@@ -34,7 +32,7 @@ public class PriorityQueueTest {
 		}
 		
 		assertTrue(pq.checkMinHeapProperty());
-		assertEquals(pq.length(), numInsertions - numExtracts);
+		assertEquals(numInsertions - numExtracts, pq.length());
 	}
 
 	
@@ -53,14 +51,13 @@ public class PriorityQueueTest {
 		}
 		assertTrue(pq.checkMinHeapProperty());
 
-		System.out.println("Test correctness of changePriority...");
 
 		for (int iter = 0; iter < numChanges; iter++) {
 			if (pq.empty())
 				break;
 
 			Testing current = pq.min();
-			long currentId = current.id();
+			int currentId = current.id();
 			pq.changePriority(currentId, current.priority() * 3 + 11);	
 
 			while (pq.extractMin().id() != currentId)
@@ -80,11 +77,55 @@ public class PriorityQueueTest {
 			assertTrue(pq.checkMinHeapProperty());
 		}
 	}
+
+
+	@Test
+	public void removeTest() {
+		PriorityQueue<Testing> pq = new PriorityQueue<Testing>();
+		int numInsertions = 1337;
+
+		// if i % 71 == 0, delete it after inserted all elems
+		int testModulus = 71; 
+		ArrayList<Integer> toBeDeleted = new ArrayList<Integer>();
+
+
+	// ---------------------------------------------- \\
+
+		for (int i = 0; i < numInsertions; i++) {
+			int priority = i * 31 % 193; // Random nums
+			Testing inserted = new Testing(priority);
+			pq.insert(inserted);
+			if (inserted.id() % testModulus == 0)
+				// Append random elems to delete queue
+				toBeDeleted.add(inserted.id()); 
+		}
+
+		int numDeletions = toBeDeleted.size();
+		for (int i = 0; i < numDeletions; i++) {
+			pq.remove(toBeDeleted.get(i));
+			assertTrue(pq.checkMinHeapProperty());
+		}
+
+		// Check counts
+		assertEquals(numInsertions - numDeletions, pq.length());
+
+		while (!pq.empty()) {
+			int curId = pq.min().id();
+			// IDs divisible by testModulus already removed
+			assertTrue(curId % testModulus != 0);
+			pq.remove(curId);
+			
+			// already deleted item must not be present in priority queue
+			assertFalse(toBeDeleted.contains(curId));
+		}
+
+		assertTrue(pq.checkMinHeapProperty());
+	}
 }
 
 class Testing implements Queable {
-	private static long ids = 1;
-	private long id;
+	private static int ids = 1;
+	private int id;
 	private int priority;
 
 	// Construct
@@ -105,7 +146,7 @@ class Testing implements Queable {
 
 
 	@Override
-	public long id() { 
+	public int id() { 
 		return id;
 	}
 
