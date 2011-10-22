@@ -1,7 +1,7 @@
 package priorityQueue;
 
 public interface Queable {
-	public long id();
+	public int id();
 	public int priority();
 	public void setPriority(int newPriority);
 }

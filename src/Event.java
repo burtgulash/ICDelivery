@@ -4,7 +4,7 @@ import priorityQueue.Queable;
 
 public class Event implements Queable {
 	private static int eventCount;
-	long id;
+	int id;
 	int priority;
 	public int eventType;
 	
@@ -21,15 +21,18 @@ public class Event implements Queable {
 		id = eventCount;
 	}
 		
+	@Override
 	public int priority(){
 		return priority;
 	}
 	
+	@Override
 	public void setPriority(int newPriority){
 		this.priority = newPriority;
 	}
 	
-	public long id(){
+	@Override
+	public int id(){
 		return id;
 	}
 

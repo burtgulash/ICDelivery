@@ -57,7 +57,7 @@ public class PriorityQueueTest {
 				break;
 
 			Testing current = pq.min();
-			long currentId = current.id();
+			int currentId = current.id();
 			pq.changePriority(currentId, current.priority() * 3 + 11);	
 
 			while (pq.extractMin().id() != currentId)
@@ -86,7 +86,7 @@ public class PriorityQueueTest {
 
 		// if i % 71 == 0, delete it after inserted all elems
 		int testModulus = 71; 
-		ArrayList<Long> toBeDeleted = new ArrayList<Long>();
+		ArrayList<Integer> toBeDeleted = new ArrayList<Integer>();
 
 
 	// ---------------------------------------------- \\
@@ -110,7 +110,7 @@ public class PriorityQueueTest {
 		assertEquals(numInsertions - numDeletions, pq.length());
 
 		while (!pq.empty()) {
-			long curId = pq.min().id();
+			int curId = pq.min().id();
 			// IDs divisible by testModulus already removed
 			assertTrue(curId % testModulus != 0);
 			pq.remove(curId);
@@ -124,8 +124,8 @@ public class PriorityQueueTest {
 }
 
 class Testing implements Queable {
-	private static long ids = 1;
-	private long id;
+	private static int ids = 1;
+	private int id;
 	private int priority;
 
 	// Construct
@@ -146,7 +146,7 @@ class Testing implements Queable {
 
 
 	@Override
-	public long id() { 
+	public int id() { 
 		return id;
 	}
 

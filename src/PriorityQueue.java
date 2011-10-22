@@ -12,7 +12,7 @@ import java.util.TreeMap;
 public class PriorityQueue<T extends Queable> {
 	private int used, alloc;
 	private T[] ar;
-	private Map<Long, Integer> position;
+	private Map<Integer, Integer> position;
 	
 
 	@SuppressWarnings("unchecked")
@@ -24,7 +24,7 @@ public class PriorityQueue<T extends Queable> {
 		alloc = 4;
 
 		ar = (T[]) new Queable[1 + 4];
-		position = new TreeMap<Long, Integer>();
+		position = new TreeMap<Integer, Integer>();
 	}
 
 
@@ -160,7 +160,7 @@ public class PriorityQueue<T extends Queable> {
 	 *
 	 * true if element was present in queue or false if not
 	 */
-	public boolean changePriority(long elemId, int newPriority) {
+	public boolean changePriority(int elemId, int newPriority) {
 		Integer elemPos_ob = position.get(elemId);
 		if (elemPos_ob == null)
 			return false;
@@ -182,7 +182,7 @@ public class PriorityQueue<T extends Queable> {
 	 * Removes and returns element with elemId from queue
 	 * or null if it wasn't present
 	 */
-	public T remove(long elemId) {
+	public T remove(int elemId) {
 		if(changePriority(elemId, Integer.MIN_VALUE))
 			return extractMin();
 		return null;
