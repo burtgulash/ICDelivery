@@ -3,11 +3,7 @@ package graph;
 public class Graph {
 	private Edge[][] v;
 	
-	// Smazat?
-	public Graph(int vertices) {
-		v = new Edge[vertices][];
-	}
-	
+		
 	/**
 	 *  Constructs graph given Edge matrix
 	 */
