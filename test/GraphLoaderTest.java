@@ -9,16 +9,12 @@ import graph.*;
 
 public class GraphLoaderTest {
 	
-	File f = new File("test.graph");
-		
-	GraphLoader gl;
 	Graph g;
 	
 	@Test
 	public void testLoader(){
 		if (f.isFile()&& f.canRead()){
-			gl = new GraphLoader("test.graph");
-			g = gl.getGraph();
+			g = GraphLoader.getGraph("test.graph");
 		}
 		
 		assertTrue(g.vertices() != 0);
