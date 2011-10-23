@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 
 public class GraphLoader {
-	private static File graphFile; // Soubor s definici grafu
+	private static File graphFile;
 	private static BufferedReader br;
 	private final static int MAX_EDGES = 500;
 	private static Edge[][] v;
@@ -53,12 +53,15 @@ public class GraphLoader {
 		while (i.hasNext()){
 			s = i.next();
 			mVertex = vertex.matcher(s);
-			
-			if (mVertex.find()){
+						
+			if (mVertex.find())
 				vertexNumber = Integer.parseInt(mVertex.group().trim());
-			}		
-			
-			v[vertexNumber] = parseEdgeList(s);
+					
+			if (vertexNumber < v.length){
+				v[vertexNumber] = parseEdgeList(s);
+				System.out.println(vertexNumber);}
+			else
+				throw new MalformedGraphFileException();
 					
 		}
 		
@@ -97,4 +100,10 @@ public class GraphLoader {
 		return new Graph(v);	
 	}
 	
+}
+
+class MalformedGraphFileException extends RuntimeException {
+	public MalformedGraphFileException() {
+		super();
+	}
 }
