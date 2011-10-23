@@ -1,4 +1,4 @@
-package events;
+package simulator;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package events;
+package simulator;
 
 public class TruckSend extends TruckEvent {
 
