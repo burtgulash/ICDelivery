@@ -10,4 +10,3 @@ public class StopEvent extends Event {
 	}
 
 }
-
