@@ -24,6 +24,11 @@ public class FloydWarshall implements ShortestPaths {
 		for (int i = 0; i < v; i++)
 			for (int j = 0; j < v; j++)
 				mat[i][j] = g.edge(i, j);
+
+		// introduce self-loops
+		// path from self to self is 0 in length
+		for (int i = 0; i < v; i++)
+			mat[i][i] = new Path(i, 0, null);
 	}
 	
 	// Floyd-Warshall O(V^3) algorithm for all pair shortest paths.
