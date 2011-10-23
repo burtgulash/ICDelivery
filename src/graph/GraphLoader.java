@@ -59,8 +59,9 @@ public class GraphLoader {
 					
 			if (vertexNumber < v.length){
 				v[vertexNumber] = parseEdgeList(s);
-				System.out.println(vertexNumber);}
-			else
+				// wtf
+				// System.out.println(vertexNumber);}
+			} else
 				throw new MalformedGraphFileException();
 					
 		}
@@ -87,16 +88,18 @@ public class GraphLoader {
 	}
 		
 	
-	public static Graph getGraph(String file){
-		graphFile = new File(file);
+	public static Graph getGraph(String fileName){
+		graphFile = new File(fileName);
+		assert(graphFile.canRead());
+
 		try {
 			br = new BufferedReader(new FileReader(graphFile));
 			parseGraphFile(loadGraphFile());
+			br.close();
 		} catch (IOException e) {
-			System.out.println("Error, couldn't read graph file!");
-			e.printStackTrace();
-		}		
-		
+			System.err.println("Error, couldn't read graph file!");
+			return null;
+		}
 		return new Graph(v);	
 	}
 	

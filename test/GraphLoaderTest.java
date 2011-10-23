@@ -13,10 +13,20 @@ public class GraphLoaderTest {
 	
 	@Test
 	public void testLoader(){
+		java.io.File readFile = new java.io.File("test.graph");
+		assertTrue(readFile.exists());
+		assertTrue(readFile.length() > 0);
+		assertTrue(readFile.canRead());
+
 		g = GraphLoader.getGraph("test.graph");
+		assertNotNull(g);
 		
 		
 		assertTrue(g.vertices() != 0);
+
+		// test if all vertices have neighbors, else the graph is not connected
+		for (int i = 0; i < g.vertices(); i ++)
+			assertTrue(g.neighbors(i) >= 0);
 	}
 	
 }

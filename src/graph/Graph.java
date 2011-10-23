@@ -23,6 +23,13 @@ public class Graph {
 		return v.length;
 	}
 
+	public int neighbors(int vertex) {
+		if (0 <= vertex && vertex < vertices()) {
+			assert (v[vertex] != null);
+			return v[vertex].length;
+		}
+		return -1;
+	}
 
 	/**
 	 * Returns edge from src to dst as Path object of length 1
