@@ -7,7 +7,6 @@
 	<path id="project_classpath">
 		<pathelement location="lib/junit-4.10.jar" />
 		<pathelement location="${classes.dir}" />
-		<pathelement location="${classes.dir}/graph" />
 	</path>
 
 
