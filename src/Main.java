@@ -29,9 +29,7 @@ public class Main {
 	
 		parseCmdArgs(args);
 		simulation = new EventHandler(SIM_TIME,pauseTime,startOrderCount);
-		Graph g = GraphLoader.getGraph("test.graph");
-		ShortestPaths sp = new FloydWarshall(g);
-	
+		
 		
 	}
 	
