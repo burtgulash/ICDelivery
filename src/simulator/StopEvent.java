@@ -4,9 +4,9 @@ public class StopEvent extends Event {
 	
 	public final int TYPE = 2;  // STOP event
 	
-	StopEvent(int priority){
+	StopEvent(int time){
+		super(time);
 		super.eventType = TYPE;
-		setPriority(priority);
 	}
 
 }
