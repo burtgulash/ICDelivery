@@ -1,3 +1,6 @@
+import graph.GraphLoader;
+import simulator.Simulator;
+
 public class Main {
 	
 	public static final String HELP = "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny\n" +
@@ -12,10 +15,9 @@ public class Main {
 	
 
 	public static void main(String[] args) {
-	
+		
 		parseCmdArgs(args);
-		
-		
+		Simulator s = new Simulator(SIM_TIME,startOrderCount,GraphLoader.getGraph("test.graph"));
 		
 	}
 	
@@ -35,9 +37,17 @@ public class Main {
 				option = args[i].charAt(1);
 				
 				switch (option){
-					case 'p': pauseTime = Integer.parseInt(args[i+1]); break;
+					case 'p': if (i+1 < args.length){
+								pauseTime = Integer.parseInt(args[i+1]);
+								System.out.println("Simulation pause time set to: " + pauseTime);
+								}else System.out.println("Bad argument! Expected number after flag -p");
+							  break;
 					case 'h': System.out.println(HELP); break;
-					case 'n': startOrderCount = Integer.parseInt(args[i+1]); break;
+					case 'n': if (i+1 < args.length){
+								startOrderCount = Integer.parseInt(args[i+1]);
+							    System.out.println("Number of default orders set to: " + startOrderCount);
+								} else System.out.println("Bad argument! Expected number after flag -n");
+							  break;
 				}
 			}
 		}
