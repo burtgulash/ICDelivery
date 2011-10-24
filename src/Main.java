@@ -7,7 +7,7 @@ public class Main {
 			"Usage: main <options>\n"+
 			"where options include:\n"+
 			"-p <minutes>\t\t Sets time when the simulation will be paused\n"+
-			"-h \t\t\t\t Displays this help message\n"+
+			"-h \t\t\t Displays this help message\n"+
 			"-n <number> \t\t Sets number of orders generated on start of simulation";
 	public static final int SIM_TIME = 7200;
 	public static int pauseTime = SIM_TIME;
@@ -19,6 +19,7 @@ public class Main {
 		parseCmdArgs(args);
 		Simulator s = new Simulator(SIM_TIME,startOrderCount,GraphLoader.getGraph("test.graph"));
 		
+
 	}
 	
 	/**
@@ -29,26 +30,31 @@ public class Main {
 	 */
 	
 	static void parseCmdArgs(String[] args){
-		
 		if (args.length > 0){
+			System.out.println(args.length);
 			char option;
 			
 			for (int i = 0; i < args.length; i++){
+				if(args[i].charAt(0) == '-'){
 				option = args[i].charAt(1);
-				
-				switch (option){
-					case 'p': if (i+1 < args.length){
-								pauseTime = Integer.parseInt(args[i+1]);
-								System.out.println("Simulation pause time set to: " + pauseTime);
-								}else System.out.println("Bad argument! Expected number after flag -p");
-							  break;
-					case 'h': System.out.println(HELP); break;
-					case 'n': if (i+1 < args.length){
-								startOrderCount = Integer.parseInt(args[i+1]);
-							    System.out.println("Number of default orders set to: " + startOrderCount);
-								} else System.out.println("Bad argument! Expected number after flag -n");
-							  break;
-				}
+			
+					switch (option){
+						case 'p': if (i+1 < args.length){
+									pauseTime = Integer.parseInt(args[++i]);
+									System.out.println("Simulation pause time set to: " + pauseTime);
+									}else System.out.println("Bad argument! Expected number after flag -p");
+								  break;
+						case 'h': System.out.println(HELP); break;
+						case 'n': if (i+1 < args.length){
+							
+									startOrderCount = Integer.parseInt(args[++i]);
+								    System.out.println("Number of default orders set to: " + startOrderCount);
+									} else System.out.println("Bad argument! Expected number after flag -n");
+								  break;
+						default:System.out.println("Unrecognized switch \"-" + option +"\"!"  );
+					}
+				}else
+					System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
 			}
 		}
 		else{
