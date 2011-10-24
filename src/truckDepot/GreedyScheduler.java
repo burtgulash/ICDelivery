@@ -23,8 +23,9 @@ public class GreedyScheduler implements Scheduler {
     // constants begin
     private final int DEPOT;
 
-    private final int MIN_TIME;               // 6 hodin rano
-    private final int MAX_TIME;               // 18 hodin vecer
+    private final int MIN_TIME		  = 360;  // 6 hodin rano
+    private final int MAX_TIME 		  = 1080; // 18 hodin vecer
+    private final int DAY			  = 1440;
     private final int SPEED           = 70;   // km/h
     private final int LOADING_TIME    = 15;   // minuters
 
@@ -65,9 +66,12 @@ public class GreedyScheduler implements Scheduler {
         Trip currentPlan = new Trip(receivedTime, shortest, amount);
         
         // delay if needed
-        int arrivalTime = currentPlan.arrivalTime();
-        if (/* not between MIN_TIME and MAX_TIME */ false) {
-            currentPlan.delay(/* by time such that it satisfies the interval */ 0);
+        int arrivalTime = currentPlan.arrivalTime()%DAY; // arrival time in minutes at the day of arrival
+        if ((arrivalTime) < MIN_TIME) {
+            currentPlan.delay(MIN_TIME-arrivalTime);
+        }
+        else if((arrivalTime) > MAX_TIME){
+        	currentPlan.delay(DAY+MIN_TIME-arrivalTime);
         }
         
     }

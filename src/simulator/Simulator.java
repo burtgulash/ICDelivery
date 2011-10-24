@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.Customers;
 import stats.Order;
 import truckDepot.Scheduler;
 import truckDepot.GreedyScheduler;
@@ -11,17 +12,22 @@ public class Simulator {
     private final int TRUCK       = 3;
     private final int TRUCK_SEND  = 4;
     private final int TRUCK_LOAD  = 5;
+    
 
     Calendar timeline;
     Scheduler scheduler;
+    Customers customerList;
 
 
 
-    public Simulator(int simulationTime, Graph graph) {
+    public Simulator(int simulationTime,int startOrderCount, Graph graph) {
 		int depotVertex = 0; // change later
-
+		
+		customerList = new Customers(graph.vertices());
         timeline   = new Calendar(simulationTime);
         scheduler  = new GreedyScheduler(graph, depotVertex);
+        
+        addOrderEvents(simulationTime,startOrderCount);
     }
 
     /**
@@ -57,4 +63,13 @@ public class Simulator {
     public void getSummary() {
 		// TODO row
     }
+    
+    private void addOrderEvents(int simulationTime,int startOrderCount){
+		for(int i = 0; i < startOrderCount; i++){
+			timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
+		}
+		for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
+			timeline.addEvent(OrderGenerator.generateOtherOrders(customerList,simulationTime));
+		}
+	}
 }

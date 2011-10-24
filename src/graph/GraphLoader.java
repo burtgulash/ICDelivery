@@ -59,8 +59,6 @@ public class GraphLoader {
 					
 			if (vertexNumber < v.length){
 				v[vertexNumber] = parseEdgeList(s);
-				// wtf
-				// System.out.println(vertexNumber);}
 			} else
 				throw new MalformedGraphFileException();
 					

@@ -18,4 +18,8 @@ public class Customers {
 		assert(0 <= customerId && customerId < list.length);
 		return list[customerId];
 	}
+	
+	public int size(){
+		return list.length;
+	}
 }
