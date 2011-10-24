@@ -11,8 +11,8 @@ public class OrderEvent extends Event {
 
 	// TRUCKLOAD event
 	
-	public OrderEvent(Order order) {
+	public OrderEvent(int time, Order order) {
+		super(time);
 		this.order = order;
-		setPriority(priority);
 	}
 }

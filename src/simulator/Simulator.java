@@ -20,8 +20,8 @@ public class Simulator {
     public Simulator(int simulationTime, Graph graph) {
 		int depotVertex = 0; // change later
 
-        timeline  = new Calendar(simulationTime);
-        scheduler = new GreedyScheduler(graph, depotVertex);
+        timeline   = new Calendar(simulationTime);
+        scheduler  = new GreedyScheduler(graph, depotVertex);
     }
 
     /**

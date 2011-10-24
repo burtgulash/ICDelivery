@@ -10,6 +10,13 @@ public class Path {
 		weight = w;
 		this.rest = rest;
 	}
+
+	/**
+	 * return length of the Path
+	 */
+	public int pathLength() {
+		return weight;
+	}
 	
 
 	public String toString() {
