@@ -1,16 +1,3 @@
-import graph.FloydWarshall;
-import graph.Graph;
-import graph.GraphLoader;
-import graph.ShortestPaths;
-import simulator.EventHandler;
-
-/**
- * 
- * Discreet simulation 
- * 
- *
- */
-
 public class Main {
 	
 	public static final String HELP = "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny\n" +
@@ -22,13 +9,12 @@ public class Main {
 	public static final int SIM_TIME = 7200;
 	public static int pauseTime = SIM_TIME;
 	public static int startOrderCount = 150;
-	public static EventHandler simulation;
 	
 
 	public static void main(String[] args) {
 	
 		parseCmdArgs(args);
-		simulation = new EventHandler(SIM_TIME,pauseTime,startOrderCount);
+		
 		
 		
 	}

@@ -1,6 +1,9 @@
 package simulator;
 import java.util.Random;
 
+import stats.Customers;
+import stats.Order;
+
 /**
  * Order generator used by EventHandler
  * 
@@ -14,6 +17,7 @@ public class OrderGenerator {
 	private final static int MAX_ORDER_TIME = 6480;
 	private final static int MAX_TONS = 6;
 	private final static int SHOP_COUNT = 3000;
+	private final static int START_TIME = 0;
 
 		
 	/**
@@ -37,8 +41,8 @@ public class OrderGenerator {
 	 * @return OrderEvent with priority zero.
 	 */
 		 
-	 public static Event generateFirstOrders(){
-		  return  new OrderEvent(r.nextInt(MAX_TONS),r.nextInt(SHOP_COUNT), 0);
+	 public static Event generateDefaultOrders(Customers cl){
+		  return  new OrderEvent(START_TIME,new Order(cl,r.nextInt(SHOP_COUNT),r.nextInt(MAX_TONS),START_TIME));
 	 }
 	 
 	 /**
@@ -47,8 +51,9 @@ public class OrderGenerator {
 	  * @return OrderEvent with random exponentially distributed priority.
 	  */
 	 
-	 public static Event generateOtherOrders(){
-		 return  new OrderEvent(r.nextInt(MAX_TONS),r.nextInt(SHOP_COUNT), expDist());
+	 public static Event generateOtherOrders(Customers cl){
+		 int time = expDist();
+		 return  new OrderEvent(time,new Order(cl,r.nextInt(SHOP_COUNT),r.nextInt(MAX_TONS),time));
 	 }
 
 }

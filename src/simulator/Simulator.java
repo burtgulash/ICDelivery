@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.Customers;
 import stats.Order;
 import truckDepot.Scheduler;
 import truckDepot.GreedyScheduler;
@@ -14,6 +15,7 @@ public class Simulator {
 
     Calendar timeline;
     Scheduler scheduler;
+    Customers customerList;
 
 
 
