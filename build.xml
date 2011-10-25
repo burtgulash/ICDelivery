@@ -1,77 +1,92 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="ICDelivery" basedir="." default="compile">
-	<property name="classes.dir" value="build/classes" />
-	<property name="jar.dir" value="build/jar" />
+    <property name="classes.dir" value="build/classes" />
+    <property name="jar.dir" value="build/jar" />
+    <property name="generator" value="src/python/simpleGen.py" />
+	<property name="test.file" value="test.graph" />
 
-	<path id="project_classpath">
-		<pathelement location="lib/junit-4.10.jar" />
-		<pathelement location="${classes.dir}" />
-	</path>
-
-
-
-
-	<target name="compile">
-		<mkdir dir="${classes.dir}" />
-		<javac srcdir="src" destdir="${classes.dir}" 
-			includeantruntime="false" />
-	</target>
+    <path id="project_classpath">
+        <pathelement location="lib/junit-4.10.jar" />
+        <pathelement location="${classes.dir}" />
+    </path>
 
 
 
-	<target name="compile-tests" depends="clean,compile">
-		<mkdir dir="${classes.dir}" />
-		<javac srcdir="test" destdir="${classes.dir}"
-			includeantruntime="false">
-			<classpath refid="project_classpath" />
-		</javac>
-	</target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="src" destdir="${classes.dir}" 
+            includeantruntime="false" />
+    </target>
 
 
 
-	<target name="test" depends="compile-tests">
-		<junit fork="yes" haltonfailure="yes">
-			<formatter type="brief" usefile="false" />
-			<classpath refid="project_classpath" />
-
-			<!-- test all Test files in ./test/ directory -->
-			<batchtest>
-				<fileset dir="test">
-					<include name="**/*Test*.java" />
-				</fileset>
-			</batchtest>
-
-			<!-- assertions only enabled for testing -->
-			<assertions>
-				<enable />
-			</assertions>
-		</junit>
-
-		<!-- clean up after testing -->
-		<antcall target="clean" />
-	</target>
+    <target name="compile-tests" depends="clean,compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="test" destdir="${classes.dir}"
+            includeantruntime="false">
+            <classpath refid="project_classpath" />
+        </javac>
+    </target>
 
 
 
-	<target name="jar" depends="compile">
-		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
-			<manifest>
-				<attribute name="Main-Class" value="Main" />
-			</manifest>
-		</jar>
-	</target>
+    <target name="test" depends="compile-tests">
+        <junit fork="yes" haltonfailure="yes">
+            <formatter type="brief" usefile="false" />
+            <classpath refid="project_classpath" />
+
+            <!-- test all Test files in ./test/ directory -->
+            <batchtest>
+                <fileset dir="test">
+                    <include name="**/*Test*.java" />
+                </fileset>
+            </batchtest>
+
+            <!-- assertions only enabled for testing -->
+            <assertions>
+                <enable />
+            </assertions>
+        </junit>
+
+        <!-- clean up after testing -->
+        <antcall target="clean" />
+    </target>
 
 
 
-	<target name="run" depends="jar">
-		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
-	</target>
-	
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}" />
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="Main" />
+            </manifest>
+        </jar>
+    </target>
 
 
-	<target name="clean">
-		<delete dir="build" />
-	</target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
+    </target>
+    
+
+    
+	<!-- generate test.graph, python must be installed -->
+    <target name="gen">
+		<echo message="generating test graph to ${test.file}" />
+        <exec executable="python" 
+              failonerror="true" 
+              output="${test.file}">
+
+            <arg line="${generator} 10 20 20 5" />
+        </exec>
+    </target>
+
+
+
+    <target name="clean">
+        <delete dir="build" />
+    </target>
 </project>
