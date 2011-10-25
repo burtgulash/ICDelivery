@@ -2,7 +2,10 @@ package simulator;
 
 import stats.Customers;
 import stats.Order;
+import stats.Truck;
+
 import graph.Graph;
+import graph.Path;
 
 public class Simulator {
     
@@ -14,11 +17,11 @@ public class Simulator {
 
 
     public Simulator(int simulationTime,int startOrderCount, Graph graph) {
-		int depotVertex = 0; // change later
-		
-		customerList = new Customers(graph.vertices());
-        timeline   = new Calendar(simulationTime);
-        scheduler  = new GreedyScheduler(graph, depotVertex);
+        int depotVertex = 0; // change later
+        
+        customerList = new Customers(graph.vertices());
+        timeline     = new Calendar(simulationTime);
+        scheduler    = new GreedyScheduler(graph, depotVertex);
         
         addOrderEvents(simulationTime,startOrderCount);
     }
@@ -38,9 +41,27 @@ public class Simulator {
                     break MAIN_LOOP;
 
                 case ORDER:
-					Order currentOrder = ((OrderEvent) current).order;
+                    Order currentOrder = ((OrderEvent) current).order;
                     scheduler.receiveOrder(currentOrder);
                     break;
+
+                case TRUCK_SEND:
+                    TruckSend e = (TruckSend) current;
+                    Truck t = e.truck;
+                    if (e.truck.arrived()) {
+                        // unload -->> ??  UnloadEvent ??
+                        // send back
+                    } else {
+						// advance truck by one town
+						// refactor to separate method
+                        Path  fromNextTown = t.advance();
+						int timeInNextTown = e.time() + t.timeToNextTown();
+                        Event nextTownSend = new TruckSend(timeInNextTown,
+                                                           fromNextTown,
+                                                           t);
+						timeline.addEvent(nextTownSend);
+                    }
+                    
 
                 default:
                     System.err.println("Unexpected event occured");
@@ -54,15 +75,15 @@ public class Simulator {
      * to be used by logger
      */
     public void getSummary() {
-		// TODO row
+        // TODO row
     }
     
     private void addOrderEvents(int simulationTime,int startOrderCount){
-		for(int i = 0; i < startOrderCount; i++){
-			timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
-		}
-		for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
-			timeline.addEvent(OrderGenerator.generateOtherOrders(customerList,simulationTime));
-		}
-	}
+        for(int i = 0; i < startOrderCount; i++){
+            timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
+        }
+        for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
+            timeline.addEvent(OrderGenerator.generateOtherOrders(customerList,simulationTime));
+        }
+    }
 }

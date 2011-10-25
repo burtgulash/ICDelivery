@@ -17,7 +17,13 @@ public class Path {
 	public int pathLength() {
 		return weight;
 	}
-	
+
+	/**
+	 * Accessor for rest of the path
+	 */
+	public Path rest() {
+		return rest;
+	}
 
 	public String toString() {
 		String res = "(" + this.vertex + ", " + this.weight + ")";

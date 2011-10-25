@@ -4,7 +4,8 @@ import stats.Truck;
 import graph.Path;
 
 class TruckSend extends TruckEvent {
-	Path toDestination;
+	// redundant ?
+	private Path toDestination;
 
 	TruckSend(int time, Path path, Truck truck) {
 		super(time, EventType.TRUCK_SEND, truck);
