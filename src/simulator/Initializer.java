@@ -12,6 +12,7 @@ public class Initializer {
     public Simulator initializeSimulation(Graph graph,
                                 int depotVertex,
                                 int simulationTime,
+                                int pauseTime,
                                 int startOrderCount,
                                 String logFile)
 
@@ -30,6 +31,9 @@ public class Initializer {
         
 
         // TODO Throw in initial events here
+        
+        cal.addEvent(new StopEvent(pauseTime));
+        
         for(int i = 0; i < startOrderCount; i++){
             cal.addEvent(OrderGenerator.generateDefaultOrders(c));
         }

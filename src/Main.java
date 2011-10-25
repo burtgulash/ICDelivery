@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         
         parseCmdArgs(args);
-        Simulator s = new Initializer().initializeSimulation(GraphLoader.getGraph(fileName), 0, SIM_TIME, startOrderCount,logFile);
+        Simulator s = new Initializer().initializeSimulation(GraphLoader.getGraph(fileName), 0, SIM_TIME,pauseTime, startOrderCount,logFile);
         s.mainLoop();
 
     }
