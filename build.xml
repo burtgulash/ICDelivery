@@ -11,6 +11,7 @@
 
 
 
+
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="src" destdir="${classes.dir}" 
@@ -18,7 +19,8 @@
 	</target>
 
 
-	<target name="compile-tests" depends="compile">
+
+	<target name="compile-tests" depends="clean,compile">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="test" destdir="${classes.dir}"
 			includeantruntime="false">
@@ -27,21 +29,29 @@
 	</target>
 
 
+
 	<target name="test" depends="compile-tests">
 		<junit fork="yes" haltonfailure="yes">
 			<formatter type="brief" usefile="false" />
 			<classpath refid="project_classpath" />
+
+			<!-- test all Test files in ./test/ directory -->
 			<batchtest>
 				<fileset dir="test">
 					<include name="**/*Test*.java" />
 				</fileset>
 			</batchtest>
 
+			<!-- assertions only enabled for testing -->
 			<assertions>
 				<enable />
 			</assertions>
 		</junit>
+
+		<!-- clean up after testing -->
+		<antcall target="clean" />
 	</target>
+
 
 
 	<target name="jar" depends="compile">
@@ -54,10 +64,12 @@
 	</target>
 
 
+
 	<target name="run" depends="jar">
 		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
 	
+
 
 	<target name="clean">
 		<delete dir="build" />
