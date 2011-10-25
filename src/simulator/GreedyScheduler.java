@@ -70,8 +70,11 @@ public class GreedyScheduler implements Scheduler {
         // create plan for received Order
         int receivedTime   = received.received();
         int amount         = received.amount();
+		assert(amount > 0);
+
         Trip currentPlan   = new Trip(receivedTime, shortestPath, amount);
         
+
         // delay if needed
         // arrival time in minutes at the day of arrival
         int endTime = currentPlan.arrivalTime % DAY;
@@ -112,6 +115,7 @@ public class GreedyScheduler implements Scheduler {
         // Send them to Calendar
         cal.addEvent(load);
         cal.addEvent(send);
+		// TODO unload event
         cal.addEvent(goBack);
         
         // BIG TODO update statistics
