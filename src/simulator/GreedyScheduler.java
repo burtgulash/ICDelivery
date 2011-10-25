@@ -65,6 +65,7 @@ public class GreedyScheduler implements Scheduler {
         // find shortest Path to customer
         int customerVertex = received.customer.vertex;
         Path shortestPath  = costMinimizer.shortestPath(DEPOT, customerVertex);
+		assert(shortestPath != null);
         
         // create plan for received Order
         int receivedTime   = received.received();
@@ -104,6 +105,7 @@ public class GreedyScheduler implements Scheduler {
         // Create return events
         int customerVertex = order.customer.vertex;
         Path shortestBack  = costMinimizer.shortestPath(customerVertex, DEPOT);
+		assert(shortestBack != null);
         Event goBack = new TruckSend(t.endTime, shortestBack, truck);
 
 
