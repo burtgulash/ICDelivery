@@ -1,6 +1,9 @@
 package simulator;
 
+
+
 import stats.Customers;
+import stats.Logger;
 import stats.Order;
 import stats.Truck;
 
@@ -13,6 +16,7 @@ public class Simulator {
     Calendar timeline;
     Scheduler scheduler;
     Customers customerList;
+    Logger log;
 
 
 
@@ -21,9 +25,12 @@ public class Simulator {
         
         customerList = new Customers(graph.vertices());
         timeline     = new Calendar(simulationTime);
-        scheduler    = new GreedyScheduler(graph, depotVertex);
-        
         addOrderEvents(simulationTime,startOrderCount);
+        scheduler    = new GreedyScheduler(graph, depotVertex);
+        log = new Logger();
+        
+        
+        mainLoop();
     }
 
     /**
@@ -73,7 +80,9 @@ public class Simulator {
                     System.err.println("Unexpected event occured");
                     return;
             }
+            log.note(current.log());
         }
+        log.closeLog();
     }
 
     /**

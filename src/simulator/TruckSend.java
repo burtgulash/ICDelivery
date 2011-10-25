@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.LogEntry;
 import stats.Truck;
 import graph.Path;
 
@@ -13,6 +14,7 @@ class TruckSend extends TruckEvent {
 	}
 
 	@Override
-	void log () {
+	LogEntry log () {
+		return new LogEntry(super.time(), "Truck n."+super.id()+" was sent to "+ toDestination.toString()  + ".");
 	}
 }
