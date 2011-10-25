@@ -4,8 +4,8 @@
     <property name="classes.dir" value="build/classes" />
     <property name="jar.dir" value="build/jar" />
     <property name="generator" value="src/python/simpleGen.py" />
-	<property name="test.file" value="test.graph" />
-	<property name="log.file" value="log.txt" />
+    <property name="test.file" value="test.graph" />
+    <property name="log.file" value="log.txt" />
 
     <path id="project_classpath">
         <pathelement location="lib/junit-4.10.jar" />
@@ -18,15 +18,27 @@
     <target name="compile">
         <mkdir dir="${classes.dir}" />
         <javac srcdir="src" destdir="${classes.dir}" 
-            includeantruntime="false" />
+               includeantruntime="false" />
     </target>
 
 
 
-    <target name="compile-tests" depends="clean,compile">
+    <!-- debugging output is set on -->
+    <target name="debug-compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="src" destdir="${classes.dir}" 
+               includeantruntime="false" 
+               debug="on" debuglevel="lines,vars,source" />
+    </target>
+
+
+
+    <target name="compile-tests" depends="clean,debug-compile">
         <mkdir dir="${classes.dir}" />
         <javac srcdir="test" destdir="${classes.dir}"
-            includeantruntime="false">
+               includeantruntime="false"
+               debug="on" debuglevel="lines,vars,source">
+
             <classpath refid="project_classpath" />
         </javac>
     </target>
@@ -59,7 +71,9 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="${jar.dir}" />
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" 
+             basedir="${classes.dir}">
+
             <manifest>
                 <attribute name="Main-Class" value="Main" />
             </manifest>
@@ -70,17 +84,17 @@
 
     <target name="run" depends="jar">
         <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
-			<assertions>
-				<enable />
-			</assertions>
-		</java>
+            <assertions>
+                <enable />
+            </assertions>
+        </java>
     </target>
     
 
     
-	<!-- generate test.graph, python must be installed -->
+    <!-- generate test.graph, python must be installed -->
     <target name="gen">
-		<echo message="generating test graph to ${test.file}" />
+        <echo message="generating test graph to ${test.file}" />
         <exec executable="python" 
               failonerror="true" 
               output="${test.file}">
@@ -93,6 +107,6 @@
 
     <target name="clean">
         <delete dir="build" />
-		<delete file="${log.file}" />
+        <delete file="${log.file}" />
     </target>
 </project>
