@@ -72,14 +72,14 @@ public class Simulator {
                 case TRUCK_SEND:
                     TruckSend e = (TruckSend) current;
                     Truck t = e.truck;
-                    if (e.truck.arrived()) {
+                    if (t.arrived()) {
                         // unload -->> ??  UnloadEvent ??
                         // send back
                     } else {
                         // advance truck by one town
                         // refactor to separate method
-                        Path  fromNextTown = t.advance();
                         int timeInNextTown = e.time() + t.timeToNextTown();
+                        Path  fromNextTown = t.advance();
                         Event nextTownSend = new TruckSend(timeInNextTown,
                                                            fromNextTown,
                                                            t);
