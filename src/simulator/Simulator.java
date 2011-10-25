@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.Logger;
 import stats.CustomerList;
 import stats.Order;
 import stats.Truck;
@@ -14,6 +15,7 @@ public class Simulator {
 
     Calendar timeline;
     Scheduler scheduler;
+    Logger logger;
     CustomerList customerList;
 
 
@@ -22,21 +24,24 @@ public class Simulator {
      */
     public static Simulator getSimulatorObject(Scheduler s,
                                                Calendar  cal,
-                                               CustomerList cust)
+                                               CustomerList cust,
+                                               Logger log)
     {
         if (onlySimulator == null)
-            onlySimulator = new Simulator(s, cal, cust);
+            onlySimulator = new Simulator(s, cal, cust, log);
         return onlySimulator;
     }
 
     // keep private, Simulator is singleton
     private Simulator(Scheduler s, 
                       Calendar cal, 
-                      CustomerList cust)
+                      CustomerList cust,
+                      Logger log)
     {
         scheduler    = s;
         timeline     = cal;
         customerList = cust;
+        logger = log;
     }
 
 
@@ -87,7 +92,9 @@ public class Simulator {
                     System.err.println("Unexpected event occured");
                     return;
             }
+            logger.note(current.log());
         }
+        logger.closeLog();
     }
 
     /**

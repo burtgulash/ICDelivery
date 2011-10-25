@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.LogEntry;
 import stats.Order;
 
 
@@ -14,6 +15,7 @@ class OrderEvent extends Event {
 	}
 
 	@Override
-	void log () {
+	LogEntry log () {
+		return new LogEntry(super.time(), "Received order n."+super.id()+" from "+ order.customer.vertex + " for " + order.amount() + " tons of ice cream.");
 	}
 }

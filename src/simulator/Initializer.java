@@ -1,6 +1,7 @@
 package simulator;
 
 import stats.CustomerList;
+import stats.Logger;
 import graph.Graph;
 
 
@@ -10,7 +11,10 @@ public class Initializer {
      */
     public Simulator initializeSimulation(Graph graph,
                                 int depotVertex,
-                                int simulationTime)
+                                int simulationTime,
+                                int startOrderCount,
+                                String logFile)
+
     {
         // Initialize components
 
@@ -18,15 +22,24 @@ public class Initializer {
         Calendar cal   = Calendar.getCalendarObject(simulationTime);
         Scheduler s    = new GreedyScheduler(graph, cal, depotVertex);
         CustomerList c = CustomerList.getCustomerListObject(customers);
+        Logger l 	   = Logger.getLoggerObject(logFile);
 
-        Simulator sim  = Simulator.getSimulatorObject(s, cal, c);
+
+        Simulator sim  = Simulator.getSimulatorObject(s, cal, c,l);
 
         
 
         // TODO Throw in initial events here
 
-        // TODO Generate all orders here
+        for(int i = 0; i < startOrderCount; i++){
+            cal.addEvent(OrderGenerator.generateDefaultOrders(c));
+        }
+        for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
+            cal.addEvent(OrderGenerator.generateOtherOrders(c,simulationTime));
+        }
+        
 
         return sim;
     }
+    
 }

@@ -1,6 +1,7 @@
 package simulator;
 
 import priorityQueue.Queable;
+import stats.LogEntry;
 
 abstract class Event implements Queable {
     private static int eventCount;
@@ -19,7 +20,7 @@ abstract class Event implements Queable {
 	/**
 	 * Calendar calls this method when nextEvent is drawn
 	 */
-	abstract void log ();
+	abstract LogEntry log ();
 
 	/**
 	 * Selector for event time

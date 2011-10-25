@@ -1,5 +1,6 @@
 package simulator;
 
+import stats.LogEntry;
 import stats.Truck;
 
 class TruckLoad extends TruckEvent {
@@ -11,6 +12,7 @@ class TruckLoad extends TruckEvent {
 	}
 
 	@Override
-	void log () {
+	LogEntry log () {
+		return new LogEntry(super.time(), "Truck n."+super.id()+" was loaded with "+ amount  + " tons of ice cream.");
 	}
 }
