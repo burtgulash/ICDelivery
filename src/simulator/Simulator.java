@@ -1,9 +1,7 @@
 package simulator;
 
-
-
-import stats.Customers;
 import stats.Logger;
+import stats.CustomerList;
 import stats.Order;
 import stats.Truck;
 
@@ -11,27 +9,41 @@ import graph.Graph;
 import graph.Path;
 
 public class Simulator {
+    // singleton reference
+    private static Simulator onlySimulator;
     
 
     Calendar timeline;
     Scheduler scheduler;
-    Customers customerList;
-    Logger log;
+    Logger logger;
+    CustomerList customerList;
 
 
-
-    public Simulator(int simulationTime,int startOrderCount, Graph graph) {
-        int depotVertex = 0; // change later
-        
-        customerList = new Customers(graph.vertices());
-        timeline     = new Calendar(simulationTime);
-        addOrderEvents(simulationTime,startOrderCount);
-        scheduler    = new GreedyScheduler(graph, depotVertex);
-        log = new Logger();
-        
-        
-        mainLoop();
+    /**
+      * Constructor for Simulator, provide all needed components
+     */
+    public static Simulator getSimulatorObject(Scheduler s,
+                                               Calendar  cal,
+                                               CustomerList cust,
+                                               Logger log)
+    {
+        if (onlySimulator == null)
+            onlySimulator = new Simulator(s, cal, cust, log);
+        return onlySimulator;
     }
+
+    // keep private, Simulator is singleton
+    private Simulator(Scheduler s, 
+                      Calendar cal, 
+                      CustomerList cust,
+                      Logger log)
+    {
+        scheduler    = s;
+        timeline     = cal;
+        customerList = cust;
+        logger = log;
+    }
+
 
     /**
      * Core of the simulation, events are handled here
@@ -53,8 +65,8 @@ public class Simulator {
                     break;
 
 
-				case TRUCK_LOAD:
-					break;
+                case TRUCK_LOAD:
+                    break;
 
 
                 case TRUCK_SEND:
@@ -64,25 +76,25 @@ public class Simulator {
                         // unload -->> ??  UnloadEvent ??
                         // send back
                     } else {
-						// advance truck by one town
-						// refactor to separate method
+                        // advance truck by one town
+                        // refactor to separate method
                         Path  fromNextTown = t.advance();
-						int timeInNextTown = e.time() + t.timeToNextTown();
+                        int timeInNextTown = e.time() + t.timeToNextTown();
                         Event nextTownSend = new TruckSend(timeInNextTown,
                                                            fromNextTown,
                                                            t);
-						timeline.addEvent(nextTownSend);
+                        timeline.addEvent(nextTownSend);
                     }
-					break;
+                    break;
                     
 
                 default:
                     System.err.println("Unexpected event occured");
                     return;
             }
-            log.note(current.log());
+            logger.note(current.log());
         }
-        log.closeLog();
+        logger.closeLog();
     }
 
     /**
@@ -90,16 +102,6 @@ public class Simulator {
      * to be used by logger
      */
     public void getSummary() {
-        // TODO row
-    }
-    
-	// co to tady dela
-    private void addOrderEvents(int simulationTime,int startOrderCount){
-        for(int i = 0; i < startOrderCount; i++){
-            timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
-        }
-        for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
-            timeline.addEvent(OrderGenerator.generateOtherOrders(customerList,simulationTime));
-        }
+        // TODO rov
     }
 }

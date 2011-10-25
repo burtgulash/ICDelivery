@@ -2,15 +2,25 @@ package stats;
 
 public class Logger {
 	
-	Formatter output = new PlainFT("log.txt");
+	private static Logger onlyRef;
+	Formatter output;
 	
-	public Logger(){
+	
+	public static Logger getLoggerObject(String fileName) {
+		if (onlyRef == null)
+			onlyRef = new Logger(fileName);
+		return onlyRef;
+	}
+	
+	public Logger(String fileName){
+		output = new PlainFT(fileName);
+		output.writeHead();
 		
 	}
 	
 	public void note(LogEntry le){
-		output.write(le);
 		System.out.println(le.time +" - "+ le.text);
+		output.write(le);
 	}
 	
 	public void closeLog(){

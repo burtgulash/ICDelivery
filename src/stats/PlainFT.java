@@ -11,7 +11,7 @@ public class PlainFT extends Formatter {
 	
 	public void writeHead(){
 		try {
-			bfr.write("Plain log file ");
+			bfr.write("Plain log file\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -19,7 +19,7 @@ public class PlainFT extends Formatter {
 	
 	public void write(LogEntry le){
 		try {
-			bfr.write(le.time +" - "+ le.text);
+			bfr.write(le.time +" - "+ le.text+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
