@@ -19,8 +19,12 @@ public class Logger {
 	}
 	
 	public void note(LogEntry le){
-		System.out.println(le.time +" - "+ le.text);
+		System.out.println(timeFormat(le.time) +" - "+ le.text);
 		output.write(le);
+	}
+	
+	private String timeFormat(int time){
+		return time/1440 + " - "+ (time%1440)/60 + ":"+ ((time%1440)%60);
 	}
 	
 	public void closeLog(){

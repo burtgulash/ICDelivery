@@ -30,7 +30,6 @@ public class Initializer {
         
 
         // TODO Throw in initial events here
-
         for(int i = 0; i < startOrderCount; i++){
             cal.addEvent(OrderGenerator.generateDefaultOrders(c));
         }
