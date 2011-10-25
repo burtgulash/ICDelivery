@@ -10,12 +10,13 @@ public class Initializer {
      */
     public Simulator initializeSimulation(Graph graph,
                                 int depotVertex,
-                                int simulationTime,
-                                int customers)
+                                int simulationTime)
     {
         // Initialize components
-        Scheduler s    = new GreedyScheduler(graph, depotVertex);
+
+        int customers = graph.vertices();
         Calendar cal   = Calendar.getCalendarObject(simulationTime);
+        Scheduler s    = new GreedyScheduler(graph, cal, depotVertex);
         CustomerList c = CustomerList.getCustomerListObject(customers);
 
         Simulator sim  = Simulator.getSimulatorObject(s, cal, c);
