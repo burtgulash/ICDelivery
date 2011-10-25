@@ -14,12 +14,16 @@ public class Initializer {
                                 int simulationTime,
                                 int startOrderCount,
                                 String logFile)
+
     {
         // Initialize components
-        Scheduler s    = new GreedyScheduler(graph, depotVertex);
+
+        int customers = graph.vertices();
         Calendar cal   = Calendar.getCalendarObject(simulationTime);
-        CustomerList c = CustomerList.getCustomerListObject(graph.vertices());
+        Scheduler s    = new GreedyScheduler(graph, cal, depotVertex);
+        CustomerList c = CustomerList.getCustomerListObject(customers);
         Logger l 	   = Logger.getLoggerObject(logFile);
+
 
         Simulator sim  = Simulator.getSimulatorObject(s, cal, c,l);
 

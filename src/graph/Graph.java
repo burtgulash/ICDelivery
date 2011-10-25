@@ -19,6 +19,7 @@ public class Graph {
 		return v.length;
 	}
 
+	// testing purposes
 	public int neighbors(int vertex) {
 		if (0 <= vertex && vertex < vertices()) {
 			assert (v[vertex] != null);

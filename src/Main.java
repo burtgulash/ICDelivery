@@ -10,7 +10,7 @@ public class Main {
             "where options include:\n"+
             "-p <minutes>\t\t Sets time when the simulation will be paused\n"+
             "-h \t\t\t Displays this help message\n"+
-            "-n <number> \t\t Sets number of orders generated on start of simulation";
+            "-n <number> \t\t Sets number of orders generated on start of simulation\n";
     public static final int SIM_TIME = 7200;
     public static int pauseTime = SIM_TIME;
     public static int startOrderCount = 150;

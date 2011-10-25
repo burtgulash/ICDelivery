@@ -43,15 +43,16 @@ public class GreedyScheduler implements Scheduler {
 
 
     private ShortestPaths costMinimizer;
-	private Calendar cal;
+    private Calendar cal;
     
 
 
     /**
      * Constructor for Greedy Scheduler
      */
-    public GreedyScheduler (Graph graph, int depot) {
+    public GreedyScheduler (Graph graph, Calendar cal, int depot) {
         DEPOT = depot;
+        this.cal = cal;
         costMinimizer = new FloydWarshall(graph);
     }
 
@@ -79,8 +80,8 @@ public class GreedyScheduler implements Scheduler {
             currentPlan.delay(DAY + MIN_ACCEPT_TIME - endTime);
 
 
-		// accept the Order
-		dispatch(currentPlan, received);
+        // accept the Order
+        dispatch(currentPlan, received);
     }
 
     /**
@@ -89,29 +90,29 @@ public class GreedyScheduler implements Scheduler {
      */
     private void dispatch(Trip successfullyPlanned, Order order) {
 
-		// Initialize dispatch variables
-		Trip t = successfullyPlanned;
-		Truck truck = new Truck(order, t.path, order.amount());
+        // Initialize dispatch variables
+        Trip t = successfullyPlanned;
+        Truck truck = new Truck(order, t.path, order.amount());
 
 
         // Create loading event
         Event load  = new TruckLoad(t.startTime, t.orderedAmount, truck);
 
-		// Create send event
-		Event send  = new TruckSend(t.dispatchTime, t.path, truck);
+        // Create send event
+        Event send  = new TruckSend(t.dispatchTime, t.path, truck);
 
-		// Create return events
-		int customerVertex = order.customer.vertex;
+        // Create return events
+        int customerVertex = order.customer.vertex;
         Path shortestBack  = costMinimizer.shortestPath(customerVertex, DEPOT);
-		Event goBack = new TruckSend(t.endTime, shortestBack, truck);
+        Event goBack = new TruckSend(t.endTime, shortestBack, truck);
 
 
         // Send them to Calendar
-		cal.addEvent(load);
-		cal.addEvent(send);
-		cal.addEvent(goBack);
-		
-		// BIG TODO update statistics
+        cal.addEvent(load);
+        cal.addEvent(send);
+        cal.addEvent(goBack);
+        
+        // BIG TODO update statistics
 
         // TODO update Truck List
         // TODO update Orders List

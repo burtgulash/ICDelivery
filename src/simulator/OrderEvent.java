@@ -16,6 +16,6 @@ class OrderEvent extends Event {
 
 	@Override
 	LogEntry log () {
-		return new LogEntry(super.time(), "Received order n."+super.id()+" from "+ order.customer.vertex + "for " + order.amount() + "tons of ice cream.");
+		return new LogEntry(super.time(), "Received order n."+super.id()+" from "+ order.customer.vertex + " for " + order.amount() + " tons of ice cream.");
 	}
 }
