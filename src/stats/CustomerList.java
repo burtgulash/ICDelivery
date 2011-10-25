@@ -14,7 +14,7 @@ public class CustomerList {
 	 * Constructor for singleton class CustomerList
 	 * @param numCustomers number of customers to be kept in list
 	 */
-	public CustomerList getCustomerListObject(int numCustomers) {
+	public static CustomerList getCustomerListObject(int numCustomers) {
 		if (onlyRef == null)
 			onlyRef = new CustomerList(numCustomers);
 		return onlyRef;

@@ -17,19 +17,19 @@ public class Simulator {
     CustomerList customerList;
 
 
-	/**
- 	 * Constructor for Simulator, provide all needed components
-	 */
-    public Simulator getSimulatorObject(Scheduler s,
-                                        Calendar  cal,
-                                        CustomerList cust)
+    /**
+      * Constructor for Simulator, provide all needed components
+     */
+    public static Simulator getSimulatorObject(Scheduler s,
+                                               Calendar  cal,
+                                               CustomerList cust)
     {
         if (onlySimulator == null)
             onlySimulator = new Simulator(s, cal, cust);
         return onlySimulator;
     }
 
-	// keep private, Simulator is singleton
+    // keep private, Simulator is singleton
     private Simulator(Scheduler s, 
                       Calendar cal, 
                       CustomerList cust)
@@ -95,6 +95,6 @@ public class Simulator {
      * to be used by logger
      */
     public void getSummary() {
-        // TODO row
+        // TODO rov
     }
 }

@@ -16,15 +16,18 @@ class Calendar {
 
 	private PriorityQueue<Event> queue;
 	
-	Calendar getCalendarObject() {
+	public static Calendar getCalendarObject(int terminationTime) {
 		if (onlyCalendar == null)
-			onlyCalendar = new Calendar();
+			onlyCalendar = new Calendar(terminationTime);
 		return onlyCalendar;
 	}
 
 	// Private constructor for Calendar singleton
-	private Calendar() {
+	private Calendar(int terminationTime) {
 		queue = new PriorityQueue<Event>();
+
+		// make sure we terminate
+		addEvent(new StopEvent(terminationTime));
 	}
 
 
@@ -40,6 +43,10 @@ class Calendar {
 	 * Returns next event in timeline
 	 */
 	Event nextEvent() {
-		return queue.extractMin();
+		Event extractedEvent = queue.extractMin();
+
+		// log what happened
+		extractedEvent.log();
+		return extractedEvent;
 	}
 }
