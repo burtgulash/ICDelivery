@@ -1,8 +1,8 @@
 package simulator;
 
 import java.util.Random;
-import stats.Customers;
 import stats.Order;
+import stats.CustomerList;
 
 /**
  * Order generator used by EventHandler
@@ -40,7 +40,7 @@ public class OrderGenerator {
 	 * @return OrderEvent with priority zero.
 	 */
 		 
-	 public static Event generateDefaultOrders(Customers cl){
+	 public static Event generateDefaultOrders(CustomerList cl){
 		  return  new OrderEvent(START_TIME,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS),START_TIME));
 	 }
 	 
@@ -50,7 +50,7 @@ public class OrderGenerator {
 	  * @return OrderEvent with random exponentially distributed priority.
 	  */
 	 
-	 public static Event generateOtherOrders(Customers cl,int simulationTime){
+	 public static Event generateOtherOrders(CustomerList cl,int simulationTime){
 		 int time = expDist(simulationTime);
 		 return  new OrderEvent(time,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS),time));
 	 }

@@ -10,25 +10,36 @@ import priorityQueue.PriorityQueue;
  * to every class that communicates by Events
  */
 class Calendar {
-	private PriorityQueue<Event> cal;
 
-	Calendar(int simulationTime) {
-		cal = new PriorityQueue<Event>();
-		addEvent(new StopEvent(simulationTime));
+	// singleton reference
+	private static Calendar onlyCalendar;
+
+	private PriorityQueue<Event> queue;
+	
+	Calendar getCalendarObject() {
+		if (onlyCalendar == null)
+			onlyCalendar = new Calendar();
+		return onlyCalendar;
 	}
+
+	// Private constructor for Calendar singleton
+	private Calendar() {
+		queue = new PriorityQueue<Event>();
+	}
+
 
 
 	/**
 	 * Adds event into calendar
 	 */
 	void addEvent(Event event) {
-		cal.insert(event);
+		queue.insert(event);
 	}
 
 	/**
 	 * Returns next event in timeline
 	 */
 	Event nextEvent() {
-		return cal.extractMin();
+		return queue.extractMin();
 	}
 }

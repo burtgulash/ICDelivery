@@ -17,7 +17,6 @@ public class Main {
 	public static void main(String[] args) {
 		
 		parseCmdArgs(args);
-		Simulator s = new Simulator(SIM_TIME,startOrderCount,GraphLoader.getGraph("test.graph"));
 		
 
 	}

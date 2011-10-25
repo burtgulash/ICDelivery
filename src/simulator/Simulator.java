@@ -1,6 +1,6 @@
 package simulator;
 
-import stats.Customers;
+import stats.CustomerList;
 import stats.Order;
 import stats.Truck;
 
@@ -8,23 +8,37 @@ import graph.Graph;
 import graph.Path;
 
 public class Simulator {
+    // singleton reference
+    private static Simulator onlySimulator;
     
 
     Calendar timeline;
     Scheduler scheduler;
-    Customers customerList;
+    CustomerList customerList;
 
 
-
-    public Simulator(int simulationTime,int startOrderCount, Graph graph) {
-        int depotVertex = 0; // change later
-        
-        customerList = new Customers(graph.vertices());
-        timeline     = new Calendar(simulationTime);
-        scheduler    = new GreedyScheduler(graph, depotVertex);
-        
-        addOrderEvents(simulationTime,startOrderCount);
+	/**
+ 	 * Constructor for Simulator, provide all needed components
+	 */
+    public Simulator getSimulatorObject(Scheduler s,
+                                        Calendar  cal,
+                                        CustomerList cust)
+    {
+        if (onlySimulator == null)
+            onlySimulator = new Simulator(s, cal, cust);
+        return onlySimulator;
     }
+
+	// keep private, Simulator is singleton
+    private Simulator(Scheduler s, 
+                      Calendar cal, 
+                      CustomerList cust)
+    {
+        scheduler    = s;
+        timeline     = cal;
+        customerList = cust;
+    }
+
 
     /**
      * Core of the simulation, events are handled here
@@ -46,8 +60,8 @@ public class Simulator {
                     break;
 
 
-				case TRUCK_LOAD:
-					break;
+                case TRUCK_LOAD:
+                    break;
 
 
                 case TRUCK_SEND:
@@ -57,16 +71,16 @@ public class Simulator {
                         // unload -->> ??  UnloadEvent ??
                         // send back
                     } else {
-						// advance truck by one town
-						// refactor to separate method
+                        // advance truck by one town
+                        // refactor to separate method
                         Path  fromNextTown = t.advance();
-						int timeInNextTown = e.time() + t.timeToNextTown();
+                        int timeInNextTown = e.time() + t.timeToNextTown();
                         Event nextTownSend = new TruckSend(timeInNextTown,
                                                            fromNextTown,
                                                            t);
-						timeline.addEvent(nextTownSend);
+                        timeline.addEvent(nextTownSend);
                     }
-					break;
+                    break;
                     
 
                 default:
@@ -82,15 +96,5 @@ public class Simulator {
      */
     public void getSummary() {
         // TODO row
-    }
-    
-	// co to tady dela
-    private void addOrderEvents(int simulationTime,int startOrderCount){
-        for(int i = 0; i < startOrderCount; i++){
-            timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
-        }
-        for(int i = 0; i < OrderGenerator.maxOrders(simulationTime); i++){
-            timeline.addEvent(OrderGenerator.generateOtherOrders(customerList,simulationTime));
-        }
     }
 }

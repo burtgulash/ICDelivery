@@ -8,14 +8,14 @@ package stats;
  */
 public class Order {
     private final int receivedTime;
-    private final Customers customers;
+    private final CustomerList customers;
     public final Customer customer;
     private int amount;
     public boolean accepted;
     public boolean served;
     public int servedBy;
 
-    public Order(Customers customerList, 
+    public Order(CustomerList customerList, 
                  int customerNum,
                  int amount,
                  int receivedTime) {
