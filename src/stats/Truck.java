@@ -42,4 +42,8 @@ public class Truck {
 		currentPath = currentPath.rest();
 		return currentPath;
 	}
+	
+	public Order assignedOrderInfo(){
+		return assignedOrder;
+	}
 }

@@ -23,11 +23,12 @@ public class Logger {
 		output.write(le);
 	}
 	
+	public void closeLog(){
+		output.writeFoot();
+	}
+	
 	private String timeFormat(int time){
 		return time/1440 + " - "+ (time%1440)/60 + ":"+ ((time%1440)%60);
 	}
 	
-	public void closeLog(){
-		output.writeFoot();
-	}
 }

@@ -11,17 +11,18 @@ public class Main {
             "-p <minutes>\t\t Sets time when the simulation will be paused\n"+
             "-h \t\t\t Displays this help message\n"+
             "-n <number> \t\t Sets number of orders generated on start of simulation\n";
-    public static final int SIM_TIME = 7200;
-    public static int pauseTime = SIM_TIME;
-    public static int startOrderCount = 150;
-    public static String fileName = "test.graph";
-    public static String logFile = "log.txt";
+    public static int simTime;
+    public static int pauseTime;
+    public static int startOrderCount;
+    public static String fileName;
+    public static String logFile;
     
 
     public static void main(String[] args) {
         
+    	loadParams();
         parseCmdArgs(args);
-        Simulator s = new Initializer().initializeSimulation(GraphLoader.getGraph(fileName), 0, SIM_TIME,pauseTime, startOrderCount,logFile);
+        Simulator s = new Initializer().initializeSimulation(GraphLoader.getGraph(fileName), 0,simTime,pauseTime, startOrderCount,logFile);
         s.mainLoop();
 
     }
@@ -37,27 +38,23 @@ public class Main {
     // ty kravo begin
     static void parseCmdArgs(String[] args){
         if (args.length > 0){
-            char option;
-            
-            for (int i = 0; i < args.length; i++){
-            	if(args[i].matches("-[phn]")){
-            		switch (args[i].charAt(1)){
-                        case 'p': if (i+1 < args.length){
-                                    pauseTime = Integer.parseInt(args[++i]);
-                                    System.out.println("Simulation pause time set to: " + pauseTime);
-                                    }else System.out.println("Bad argument! Expected number after flag -p");
-                                  break;
-                        case 'h': System.out.println(HELP); break;
-                        case 'n': if (i+1 < args.length){
-                                    startOrderCount = Integer.parseInt(args[++i]);
-                                    System.out.println("Number of default orders set to: " + startOrderCount);
-                                    } else System.out.println("Bad argument! Expected number after flag -n");
-                                  break;
-                        default:System.out.println("Unrecognized switch \"-" + args[i].charAt(1) +"\"!"  );
-                    }
-                }else
-                    System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
-            	}
+          for (int i = 0; i < args.length; i++){
+           	if(args[i].matches("-[phn]")){
+            	switch (args[i].charAt(1)){
+                  case 'p': if (i+1 < args.length){
+                            pauseTime = Integer.parseInt(args[++i]);
+                            }else System.out.println("Bad argument! Expected number after flag -p");
+                            break;
+                  case 'h': System.out.println(HELP); break;
+                  case 'n': if (i+1 < args.length){
+                            startOrderCount = Integer.parseInt(args[++i]);
+                            } else System.out.println("Bad argument! Expected number after flag -n");
+                            break;
+                  default:System.out.println("Unrecognized switch \"-" + args[i].charAt(1) +"\"!"  );
+                }
+            }else
+            	System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
+            }
         }
         else{
             System.out.println(HELP);
@@ -98,6 +95,15 @@ public class Main {
             }
         }
         return t;
+    }
+    
+    static void loadParams(){
+    	Config.readConfig();
+    	simTime = Config.getSimTime();
+    	pauseTime = Config.getPauseTime();
+    	startOrderCount = Config.getStartOrderCount();
+    	fileName = Config.getgraphFileName();
+    	logFile = Config.getLogFileName();
     }
 }
 

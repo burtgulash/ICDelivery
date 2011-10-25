@@ -50,6 +50,7 @@ public class Simulator {
      */
     public void mainLoop() {
         Event current;
+
         MAIN_LOOP:
         while (true) {
             current = timeline.nextEvent();
