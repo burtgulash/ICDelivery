@@ -2,31 +2,29 @@ package simulator;
 
 import priorityQueue.Queable;
 
-public class Event implements Queable {
+abstract class Event implements Queable {
     private static int eventCount;
     private int id;
     private int time;
-    public int eventType;
+    final EventType type;
     
-    /*
-     * 1 - ORDER event
-     * 2 - STOP event
-     * 3 - TRUCK event
-     * 4 - TRUCKSEND event
-     * 5 - TRUCKLOAD event
-     */
-    
-    Event(int time){
+    Event(int time, EventType type) {
         eventCount++;
         id = eventCount;
 
 		this.time = time;
+		this.type = type;
     }
+
+	/**
+	 * Calendar calls this method when nextEvent is drawn
+	 */
+	abstract void log ();
 
 	/**
 	 * Selector for event time
 	 */
-    public int time() {
+    int time() {
         return time;
     }
 

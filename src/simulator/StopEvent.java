@@ -1,12 +1,12 @@
 package simulator;
 
-public class StopEvent extends Event {
-	
-	public final int TYPE = 2;  // STOP event
+class StopEvent extends Event {
 	
 	StopEvent(int time){
-		super(time);
-		super.eventType = TYPE;
+		super(time, EventType.STOP);
 	}
 
+	@Override
+	void log () {
+	}
 }

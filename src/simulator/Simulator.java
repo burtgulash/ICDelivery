@@ -7,11 +7,6 @@ import truckDepot.GreedyScheduler;
 import graph.Graph;
 
 public class Simulator {
-    private final int ORDER       = 1;
-    private final int STOP        = 2;
-    private final int TRUCK       = 3;
-    private final int TRUCK_SEND  = 4;
-    private final int TRUCK_LOAD  = 5;
     
 
     Calendar timeline;
@@ -40,7 +35,7 @@ public class Simulator {
         while (true) {
             current = timeline.nextEvent();
 
-            switch (current.eventType) {
+            switch (current.type) {
                 case STOP:
                     break MAIN_LOOP;
 

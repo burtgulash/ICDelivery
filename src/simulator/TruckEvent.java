@@ -1,10 +1,11 @@
 package simulator;
 
-public class TruckEvent extends Event {
-	
-	public final int TYPE = 3;  // TRUCK event
+import stats.Truck;
 
-	public TruckEvent(int time) {
-		super(time);
+abstract class TruckEvent extends Event {
+	Truck truck;
+
+	TruckEvent (int time, EventType type) {
+		super(time, type);
 	}
 }

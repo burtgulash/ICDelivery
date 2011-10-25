@@ -1,10 +1,11 @@
 package simulator;
 
-public class TruckSend extends TruckEvent {
+class TruckSend extends TruckEvent {
+	TruckSend(int time) {
+		super(time, EventType.TRUCK_SEND);
+	}
 
-    public final int TYPE = 4; // TRUCKSEND event
-	
-	public TruckSend(int time) {
-		super(time);
+	@Override
+	void log () {
 	}
 }

@@ -1,4 +1,4 @@
-package truckDepot;
+package stats;
 
 import stats.Order;
 import graph.Path;
