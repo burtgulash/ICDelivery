@@ -22,19 +22,22 @@ public class GreedyScheduler implements Scheduler {
     // constants begin
     private final int DEPOT;
 
-    private final int MIN_TIME		  = 360;  // 6 hodin rano
-    private final int MAX_TIME 		  = 1080; // 18 hodin vecer
-    private final int DAY			  = 1440;
+	private final int ROUND_UP        = 1;
+	private final int MINUTES_IN_HOUR = 60;
+
+    private final int MIN_ACCEPT_TIME = 6  * MINUTES_IN_HOUR;  // 6 hodin rano
+    private final int MAX_ACCEPT_TIME = 18 * MINUTES_IN_HOUR; // 18 hodin vecer
+    private final int DAY			  = 24 * MINUTES_IN_HOUR;
+
     private final int SPEED           = 70;   // km/h
     private final int LOADING_TIME    = 15;   // minuters
+    private final int UNLOADING_TIME  = LOADING_TIME;
 
     private final int BASE_COST       = 5;    // kc/km
     private final int TRANSPORT_COST  = 1;    // per container
     private final int UNLOAD_COST     = 100;
     private final int WAITING_COST    = 150;
 
-	private final int ROUND_UP        = 1;
-	private final int MINUTES_IN_HOUR = 60;
     // constants end
 
     private ShortestPaths costMinimizer;
@@ -66,11 +69,11 @@ public class GreedyScheduler implements Scheduler {
         
         // delay if needed
         int arrivalTime = currentPlan.arrivalTime()%DAY; // arrival time in minutes at the day of arrival
-        if ((arrivalTime) < MIN_TIME) {
-            currentPlan.delay(MIN_TIME-arrivalTime);
+        if ((arrivalTime) < MIN_ACCEPT_TIME) {
+            currentPlan.delay(MIN_ACCEPT_TIME-arrivalTime);
         }
-        else if((arrivalTime) > MAX_TIME){
-        	currentPlan.delay(DAY+MIN_TIME-arrivalTime);
+        else if((arrivalTime) > MAX_ACCEPT_TIME){
+        	currentPlan.delay(DAY+MIN_ACCEPT_TIME-arrivalTime);
         }
         
     }
@@ -125,7 +128,7 @@ public class GreedyScheduler implements Scheduler {
             // travel time + load + unload
             arrivalTime = tripLength * MINUTES_IN_HOUR/SPEED + ROUND_UP +
                           LOADING_TIME * orderedAmount + 
-                          LOADING_TIME * orderedAmount; 
+                          UNLOADING_TIME * orderedAmount; 
 
             totalCost   = BASE_COST * tripLength + 
                           TRANSPORT_COST * tripLength * orderedAmount +
