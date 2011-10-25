@@ -45,6 +45,11 @@ public class Simulator {
                     scheduler.receiveOrder(currentOrder);
                     break;
 
+
+				case TRUCK_LOAD:
+					break;
+
+
                 case TRUCK_SEND:
                     TruckSend e = (TruckSend) current;
                     Truck t = e.truck;
@@ -61,6 +66,7 @@ public class Simulator {
                                                            t);
 						timeline.addEvent(nextTownSend);
                     }
+					break;
                     
 
                 default:

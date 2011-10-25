@@ -100,9 +100,16 @@ public class GreedyScheduler implements Scheduler {
 		// Create send event
 		Event send  = new TruckSend(t.dispatchTime, t.path, truck);
 
+		// Create return events
+		int customerVertex = order.customer.vertex;
+        Path shortestBack  = costMinimizer.shortestPath(customerVertex, DEPOT);
+		Event goBack = new TruckSend(t.endTime, shortestBack, truck);
+
+
         // Send them to Calendar
 		cal.addEvent(load);
 		cal.addEvent(send);
+		cal.addEvent(goBack);
 		
 		// BIG TODO update statistics
 

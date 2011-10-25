@@ -21,6 +21,7 @@ public class Truck {
 	}
 
 	public int timeToNextTown () {
+		assert(!arrived());
 		int length = currentPath.pathLength() - currentPath.rest().pathLength();
 
 		// change to constants
