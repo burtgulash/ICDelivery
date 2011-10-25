@@ -10,7 +10,7 @@ public class Order {
     private final int receivedTime;
     private final Customers customers;
     public final Customer customer;
-    public int amount;
+    private int amount;
     public boolean accepted;
     public boolean served;
     public int servedBy;

@@ -1,6 +1,8 @@
-package truckDepot;
+package simulator;
 
 import stats.Order;
+import stats.Truck;
+
 import graph.Graph;
 import graph.ShortestPaths;
 import graph.FloydWarshall;
@@ -22,12 +24,12 @@ public class GreedyScheduler implements Scheduler {
     // constants begin
     private final int DEPOT;
 
-	private final int ROUND_UP        = 1;
-	private final int MINUTES_IN_HOUR = 60;
+    private final int ROUND_UP        = 1;
+    private final int MINUTES_IN_HOUR = 60;
 
     private final int MIN_ACCEPT_TIME = 6  * MINUTES_IN_HOUR;  // 6 hodin rano
     private final int MAX_ACCEPT_TIME = 18 * MINUTES_IN_HOUR; // 18 hodin vecer
-    private final int DAY			  = 24 * MINUTES_IN_HOUR;
+    private final int DAY             = 24 * MINUTES_IN_HOUR;
 
     private final int SPEED           = 70;   // km/h
     private final int LOADING_TIME    = 15;   // minuters
@@ -37,10 +39,11 @@ public class GreedyScheduler implements Scheduler {
     private final int TRANSPORT_COST  = 1;    // per container
     private final int UNLOAD_COST     = 100;
     private final int WAITING_COST    = 150;
-
     // constants end
 
+
     private ShortestPaths costMinimizer;
+	private Calendar cal;
     
 
 
@@ -59,33 +62,49 @@ public class GreedyScheduler implements Scheduler {
      */
     public void receiveOrder(Order received) {
         // find shortest Path to customer
-        int customerVertex  = received.customer.vertex;
-        Path shortest = costMinimizer.shortestPath(DEPOT, customerVertex);
+        int customerVertex = received.customer.vertex;
+        Path shortestPath  = costMinimizer.shortestPath(DEPOT, customerVertex);
         
         // create plan for received Order
-        int receivedTime = received.received();
-        int amount       = received.amount();
-        Trip currentPlan = new Trip(receivedTime, shortest, amount);
+        int receivedTime   = received.received();
+        int amount         = received.amount();
+        Trip currentPlan   = new Trip(receivedTime, shortestPath, amount);
         
         // delay if needed
-        int arrivalTime = currentPlan.arrivalTime()%DAY; // arrival time in minutes at the day of arrival
-        if ((arrivalTime) < MIN_ACCEPT_TIME) {
-            currentPlan.delay(MIN_ACCEPT_TIME-arrivalTime);
-        }
-        else if((arrivalTime) > MAX_ACCEPT_TIME){
-        	currentPlan.delay(DAY+MIN_ACCEPT_TIME-arrivalTime);
-        }
-        
+        // arrival time in minutes at the day of arrival
+        int endTime = currentPlan.arrivalTime % DAY;
+        if (endTime < MIN_ACCEPT_TIME)
+            currentPlan.delay(MIN_ACCEPT_TIME - endTime);
+        else if(endTime > MAX_ACCEPT_TIME)
+            currentPlan.delay(DAY + MIN_ACCEPT_TIME - endTime);
+
+
+		// accept the Order
+		dispatch(currentPlan, received);
     }
 
     /**
      * Takes care of inserting Routing events into calendar
      * and communicating with statistics package
      */
-    private void dispatch(Trip successfullyPlanned) {
-        // Create Truck events
+    private void dispatch(Trip successfullyPlanned, Order order) {
+
+		// Initialize dispatch variables
+		Trip t = successfullyPlanned;
+		Truck truck = new Truck(order, t.path, order.amount());
+
+
+        // Create loading event
+        Event load  = new TruckLoad(t.startTime, t.orderedAmount, truck);
+
+		// Create send event
+		Event send  = new TruckSend(t.dispatchTime, t.path, truck);
 
         // Send them to Calendar
+		cal.addEvent(load);
+		cal.addEvent(send);
+		
+		// BIG TODO update statistics
 
         // TODO update Truck List
         // TODO update Orders List
@@ -102,54 +121,59 @@ public class GreedyScheduler implements Scheduler {
     }
 
 
+
+
+
     /**
      * Private class for internal purposes of Scheduler
      * 
      * Stores cost and time of the trip to be assigned to Truck
      */
     private class Trip {
-        Path trip;
+        Path path;
+        int orderedAmount;
         int totalCost;
-        int arrivalTime;
+
+        int endTime;
+        int startTime;
         int dispatchTime;
+        int arrivalTime;
+
+
 
         /**
          * Constructs temporary storage Trip given Path to customer
          */
         private Trip (int receivedTime, Path toDestination, int orderedAmount) {
             // dispatch as soon as possible
-            dispatchTime   = receivedTime;
-            arrivalTime    = dispatchTime;
 
-            this.trip = toDestination;
-            int tripLength = trip.pathLength();
+            path = toDestination;
+            int tripLength = path.pathLength();
 
+            startTime = receivedTime;
+            dispatchTime = startTime + LOADING_TIME   * orderedAmount;
+            arrivalTime = startTime  + tripLength     * MINUTES_IN_HOUR/SPEED
+                                     + ROUND_UP;
 
-            // travel time + load + unload
-            arrivalTime = tripLength * MINUTES_IN_HOUR/SPEED + ROUND_UP +
-                          LOADING_TIME * orderedAmount + 
-                          UNLOADING_TIME * orderedAmount; 
+            endTime = arrivalTime    + UNLOADING_TIME * orderedAmount;
+            
 
-            totalCost   = BASE_COST * tripLength + 
-                          TRANSPORT_COST * tripLength * orderedAmount +
-                          UNLOAD_COST * orderedAmount + 
-                          WAITING_COST * 0;
+            // unnecessary to compute
+            totalCost   = BASE_COST      * tripLength    + 
+                          TRANSPORT_COST * tripLength    * orderedAmount +
+                          UNLOAD_COST    * orderedAmount + 
+                          WAITING_COST   * 0;
         }
 
 
         /**
          * Delay the trip by delay time
          */
-        private void delay(int delay) {
-            dispatchTime += delay;
-            arrivalTime  += delay;
-        }
-
-        /**
-         * Selector for arrival time
-         */
-        private int arrivalTime () {
-            return arrivalTime;
+        private void delay(int delayTime) {
+            startTime     += delayTime;
+            dispatchTime  += delayTime;
+            arrivalTime   += delayTime;
+            endTime       += delayTime;
         }
     }
 }

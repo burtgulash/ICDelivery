@@ -1,8 +1,14 @@
 package simulator;
 
+import stats.Truck;
+import graph.Path;
+
 class TruckSend extends TruckEvent {
-	TruckSend(int time) {
-		super(time, EventType.TRUCK_SEND);
+	Path toDestination;
+
+	TruckSend(int time, Path path, Truck truck) {
+		super(time, EventType.TRUCK_SEND, truck);
+		toDestination = path;
 	}
 
 	@Override

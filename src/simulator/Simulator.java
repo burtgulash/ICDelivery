@@ -2,8 +2,6 @@ package simulator;
 
 import stats.Customers;
 import stats.Order;
-import truckDepot.Scheduler;
-import truckDepot.GreedyScheduler;
 import graph.Graph;
 
 public class Simulator {
