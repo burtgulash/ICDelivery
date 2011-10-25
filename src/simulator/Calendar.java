@@ -9,10 +9,10 @@ import priorityQueue.PriorityQueue;
  * Only one instance should exist and it should be publicly available
  * to every class that communicates by Events
  */
-public class Calendar {
+class Calendar {
 	private PriorityQueue<Event> cal;
 
-	public Calendar(int simulationTime) {
+	Calendar(int simulationTime) {
 		cal = new PriorityQueue<Event>();
 		addEvent(new StopEvent(simulationTime));
 	}
@@ -21,14 +21,14 @@ public class Calendar {
 	/**
 	 * Adds event into calendar
 	 */
-	public void addEvent(Event event) {
+	void addEvent(Event event) {
 		cal.insert(event);
 	}
 
 	/**
 	 * Returns next event in timeline
 	 */
-	public Event nextEvent() {
+	Event nextEvent() {
 		return cal.extractMin();
 	}
 }

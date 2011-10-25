@@ -40,7 +40,7 @@ abstract class Event implements Queable {
     
     @Override
     public void setPriority(int newPriority){
-        this.time = newPriority;
+        time = newPriority;
     }
     
     @Override

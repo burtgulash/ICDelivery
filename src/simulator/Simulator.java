@@ -78,6 +78,7 @@ public class Simulator {
         // TODO row
     }
     
+	// co to tady dela
     private void addOrderEvents(int simulationTime,int startOrderCount){
         for(int i = 0; i < startOrderCount; i++){
             timeline.addEvent(OrderGenerator.generateDefaultOrders(customerList));
