@@ -14,6 +14,8 @@ public class Order {
     public boolean accepted;
     public boolean served;
     public int servedBy;
+    private static int orderCount = 0;
+	private int orderId;
 
     public Order(CustomerList customerList, 
                  int customerNum,
@@ -24,6 +26,7 @@ public class Order {
         this.customers = customerList;
         this.amount = amount;
         customer = customers.getCustomer(customerNum);
+        orderId = ++orderCount;
     }
 
     /**
@@ -39,4 +42,8 @@ public class Order {
     public int amount() {
         return amount;
     }
+    
+    public int getId(){
+		return orderId;
+	}
 }

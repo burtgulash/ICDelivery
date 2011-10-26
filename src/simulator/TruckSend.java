@@ -15,6 +15,6 @@ class TruckSend extends TruckEvent {
 
 	@Override
 	LogEntry log () {
-		return new LogEntry(super.time(), "Truck n."+super.id()+" was sent to "+ truck.assignedOrderInfo().customer.vertex  + ".");
+			return new LogEntry(super.time(), "Truck n."+ truck.getId()+" was sent to "+ toDestination.town()+ "." );
 	}
 }

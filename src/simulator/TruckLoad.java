@@ -13,6 +13,6 @@ class TruckLoad extends TruckEvent {
 
 	@Override
 	LogEntry log () {
-		return new LogEntry(super.time(), "Truck n."+super.id()+" was loaded with "+ amount  + " tons of ice cream.");
+		return new LogEntry(super.time(), "Truck n."+truck.getId()+" was loaded with "+ amount  + " tons of ice cream.");
 	}
 }

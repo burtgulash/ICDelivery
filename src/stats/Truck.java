@@ -13,11 +13,14 @@ public class Truck {
 	// remaining Path to destination for this truck
 	private Path currentPath;
 	private int cargo;
+	private static int truckCount = 0;
+	private int truckId;
 
 	public Truck(Order assigned, Path path, int cargo) {
 		assignedOrder = assigned;
 		currentPath = path;
 		this.cargo = cargo;
+		truckId = ++truckCount;
 	}
 
 	public int timeToNextTown () {
@@ -46,4 +49,9 @@ public class Truck {
 	public Order assignedOrderInfo(){
 		return assignedOrder;
 	}
+	
+	public int getId(){
+		return truckId;
+	}
+	
 }
