@@ -65,12 +65,12 @@ public class GreedyScheduler implements Scheduler {
         // find shortest Path to customer
         int customerVertex = received.customer.vertex;
         Path shortestPath  = costMinimizer.shortestPath(DEPOT, customerVertex);
-		assert(shortestPath != null);
+        assert(shortestPath != null);
         
         // create plan for received Order
         int receivedTime   = received.received();
         int amount         = received.amount();
-		assert(amount > 0);
+        assert(amount > 0);
 
         Trip currentPlan   = new Trip(receivedTime, shortestPath, amount);
         
@@ -95,12 +95,14 @@ public class GreedyScheduler implements Scheduler {
     private void dispatch(Trip successfullyPlanned, Order order) {
 
         // Initialize dispatch variables
+        // fully load the truck
+        int orderedAmount = order.amount();
         Trip t = successfullyPlanned;
-        Truck truck = new Truck(order, t.path, order.amount());
+        Truck truck = new Truck(order, t.path, orderedAmount);
 
 
         // Create loading event
-        Event load  = new TruckLoad(t.startTime, t.orderedAmount, truck);
+        Event load  = new TruckLoad(t.startTime, orderedAmount, truck);
 
         // Create send event
         Event send  = new TruckSend(t.dispatchTime, t.path, truck);
@@ -108,14 +110,14 @@ public class GreedyScheduler implements Scheduler {
         // Create return events
         int customerVertex = order.customer.vertex;
         Path shortestBack  = costMinimizer.shortestPath(customerVertex, DEPOT);
-		assert(shortestBack != null);
+        assert(shortestBack != null);
         Event goBack = new TruckSend(t.endTime, shortestBack, truck);
 
 
         // Send them to Calendar
         cal.addEvent(load);
         cal.addEvent(send);
-		// TODO unload event
+        // TODO unload event
         cal.addEvent(goBack);
         
         // BIG TODO update statistics
