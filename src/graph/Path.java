@@ -15,12 +15,22 @@ public class Path {
         this.rest = rest;
     }
 
+
     /**
      * return length of the Path
      */
     public int pathLength() {
         return weight;
     }
+
+
+	/**
+	 * get current town
+	 */
+	public int town() {
+		return vertex;
+	}
+
 
     /**
      * Accessor for rest of the path
