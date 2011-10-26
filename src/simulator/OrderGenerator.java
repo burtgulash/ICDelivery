@@ -15,7 +15,7 @@ public class OrderGenerator {
 	
 	static private Random r = new Random();
 	private final static int TWELVE_HOURS = 720;
-	private final static int MAX_TONS = 6;
+	private final static int MAX_TONS = 5;
 	private final static int START_TIME = 0;
 
 		
@@ -41,7 +41,7 @@ public class OrderGenerator {
 	 */
 		 
 	 public static Event generateDefaultOrders(CustomerList cl){
-		  return  new OrderEvent(START_TIME,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS),START_TIME));
+		  return  new OrderEvent(START_TIME,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS)+1,START_TIME));
 	 }
 	 
 	 /**
@@ -52,7 +52,7 @@ public class OrderGenerator {
 	 
 	 public static Event generateOtherOrders(CustomerList cl,int simulationTime){
 		 int time = expDist(simulationTime);
-		 return  new OrderEvent(time,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS),time));
+		 return  new OrderEvent(time,new Order(cl,r.nextInt(cl.size()),r.nextInt(MAX_TONS)+1,time));
 	 }
 	 
 	 public static int maxOrders(int simulationTime){
