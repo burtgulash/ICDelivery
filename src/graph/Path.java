@@ -24,12 +24,12 @@ public class Path {
     }
 
 
-	/**
-	 * get current town
-	 */
-	public int town() {
-		return vertex;
-	}
+    /**
+     * get current town
+     */
+    public int town() {
+        return vertex;
+    }
 
 
     /**
