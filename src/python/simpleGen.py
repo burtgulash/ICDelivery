@@ -42,22 +42,23 @@ def addEdge(graph, MAXDEGREE):
 def treeToGraph(graph, MAXDEGREE, edge_count):
     """ Turns unidirectional tree into unidirectional 
         graph by adding random edges """
+
     v          = len(graph)
     successes  = 0
 
     # divide by 2, as edge count will be doubled in bidirectional graph
-    MAXDEGREE  = min(MAXDEGREE, v - 1) / 2
+    MAXDEGREE  = min(MAXDEGREE, v - 1)
 
     # (v choose 2) - number of tree edges currently in graph
-    maxEdges   = v*(MAXDEGREE - 1)/2
-    edge_count = min(maxEdges, edge_count)
+    maxEdges   = v * MAXDEGREE / 2
+    new_edges = min(maxEdges, edge_count) - (v - 1)
 
-    for i in xrange(edge_count):
+    for i in xrange(new_edges):
         if addEdge(graph, MAXDEGREE):
             successes += 1
     
     # force the generator to make at least half of desired edges
-    while successes <= edge_count / 2 :
+    while successes < new_edges:
         if addEdge(graph, MAXDEGREE):
             successes += 1
 
@@ -78,18 +79,6 @@ def makeWeighted(graph, MAXWEIGHT):
         graph[v] = weightedAdjList
     return graph
 
-def makeUndirected(graph):
-    """ Adds bidirectional edges to weighted graph """
-    undirectedGraph = dict((v, []) for v in graph)
-
-    for v in graph:
-        for e in graph[v]:
-            assert isinstance(e, tuple)
-            undirectedGraph[v] += [e]
-            undirectedGraph[e[0]] += [(v, e[1])]
-
-    return undirectedGraph
-            
 
 def dump(graph):
     def edgeStr(edge):
@@ -104,9 +93,6 @@ def maxDeg(graph):
     """ for debugging: returns maxDegree of graph """
     return max(len(graph[v]) for v in graph)
 
-def maxWeight(graph):
-    """ for debugging: returns maxWeight of graph """
-    return max(max(e[1] for e in graph[v]) for v in graph)
 
 usageString = """usage: simpleGen.py MAXDEGREE MAXWEIGHT VERTICES RATIO
     MAXDEGREE <- maximal degree for each vertex
@@ -132,7 +118,7 @@ if __name__ == "__main__":
         VERTICES  = int(sys.argv[3])
         RATIO     = int(sys.argv[4])
 
-        if MAXDEGREE <= 0 or MAXWEIGHT <= 0 or VERTICES <= 1 or RATIO <= 0:
+        if MAXDEGREE <= 0 or MAXWEIGHT <= 1 or VERTICES <= 1 or RATIO <= 0:
             raise ValueError
     except ValueError:
         print >> sys.stderr, "argument parsing error"
@@ -145,16 +131,12 @@ if __name__ == "__main__":
     graph = makeConnectedGraph(vertices)
     graph = treeToGraph   (graph, MAXDEGREE, edge_count)
     graph = makeWeighted  (graph, MAXWEIGHT)
-    graph = makeUndirected(graph)
     # graph factory end
 
     if maxDeg(graph) > MAXDEGREE:
         print >> sys.stderr, "MAXDEGREE exceeded..."
         sys.exit(1)
 
-    if maxWeight(graph) > MAXWEIGHT:
-        print >> sys.stderr, "MAXWEIGHT exceeded..."
-        sys.exit(1)
 
     # success: print graph
     dump(graph)
