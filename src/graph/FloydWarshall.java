@@ -22,8 +22,13 @@ public class FloydWarshall implements ShortestPaths {
 		mat = new Path[v][v];
 
 		for (int i = 0; i < v; i++)
-			for (int j = 0; j < v; j++)
-				mat[i][j] = g.edge(i, j);
+			for (int j = 0; j < v; j++) {
+				int edgeCost = g.cost(i, j);
+				if (edgeCost == Integer.MAX_VALUE)
+					mat[i][j] = null;
+				else 
+					mat[i][j] = new Path(i, g.cost(i, j), null);
+			}
 
 		// introduce self-loops
 		// path from self to self is 0 in length
@@ -52,6 +57,10 @@ public class FloydWarshall implements ShortestPaths {
 	 * Returns shortest path from src to dst or null if the path does not exist;
 	 */
 	public Path shortestPath(int src, int dst) {
+		int v = mat.length;
+		assert(0 <= src && src < v);
+		assert(0 <= dst && dst < v);
+		
 		return mat[src][dst];
 	}
 }

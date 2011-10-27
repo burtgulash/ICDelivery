@@ -7,6 +7,46 @@ import graph.*;
 import java.io.*;
 
 public class ShortestPathsTest {
+	final String graphString =  "0 {3:7; 4:4}\n" +
+								"1 {2:3; 3:4; 5:6}\n" +
+								"2 {1:3; 3:5}\n" +
+								"3 {0:7; 1:4; 2:5; 5:2}\n" +
+								"4 {0:4}\n" +
+								"5 {1:6; 3:2}\n";
+
+	private File tmp;
+	private Graph g;
+
+	@Test
+	public void rarach () {
+		long start = System.currentTimeMillis();
+		ShortestPaths sp = new OptimizedFloydWarshall(GraphLoader.getGraph("test.graph1"));
+		
+		System.err.println((System.currentTimeMillis() - start)/1000);
+	}
+
+	@Before
+	public void setUp() {
+		try {
+			tmp = File.createTempFile("tmp", "graph");
+		} catch (IOException ioe) {
+			fail("Couldn't create temporary file");
+			return;
+		}
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(tmp));
+			out.write(graphString);
+			out.close();
+		} catch (IOException ioe) {
+			fail("Error writing to tmp file");
+			return;
+		}
+
+		g = GraphLoader.getGraph(tmp.getAbsolutePath());
+	}
+
+
+
 	@Test
 	// generated graph is assumed to be connected
 	// This test ensures that
@@ -25,45 +65,28 @@ public class ShortestPathsTest {
 			}
 	}
 
+
+	
 	@Test
+	public void HardCodedFloydWarshall () {
+		HardCodedTest(new FloydWarshall(g));	
+	}
+
+
 	// Tests hard coded and hand checked graph
-	public void HardCodedTest () {
-		final String graphString =  "0 {3:7; 4:4}\n" +
-									"1 {2:3; 3:4; 5:6}\n" +
-									"2 {1:3; 3:5}\n" +
-									"3 {0:7; 1:4; 2:5; 5:2}\n" +
-									"4 {0:4}\n" +
-									"5 {1:6; 3:2}\n";
-
-		File tmp;
-		try {
-			tmp = File.createTempFile("tmp", "graph");
-		} catch (IOException ioe) {
-			fail("Couldn't create temporary file");
-			return;
-		}
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(tmp));
-			out.write(graphString);
-			out.close();
-		} catch (IOException ioe) {
-			fail("Error writing to tmp file");
-			return;
-		}
-
-		Graph graph = GraphLoader.getGraph(tmp.getAbsolutePath());
-		ShortestPaths sp = new FloydWarshall(graph);
+	private void HardCodedTest (ShortestPaths implementation) {
+		ShortestPaths sp = implementation;
 
 		// hardcoded graph has 6 vertices
-		assertEquals(6, graph.vertices());
+		assertEquals(6, g.vertices());
 	
 		// test hardcoded neighbor counts
-		assertEquals(2, graph.neighbors(0));
-		assertEquals(3, graph.neighbors(1));
-		assertEquals(2, graph.neighbors(2));
-		assertEquals(4, graph.neighbors(3));
-		assertEquals(1, graph.neighbors(4));
-		assertEquals(2, graph.neighbors(5));
+		assertEquals(2, g.neighbors(0));
+		assertEquals(3, g.neighbors(1));
+		assertEquals(2, g.neighbors(2));
+		assertEquals(4, g.neighbors(3));
+		assertEquals(1, g.neighbors(4));
+		assertEquals(2, g.neighbors(5));
 
 		// check all shortest paths in matrix lower triangle
 		assertEquals(0, sp.shortestPath(0, 0).weight);

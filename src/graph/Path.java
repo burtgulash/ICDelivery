@@ -2,7 +2,12 @@ package graph;
 
 public class Path {
     // alow attributes to be visible for shortest paths algorithms
-    int vertex, weight;
+	// vertex is NEXT vertex in Path
+    int vertex;
+	// Path weight to NEXT vertex, that is to this.vertex
+	// first vertex of Path is stored implicitly
+	int weight;
+	// rest of the path
     Path rest;
     
 
@@ -25,7 +30,7 @@ public class Path {
 
 
     /**
-     * get current town
+     * get //TODO(next) current town
      */
     public int town() {
         return vertex;
@@ -46,7 +51,6 @@ public class Path {
     }
 
     // Concatenate two paths together
-    // TODO should not be static 
     static Path concat(Path p1, Path p2) {
         if (p1 == null)
             return p2;
