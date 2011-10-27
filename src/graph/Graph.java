@@ -40,6 +40,15 @@ public class Graph {
 			if (v[src][i].destination == dst)
 				return new Path(dst, v[src][i].weight, null);
 		}
+
+		// else try the edge in other direction
+		assert(v[dst] != null);
+		srcListLen = v[dst].length;
+		for (int i = 0; i < srcListLen; i++) {
+			assert(v[dst][i] != null);
+			if (v[dst][i].destination == src)
+				return new Path(dst, v[dst][i].weight, null);
+		}
 		return null;
 	}
 }
