@@ -93,12 +93,15 @@ def maxDeg(graph):
     """ for debugging: returns maxDegree of graph """
     return max(len(graph[v]) for v in graph)
 
+def countEdges(graph):
+    return sum(len(graph[v]) for v in graph)
 
-usageString = """usage: simpleGen.py MAXDEGREE MAXWEIGHT VERTICES RATIO
+
+usageString = """usage: simpleGen.py MAXDEGREE MAXWEIGHT VERTICES DENSITY
     MAXDEGREE <- maximal degree for each vertex
     MAXWEIGHT <- maximal weight of every edge
     VERTICES  <- number of vertices of graph
-    RATIO     <- EDGES/VERTICES ratio, more means more edges
+    DENSITY   <- EDGES/VERTICES ratio, more means more edges
 
     # small testing graph:
     simpleGen.py 10 20 20 5
@@ -116,16 +119,16 @@ if __name__ == "__main__":
         MAXDEGREE = int(sys.argv[1])
         MAXWEIGHT = int(sys.argv[2])
         VERTICES  = int(sys.argv[3])
-        RATIO     = int(sys.argv[4])
+        DENSITY   = int(sys.argv[4])
 
-        if MAXDEGREE <= 0 or MAXWEIGHT <= 1 or VERTICES <= 1 or RATIO <= 0:
+        if MAXDEGREE <= 0 or MAXWEIGHT <= 1 or VERTICES <= 1 or DENSITY <= 0:
             raise ValueError
     except ValueError:
         print >> sys.stderr, "argument parsing error"
         sys.exit(1)
 
     vertices   = range(VERTICES)
-    edge_count = RATIO * VERTICES
+    edge_count = DENSITY * VERTICES
 
     # graph factory begin
     graph = makeConnectedGraph(vertices)
@@ -133,6 +136,8 @@ if __name__ == "__main__":
     graph = makeWeighted  (graph, MAXWEIGHT)
     # graph factory end
 
+
+    maxDegree = maxDeg(graph)
     if maxDeg(graph) > MAXDEGREE:
         print >> sys.stderr, "MAXDEGREE exceeded..."
         sys.exit(1)
@@ -140,3 +145,12 @@ if __name__ == "__main__":
 
     # success: print graph
     dump(graph)
+    numEdges = countEdges(graph)
+
+    # print graph summary
+    print >> sys.stderr
+    print >> sys.stderr, "MAXDEGREE : %15d" % maxDegree
+    print >> sys.stderr, "DENSITY   : %15d edges per vertex" \
+                                      % (numEdges / VERTICES)
+
+
