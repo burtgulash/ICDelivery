@@ -32,6 +32,10 @@ public class OptimizedFloydWarshall implements ShortestPaths {
 				kMat[i][j] = NO_INTERMEDIATE;
 				// vertices i and j adjacent? w_0 = a[i, j]
 				wMat[i][j] = graph.cost(i, j);
+
+				// Path cost from self to self is free
+				if (j == i)
+					wMat[i][j] = 0;
 			}
 		}
 	}
@@ -56,7 +60,8 @@ public class OptimizedFloydWarshall implements ShortestPaths {
 
 				for (j = 0; j <= i; j++) {
 					alternate = half + wKth[j];
-					if (alternate < wIth[j]) {
+					// check overflow first
+					if (alternate >= half && alternate < wIth[j]) {
 						wIth[j] = alternate;
 						kIth[j] = k;
 					}
@@ -70,14 +75,14 @@ public class OptimizedFloydWarshall implements ShortestPaths {
 
 				for (j = 0; j < k; j++) {
 					alternate = half + wKth[j];
-					if (alternate < wIth[j]) {
+					if (alternate >= half && alternate < wIth[j]) {
 						wIth[j] = alternate;
 						kIth[j] = k;
 					}
 				}
 				for (; j <= i; j++) {
 					alternate = half + wMat[j][k];
-					if (alternate < wIth[j]) {
+					if (alternate >= half && alternate < wIth[j]) {
 						wIth[j] = alternate;
 						kIth[j] = k;
 					}
@@ -86,31 +91,19 @@ public class OptimizedFloydWarshall implements ShortestPaths {
 		}
 	}
 
-	// Add weights to non-weighted Path
-	private void addWeights(int src, Path p) {
-		if (p == null)
-			return;
-		int restWeight = 0;
-		if (p.rest != null)
-			restWeight = p.rest.weight;
-
-		addWeights(p.vertex, p.rest);
-		p.weight = wMat[src][p.vertex] + restWeight;
-	}
 
 	@Override
 	public Path shortestPath(int src, int dst) {
+		if (src < dst)
+			return Path.reversed(dst, shortestPath(dst, src));
+
 		int v = wMat.length;
 		assert(0 <= src && src < v);
 		assert(0 <= dst && dst < v);
 
 
-		// find min and max indices and find the values in lower triangles
-		// of matrices
-		int min = Math.min(src, dst);
-		int max = Math.max(src, dst);
-		int intermediate = kMat[max][min];
-		int weight = wMat[max][min];
+		int intermediate = kMat[src][dst];
+		int weight       = wMat[src][dst];
 
 		if (weight == Integer.MAX_VALUE)
 			return null;
@@ -119,14 +112,18 @@ public class OptimizedFloydWarshall implements ShortestPaths {
 
 		
 		// Construct the Path as Path(i -> k) + k + Path(k -> j).
-		// At this stage we don't know the last vertex of Path(i -> k)
-		// that's why we add the weights later.
-		Path resultPath = Path.concat(shortestPath(src, intermediate), 
-							Path.concat(new Path(intermediate, 0, null), 
-								shortestPath(intermediate, dst)));
+		Path src_to_k = shortestPath(src, intermediate);
+		Path k_to_dst = shortestPath(intermediate, dst);
 
-		// add weights to zero-weighted resultPath
-		addWeights(src, resultPath);
+		// if one part of Path is null, Path does not exist
+		if (src_to_k == null || k_to_dst == null)
+			return null;
+
+		// Concatenate all the paths together
+		// return Path.concat(src_to_k, Path.concat(singleK, k_to_dst));
+		Path resultPath = Path.concat(src_to_k, k_to_dst);
+			
+		assert(resultPath.weight == wMat[Math.max(src,dst)][Math.min(src,dst)]);
 		return resultPath;
 	}
 }

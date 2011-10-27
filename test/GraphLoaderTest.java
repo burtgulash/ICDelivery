@@ -23,9 +23,5 @@ public class GraphLoaderTest {
 		assertNotNull(g);
 
 		assertTrue(g.vertices() != 0);
-
-		// test if all vertices have neighbors, else the graph is not connected
-		for (int i = 0; i < g.vertices(); i ++)
-			assertTrue(g.neighbors(i) >= 0);
 	}
 }

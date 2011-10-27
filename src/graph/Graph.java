@@ -19,14 +19,6 @@ public class Graph {
 		return v.length;
 	}
 
-	// testing purposes
-	public int neighbors(int vertex) {
-		if (0 <= vertex && vertex < vertices()) {
-			assert (v[vertex] != null);
-			return v[vertex].length;
-		}
-		return -1;
-	}
 
 	/**
 	 * Returns weight from src to dst or +inf, if no edge

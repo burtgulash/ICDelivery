@@ -9,24 +9,18 @@ import java.io.*;
 public class ShortestPathsTest {
 	final String graphString =  "0 {3:7; 4:4}\n" +
 								"1 {2:3; 3:4; 5:6}\n" +
-								"2 {1:3; 3:5}\n" +
-								"3 {0:7; 1:4; 2:5; 5:2}\n" +
-								"4 {0:4}\n" +
-								"5 {1:6; 3:2}\n";
+								"2 {3:5}\n" +
+								"3 {5:2}\n" +
+								"4 {}\n" +
+								"5 {}\n";
 
 	private File tmp;
 	private Graph g;
 
-	@Test
-	public void rarach () {
-		long start = System.currentTimeMillis();
-		ShortestPaths sp = new OptimizedFloydWarshall(GraphLoader.getGraph("test.graph1"));
-		
-		System.err.println((System.currentTimeMillis() - start)/1000);
-	}
-
+	// Test constructor
 	@Before
 	public void setUp() {
+
 		try {
 			tmp = File.createTempFile("tmp", "graph");
 		} catch (IOException ioe) {
@@ -46,30 +40,10 @@ public class ShortestPathsTest {
 	}
 
 
-
-	@Test
-	// generated graph is assumed to be connected
-	// This test ensures that
-	// Also checks that paths are symmetrc, p[i, j] == p[j, i]
-	public void ConnectivityTest () {
-		Graph graph = GraphLoader.getGraph("test.graph");
-		ShortestPaths sp = new FloydWarshall(graph);
-
-		int v = graph.vertices();
-		for (int i = 0; i < v; i++)
-			for (int j = 0; j < v; j++) {
-				// null shortest path doesn't exist
-				assertNotNull(sp.shortestPath(i, j));
-				assertEquals(sp.shortestPath(i, j).weight, 
-                             sp.shortestPath(j, i).weight);
-			}
-	}
-
-
-	
 	@Test
 	public void HardCodedFloydWarshall () {
 		HardCodedTest(new FloydWarshall(g));	
+		HardCodedTest(new OptimizedFloydWarshall(g));	
 	}
 
 
@@ -80,13 +54,6 @@ public class ShortestPathsTest {
 		// hardcoded graph has 6 vertices
 		assertEquals(6, g.vertices());
 	
-		// test hardcoded neighbor counts
-		assertEquals(2, g.neighbors(0));
-		assertEquals(3, g.neighbors(1));
-		assertEquals(2, g.neighbors(2));
-		assertEquals(4, g.neighbors(3));
-		assertEquals(1, g.neighbors(4));
-		assertEquals(2, g.neighbors(5));
 
 		// check all shortest paths in matrix lower triangle
 		assertEquals(0, sp.shortestPath(0, 0).weight);
