@@ -33,7 +33,7 @@ public class Path {
 
 
     /**
-     * return length of the Path
+     * return length of the Path from src(not in path) to end of path
      */
     public int pathLength() {
         return weight;
@@ -56,26 +56,6 @@ public class Path {
     }
 
 
-    // prepend new Path element with vertex v and weight w to Path p
-    private static Path prepend(int v, int w, Path p) {
-		int restWeight = 0;
-		if (p != null)
-			restWeight = p.weight;
-        return new Path(v, w + restWeight, p);
-    }
-
-    // Concatenate two paths together
-    static Path concat(Path p1, Path p2) {
-        if (p1 == null)
-            return p2;
-
-        int restWeight = 0;
-        if (p1.rest != null)
-            restWeight = p1.rest.weight;
-        return prepend(p1.vertex, p1.weight - restWeight, concat(p1.rest, p2));
-    }
-
-
 	/**
 	 * Reverses Path
 	 *
@@ -95,4 +75,25 @@ public class Path {
 		}
 		return rev;
 	}
+
+
+    // prepend new Path element with vertex v and weight w to Path p
+    private static Path prepend(int v, int w, Path p) {
+		int restWeight = 0;
+		if (p != null)
+			restWeight = p.weight;
+        return new Path(v, w + restWeight, p);
+    }
+
+
+    // Concatenate two paths together
+    static Path concat(Path p1, Path p2) {
+        if (p1 == null)
+            return p2;
+
+        int restWeight = 0;
+        if (p1.rest != null)
+            restWeight = p1.rest.weight;
+        return prepend(p1.vertex, p1.weight - restWeight, concat(p1.rest, p2));
+    }
 }
