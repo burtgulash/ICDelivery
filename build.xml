@@ -92,19 +92,6 @@
             </assertions>
         </java>
     </target>
-    
-
-    
-    <!-- generate test.graph, python must be installed -->
-    <target name="gen">
-        <echo message="generating test graph to ${test.file}" />
-        <exec executable="python" 
-              failonerror="true" 
-              output="${test.file}">
-
-            <arg line="${generator} 10 20 20 5" />
-        </exec>
-    </target>
 
 
 

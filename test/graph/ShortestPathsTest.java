@@ -40,15 +40,24 @@ public class ShortestPathsTest {
 	}
 
 
+
 	@Test
-	public void HardCodedFloydWarshall () {
-		HardCodedTest(new FloydWarshall(g));	
-		HardCodedTest(new OptimizedFloydWarshall(g));	
+	// benchmark shortestPaths
+	public void shortestPathBenchmark() {
+		Graph graph = GraphLoader.getGraph("test.graph");
+		new OptimizedFloydWarshall(graph);
+	}
+
+
+	@Test
+	public void hardCodedFloydWarshall () {
+		hardCodedTest(new FloydWarshall(g));	
+		hardCodedTest(new OptimizedFloydWarshall(g));	
 	}
 
 
 	// Tests hard coded and hand checked graph
-	private void HardCodedTest (ShortestPaths implementation) {
+	private void hardCodedTest (ShortestPaths implementation) {
 		ShortestPaths sp = implementation;
 
 		// hardcoded graph has 6 vertices
