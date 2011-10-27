@@ -7,35 +7,20 @@ import graph.*;
 import java.io.*;
 
 public class ShortestPathsTest {
-	@Test
-	// generated graph is assumed to be connected
-	// This test ensures that
-	// Also checks that paths are symmetrc, p[i, j] == p[j, i]
-	public void ConnectivityTest () {
-		Graph graph = GraphLoader.getGraph("test.graph");
-		ShortestPaths sp = new FloydWarshall(graph);
+	final String graphString =  "0 {3:7; 4:4}\n" +
+								"1 {2:3; 3:4; 5:6}\n" +
+								"2 {3:5}\n" +
+								"3 {5:2}\n" +
+								"4 {}\n" +
+								"5 {}\n";
 
-		int v = graph.vertices();
-		for (int i = 0; i < v; i++)
-			for (int j = 0; j < v; j++) {
-				// null shortest path doesn't exist
-				assertNotNull(sp.shortestPath(i, j));
-				assertEquals(sp.shortestPath(i, j).weight, 
-                             sp.shortestPath(j, i).weight);
-			}
-	}
+	private File tmp;
+	private Graph g;
 
-	@Test
-	// Tests hard coded and hand checked graph
-	public void HardCodedTest () {
-		final String graphString =  "0 {3:7; 4:4}\n" +
-									"1 {2:3; 3:4; 5:6}\n" +
-									"2 {1:3; 3:5}\n" +
-									"3 {0:7; 1:4; 2:5; 5:2}\n" +
-									"4 {0:4}\n" +
-									"5 {1:6; 3:2}\n";
+	// Test constructor
+	@Before
+	public void setUp() {
 
-		File tmp;
 		try {
 			tmp = File.createTempFile("tmp", "graph");
 		} catch (IOException ioe) {
@@ -51,19 +36,24 @@ public class ShortestPathsTest {
 			return;
 		}
 
-		Graph graph = GraphLoader.getGraph(tmp.getAbsolutePath());
-		ShortestPaths sp = new FloydWarshall(graph);
+		g = GraphLoader.getGraph(tmp.getAbsolutePath());
+	}
+
+
+	@Test
+	public void HardCodedFloydWarshall () {
+		HardCodedTest(new FloydWarshall(g));	
+		HardCodedTest(new OptimizedFloydWarshall(g));	
+	}
+
+
+	// Tests hard coded and hand checked graph
+	private void HardCodedTest (ShortestPaths implementation) {
+		ShortestPaths sp = implementation;
 
 		// hardcoded graph has 6 vertices
-		assertEquals(6, graph.vertices());
+		assertEquals(6, g.vertices());
 	
-		// test hardcoded neighbor counts
-		assertEquals(2, graph.neighbors(0));
-		assertEquals(3, graph.neighbors(1));
-		assertEquals(2, graph.neighbors(2));
-		assertEquals(4, graph.neighbors(3));
-		assertEquals(1, graph.neighbors(4));
-		assertEquals(2, graph.neighbors(5));
 
 		// check all shortest paths in matrix lower triangle
 		assertEquals(0, sp.shortestPath(0, 0).weight);
