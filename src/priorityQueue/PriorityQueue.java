@@ -189,6 +189,16 @@ public class PriorityQueue<T extends Queable> {
 	}
 
 
+	/**
+	 * Returns priority of selected element
+	 */
+	public int priority(int elemId) {
+		Integer elemPos_ob = position.get(elemId);
+		if (elemPos_ob == null)
+			return -1;
+		return ar[elemPos_ob.intValue()].priority();
+	}
+	
 
 
 	// Remove after testing

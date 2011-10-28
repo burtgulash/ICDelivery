@@ -56,18 +56,4 @@ public class Graph {
         // if no edge found, return +INFINITY
         return Integer.MAX_VALUE;
     }
-
-
-    /**
-     * Little data structure for graph edge
-     */
-    private class Edge {
-        int destination, weight;
-        Edge next;
-
-        Edge(int dst, int w) {
-            destination = dst;
-            weight = w;
-        }
-    }
 }
