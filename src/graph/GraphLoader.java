@@ -116,7 +116,10 @@ public class GraphLoader {
             while (edgeMatcher.find()) {
                 int dst       = Integer.parseInt(edgeMatcher.group(1));
                 int weight    = Integer.parseInt(edgeMatcher.group(2));
+
+				// insert bidirectional edge
                 graph.addEdge(src, dst, weight);
+                graph.addEdge(dst, src, weight);
             }
         } catch (NumberFormatException ex) {
             throw new MalformedGraphFileException();

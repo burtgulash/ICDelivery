@@ -48,10 +48,6 @@ public class Graph {
         for (Edge iter = v[src].next; iter != null; iter = iter.next)
             if (iter.destination == dst)
                 return iter.weight;
-
-        for (Edge iter = v[dst].next; iter != null; iter = iter.next)
-            if (iter.destination == src)
-                return iter.weight;
         
         // if no edge found, return +INFINITY
         return Integer.MAX_VALUE;

@@ -8,100 +8,117 @@ import priorityQueue.PriorityQueue;
 
 
 public class Dijkstra implements ShortestPaths {
-	private final int INF = Integer.MAX_VALUE;
+    private final int INF = Integer.MAX_VALUE;
 
-	private Map<Integer, Integer> prev;
-	private PriorityQueue<NotSeen> queue;
-	private UndirectedGraph graph;
-	
+    private Map<Integer, Integer> prev;
+    private PriorityQueue<NotSeenPath> queue;
+    private Graph graph;
+    
 
-	public Dijkstra(Graph graph) {
-		this.graph = UndirectedGraph.make(graph);
-	}
+    public Dijkstra(Graph graph) {
+        this.graph = graph;
+    }
 
-	private void init(int srcVertex) {
-		queue = new PriorityQueue<NotSeen>();
-		prev = new TreeMap<Integer, Integer>();
+    // Initialize Priority Queue and prev-tree for given source vertex
+    private void init(int src) {
+        queue = new PriorityQueue<NotSeenPath>();
+        prev = new TreeMap<Integer, Integer>();
 
-		int v = graph.vertices();
-		for (int i = 0; i < v; i++) {
-			Edge iter;
-			if (i == srcVertex)
-				for (iter = graph.v[i].next; iter != null; iter = iter.next)
-					queue.insert(new NotSeen(iter.destination, iter.weight));
-			else 
-				for (iter = graph.v[i].next; iter != null; iter = iter.next)
-					queue.insert(new NotSeen(iter.destination, INF));
-		}
-	}
+        int v = graph.vertices();
+        for (int i = 0; i < v; i++)
+            queue.insert(new NotSeenPath(i, INF));
 
-	private Path traceBack(int src, int dst) {
-		Path p = null;
-		int oneBack;
-		
-		while (dst != src) {
-			oneBack = prev.get(dst);
-			p = Path.concat(new Path(dst, graph.cost(oneBack, dst), null), p);
-			dst = oneBack;
-		}
-		return p;
-	}
-
-	@Override
-	public Path shortestPath(int src, int dst) {
-		init(src);
-
-		Edge iter;
-		int drawn, next, best;
-
-		NotSeen seen;
-		while (!queue.empty()) {
-			seen   = queue.extractMin();
-			drawn  = seen.dstVertex;
-			best   = seen.bestWeight;
-			assert(best != INF); // else the graph was not connected
-
-			// decrease key for all neighbors
-			for (iter = graph.v[drawn].next; iter != null; iter = iter.next) {
-				int newWeight = best + iter.weight;
-				next = iter.destination;
-
-				// benchmark this conditional
-				if (newWeight < queue.priority(next)) {
-					queue.changePriority(next, best + iter.weight);
-					prev.put(next, drawn);
-				}
-			}
-			
-		}
-
-		return traceBack(src, dst);
-	}
+        for (Edge iter = graph.v[src].next; iter != null; iter = iter.next) {
+            queue.changePriority(iter.destination, iter.weight);
+            prev.put(iter.destination, src);
+        }
+    }
 
 
+    @Override
+    public Path shortestPath(int src, int dst) {
+        if (src == dst)
+            return new Path(dst, 0, null);
 
-	private class NotSeen implements Queable {
-		int dstVertex;
-		int bestWeight;
+        init(src);
 
-		private NotSeen(int dst, int w) {
-			dstVertex  = dst;
-			bestWeight = w;
-		}
-		
-		@Override
-		public int id() {
-			return dstVertex;
-		}
+        // neighbor iterator
+        Edge n;
+        int curVertex, curWeight, next;
 
-		@Override
-		public int priority() {
-			return bestWeight;
-		}
+        NotSeenPath current;
+        while (!queue.empty()) {
+            current    = queue.extractMin();
+            curVertex  = current.dstVertex;
+            curWeight  = current.bestWeight;
+            assert(curWeight != INF); // else the graph was not connected
 
-		@Override
-		public void setPriority(int newPriority) {
-			bestWeight = newPriority;
-		}
-	}
+			// if not using caching, keep this
+			if (curVertex == dst)
+				break;
+
+            // decrease key for all neighbors
+            for (n = graph.v[curVertex].next; n != null; n = n.next) {
+                int newWeight = curWeight + n.weight;
+                next = n.destination;
+
+                // benchmark this conditional
+                if (newWeight < queue.priority(next)) {
+                    queue.changePriority(next, curWeight + n.weight);
+                    prev.put(next, curVertex);
+                }
+            }
+            
+        }
+
+        return traceBack(src, dst);
+    }
+
+
+    /**
+     * Backtraces path from src to dst in 'prev' tree
+     */
+    private Path traceBack(int src, int dst) {
+        Path p = null;
+        int oneBack;
+        
+        while (dst != src) {
+            assert(prev.get(dst) != null);
+            oneBack = prev.get(dst);
+            p = Path.concat(new Path(dst, graph.cost(oneBack, dst), null), p);
+            dst = oneBack;
+        }
+        return p;
+    }
+
+
+
+    /**
+     * Helper data structure, represents path from src to dstVertex
+     * with current best path-weight
+     */
+    private class NotSeenPath implements Queable {
+        int dstVertex;
+        int bestWeight;
+
+        private NotSeenPath(int dst, int w) {
+            dstVertex  = dst;
+            bestWeight = w;
+        }
+        
+        @Override
+        public int id() {
+            return dstVertex;
+        }
+
+        @Override
+        public int priority() {
+            return bestWeight;
+        }
+
+        @Override
+        public void setPriority(int newPriority) {
+            bestWeight = newPriority;
+        }
+    }
 }
