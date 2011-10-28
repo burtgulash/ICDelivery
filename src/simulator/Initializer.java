@@ -14,14 +14,11 @@ public class Initializer {
                                        int pauseTime)
 
     {
-        // Initialize components begin
+        // Initialize components
         Scheduler s = new GreedyScheduler(graph, depotVertex, simulationTime);
         Simulator.init(s);
         Calendar.init(simulationTime);
         // TODO Logger.init();
         CustomerList.init(graph.vertices());
-        // Initialize components end
-
-
     }
 }

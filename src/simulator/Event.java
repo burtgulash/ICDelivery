@@ -6,15 +6,18 @@ abstract class Event implements Queable {
     private static int eventCount;
     private int id;
     private int time;
-    final EventType type;
     
-    Event(int time, EventType type) {
+    Event(int time) {
         eventCount++;
         id = eventCount;
 
         this.time = time;
-        this.type = type;
     }
+
+    /**
+     * Let the event do something
+     */
+    protected abstract int doWork ();
 
     /**
      * Selector for event time

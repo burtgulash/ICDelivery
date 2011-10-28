@@ -35,9 +35,6 @@ class Calendar {
      * Returns next event in timeline
      */
     static Event nextEvent() {
-        Event extractedEvent = queue.extractMin();
-
-        // log what happened
-        return extractedEvent;
+        return queue.extractMin();
     }
 }

@@ -8,7 +8,9 @@ import graph.Graph;
 import graph.Path;
 
 public class Simulator {
-    private static Scheduler scheduler;
+    protected static Scheduler scheduler;
+    protected final static int TERMINATE = 0;
+    protected final static int CONTINUE  = 1;
 
     /**
      * Static constructor
@@ -16,7 +18,7 @@ public class Simulator {
      * Provide with one of Scheduler strategy implementations
      */
     public static void init(Scheduler s) {
-        scheduler = s;
+        scheduler  = s;
     }
 
     /**
@@ -24,33 +26,14 @@ public class Simulator {
      */
     public static void mainLoop() {
         Event current;
+        int purpose;
 
-        MAIN_LOOP:
-        while (true) {
-            current = Calendar.nextEvent();
+        do {
+            current  = Calendar.nextEvent();
+            purpose  = current.doWork();
 
-            switch (current.type) {
-                case STOP:
-                    break MAIN_LOOP;
+            // current.log();
 
-                case ORDER:
-                    Order currentOrder = ((OrderEvent) current).order;
-                    scheduler.receiveOrder(currentOrder);
-                    break;
-
-
-                case TRUCK_LOAD:
-                    break;
-
-
-                case TRUCK_SEND:
-                    break;
-                    
-
-                default:
-                    System.err.println("Unexpected event occured");
-                    return;
-            }
-        }
+        } while (purpose != TERMINATE);
     }
 }

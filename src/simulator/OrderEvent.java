@@ -9,7 +9,13 @@ class OrderEvent extends Event {
     // TRUCKLOAD event
     
     OrderEvent(int time, Order order) {
-        super(time, EventType.ORDER);
+        super(time);
         this.order = order;
     }
+
+    @Override
+    protected int doWork() {
+        Simulator.scheduler.receiveOrder(order);
+        return Simulator.CONTINUE;
+    }    
 }
