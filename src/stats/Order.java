@@ -7,26 +7,35 @@ package stats;
  * Used by scheduler and statistics keeper
  */
 public class Order {
+    private Trip assigned; // null if Order declined
+    private final Customer customer; // creator of Order
+    
+    private int amount;   // num of containers
+    private int servedBy; // id of truck
+    
     private final int receivedTime;
-    private final CustomerList customers;
-    public final Customer customer;
-    private int amount;
-    public boolean accepted;
-    public boolean served;
-    public int servedBy;
-    private static int orderCount = 0;
-	private int orderId;
 
-    public Order(CustomerList customerList, 
-                 int customerNum,
-                 int amount,
-                 int receivedTime) {
+    // for Order tracking purposes
+    private static int orderCount = 0;
+    private int orderId;
+
+
+    /**
+     * Constructs Order object 
+     *
+     * time of construction != receivedTime, receivedTime means when it 
+     * first appears in time
+     *
+     * @param receivedTime time, when Simulator first sees the Order
+     * @param customerNum  id of Customer that generated this Order
+     * @param amount       number of containers to deliver
+     */
+    public Order(int receivedTime, int customerNum, int amount) {
+        orderId = ++orderCount;
 
         this.receivedTime = receivedTime;
-        this.customers = customerList;
         this.amount = amount;
-        customer = customers.getCustomer(customerNum);
-        orderId = ++orderCount;
+        customer = CustomerList.get(customerNum);
     }
 
     /**
@@ -36,14 +45,25 @@ public class Order {
         return receivedTime;
     }
 
+	/**
+	 * Return customer that sent this Order
+	 */
+	public Customer sentBy() {
+		return customer;
+	}
+
+
     /**
-      * Return ordered amount of containers
+     * Return ordered amount of containers
      */
     public int amount() {
         return amount;
     }
     
+    /**
+     * Returns id of this Order
+     */
     public int getId(){
-		return orderId;
-	}
+        return orderId;
+    }
 }

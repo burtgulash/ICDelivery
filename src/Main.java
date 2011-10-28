@@ -17,14 +17,18 @@ public class Main {
     public static String fileName;
     public static String logFile;
     
+    private static int DEPOT = 0;
 
     public static void main(String[] args) {
-        
-    	loadParams();
+        loadParams();
         parseCmdArgs(args);
-        Simulator s = new Initializer().initializeSimulation(GraphLoader.getGraph(fileName), 0,simTime,pauseTime, startOrderCount,logFile);
-        s.mainLoop();
 
+        Initializer.initSimulation(GraphLoader.getGraph(fileName), 
+                                   DEPOT,
+                                   simTime,
+                                   pauseTime);
+
+        Simulator.mainLoop();
     }
     
     /**
@@ -39,8 +43,8 @@ public class Main {
     static void parseCmdArgs(String[] args){
         if (args.length > 0){
           for (int i = 0; i < args.length; i++){
-           	if(args[i].matches("-[phn]")){
-            	switch (args[i].charAt(1)){
+               if(args[i].matches("-[phn]")){
+                switch (args[i].charAt(1)){
                   case 'p': if (i+1 < args.length){
                             pauseTime = Integer.parseInt(args[++i]);
                             }else System.out.println("Bad argument! Expected number after flag -p");
@@ -53,7 +57,7 @@ public class Main {
                   default:System.out.println("Unrecognized switch \"-" + args[i].charAt(1) +"\"!"  );
                 }
             }else
-            	System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
+                System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
             }
         }
         else{
@@ -98,12 +102,12 @@ public class Main {
     }
     
     static void loadParams(){
-    	Config.readConfig();
-    	simTime = Config.getSimTime();
-    	pauseTime = Config.getPauseTime();
-    	startOrderCount = Config.getStartOrderCount();
-    	fileName = Config.getgraphFileName();
-    	logFile = Config.getLogFileName();
+        Config.readConfig();
+        simTime = Config.getSimTime();
+        pauseTime = Config.getPauseTime();
+        startOrderCount = Config.getStartOrderCount();
+        fileName = Config.getgraphFileName();
+        logFile = Config.getLogFileName();
     }
 }
 

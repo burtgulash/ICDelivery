@@ -15,7 +15,7 @@ static class Calendar {
     
 
     // Private constructor for Calendar singleton
-    public static init(int terminationTime) {
+    public static void init(int terminationTime) {
         queue = new PriorityQueue<Event>();
 
         // make sure we terminate
@@ -38,7 +38,6 @@ static class Calendar {
         Event extractedEvent = queue.extractMin();
 
         // log what happened
-        extractedEvent.log();
         return extractedEvent;
     }
 }

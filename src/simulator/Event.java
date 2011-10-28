@@ -1,7 +1,6 @@
 package simulator;
 
 import priorityQueue.Queable;
-import stats.LogEntry;
 
 abstract class Event implements Queable {
     private static int eventCount;

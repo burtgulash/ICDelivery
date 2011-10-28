@@ -1,6 +1,5 @@
 package simulator;
 
-import stats.LogEntry;
 import stats.Order;
 
 

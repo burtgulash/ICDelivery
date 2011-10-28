@@ -8,17 +8,17 @@ import stats.Truck;
 import graph.Graph;
 import graph.Path;
 
-public static class Simulator {
-	private static scheduler;
+public class Simulator {
+    private static Scheduler scheduler;
 
-	/**
-	 * Static constructor
-	 *
-	 * Provide with one of Scheduler strategy implementations
-	 */
-	public static void init(Scheduler s) {
-		scheduler = s;
-	}
+    /**
+     * Static constructor
+     *
+     * Provide with one of Scheduler strategy implementations
+     */
+    public static void init(Scheduler s) {
+        scheduler = s;
+    }
 
     /**
      * Core of the simulation, events are handled here
@@ -45,21 +45,6 @@ public static class Simulator {
 
 
                 case TRUCK_SEND:
-                    TruckSend e = (TruckSend) current;
-                    Truck t = e.truck;
-                    if (t.arrived()) {
-                        // unload -->> ??  UnloadEvent ??
-                        // send back
-                    } else {
-                        // advance truck by one town
-                        // refactor to separate method
-                        int timeInNextTown = e.time() + t.timeToNextTown();
-                        Path  fromNextTown = t.advance();
-                        Event nextTownSend = new TruckSend(timeInNextTown,
-                                                           fromNextTown,
-                                                           t);
-                        Calendar.addEvent(nextTownSend);
-                    }
                     break;
                     
 
@@ -67,17 +52,6 @@ public static class Simulator {
                     System.err.println("Unexpected event occured");
                     return;
             }
-            Logger.note(current.log());
         }
-        Logger.closeLog();
-    }
-
-
-    /**
-     * Returns summary of all trucks and customers
-     * to be used by Logger
-     */
-    public static void getSummary() {
-        // TODO rov
     }
 }

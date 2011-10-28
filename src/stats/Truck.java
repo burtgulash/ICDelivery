@@ -1,57 +1,32 @@
 package stats;
 
 import stats.Order;
-import graph.Path;
-
-// import time constants
-import simulator.Times.*;
 
 
 public class Truck {
-	private Order assignedOrder;
+    private static int truckCount = 0;
+    private int truckId;
 
-	// remaining Path to destination for this truck
-	private Path currentPath;
-	private int cargo;
-	private static int truckCount = 0;
-	private int truckId;
+    private Order assigned;
+    private int loadedCargo;
 
-	public Truck(Order assigned, Path path, int cargo) {
-		assignedOrder = assigned;
-		currentPath = path;
-		this.cargo = cargo;
-		truckId = ++truckCount;
-	}
+    // remaining Path to destination for this truck
+    private int currentTown;
 
-	public int timeToNextTown () {
-		assert(!arrived());
-		int length = currentPath.pathLength() - currentPath.rest().pathLength();
 
-		// change to constants
-		return length * 60 / 70 + 1;
-	}
+    public Truck(Order assigned, int loadedCargo) {
+        truckId = ++truckCount;
 
-	/**
-	 * Check if the truck has arrived to destination
-	 */
-	public boolean arrived() {
-		return currentPath.rest() == null;
-	}
+        this.assigned = assigned;
+        this.loadedCargo = loadedCargo;
+    }
 
-	/**
-	 * Send truck to next town
-	 */
-	public Path advance() {
-		currentPath = currentPath.rest();
-		return currentPath;
-	}
-	
-	public Order assignedOrderInfo(){
-		return assignedOrder;
-	}
-	
-	public int getId(){
-		return truckId;
-	}
-	
+    
+    public Order assignedOrder(){
+        return assigned;
+    }
+    
+    public int getId(){
+        return truckId;
+    }
 }
