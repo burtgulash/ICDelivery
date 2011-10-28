@@ -43,16 +43,12 @@ public class GreedyScheduler implements Scheduler {
 
 
     private ShortestPaths costMinimizer;
-    private Calendar cal;
-    
-
 
     /**
      * Constructor for Greedy Scheduler
      */
-    public GreedyScheduler (Graph graph, Calendar cal, int depot) {
+    public GreedyScheduler (Graph graph, int depot) {
         DEPOT = depot;
-        this.cal = cal;
         costMinimizer = new FloydWarshall(graph);
     }
 
@@ -89,7 +85,7 @@ public class GreedyScheduler implements Scheduler {
     }
 
     /**
-     * Takes care of inserting Routing events into calendar
+     * Takes care of inserting Routing events into Calendar
      * and communicating with statistics package
      */
     private void dispatch(Trip successfullyPlanned, Order order) {
@@ -115,10 +111,10 @@ public class GreedyScheduler implements Scheduler {
 
 
         // Send them to Calendar
-        cal.addEvent(load);
-        cal.addEvent(send);
+        Calendar.addEvent(load);
+        Calendar.addEvent(send);
         // TODO unload event
-        cal.addEvent(goBack);
+        Calendar.addEvent(goBack);
         
         // BIG TODO update statistics
 

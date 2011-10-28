@@ -13,27 +13,19 @@ abstract class Event implements Queable {
         eventCount++;
         id = eventCount;
 
-		this.time = time;
-		this.type = type;
+        this.time = time;
+        this.type = type;
     }
 
-	/**
-	 * Calendar calls this method when nextEvent is drawn
-	 */
-	abstract LogEntry log ();
-
-	/**
-	 * Selector for event time
-	 */
+    /**
+     * Selector for event time
+     */
     int time() {
         return time;
     }
 
 
-  // ---- Don't use methods below this point ----- \\
- // ------- Unless you are Priority Queue --------- \\ 
-// ------------------------------------------------- \\
-
+    // DONT USE THESE METHODES
     @Override
     public int priority(){
         return time;

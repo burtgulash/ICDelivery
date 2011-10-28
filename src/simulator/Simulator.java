@@ -8,52 +8,27 @@ import stats.Truck;
 import graph.Graph;
 import graph.Path;
 
-public class Simulator {
-    // singleton reference
-    private static Simulator onlySimulator;
-    
+public static class Simulator {
+	private static scheduler;
 
-    Calendar timeline;
-    Scheduler scheduler;
-    Logger logger;
-    CustomerList customerList;
-
-
-    /**
-      * Constructor for Simulator, provide all needed components
-     */
-    public static Simulator getSimulatorObject(Scheduler s,
-                                               Calendar  cal,
-                                               CustomerList cust,
-                                               Logger log)
-    {
-        if (onlySimulator == null)
-            onlySimulator = new Simulator(s, cal, cust, log);
-        return onlySimulator;
-    }
-
-    // keep private, Simulator is singleton
-    private Simulator(Scheduler s, 
-                      Calendar cal, 
-                      CustomerList cust,
-                      Logger log)
-    {
-        scheduler    = s;
-        timeline     = cal;
-        customerList = cust;
-        logger = log;
-    }
-
+	/**
+	 * Static constructor
+	 *
+	 * Provide with one of Scheduler strategy implementations
+	 */
+	public static void init(Scheduler s) {
+		scheduler = s;
+	}
 
     /**
      * Core of the simulation, events are handled here
      */
-    public void mainLoop() {
+    public static void mainLoop() {
         Event current;
 
         MAIN_LOOP:
         while (true) {
-            current = timeline.nextEvent();
+            current = Calendar.nextEvent();
 
             switch (current.type) {
                 case STOP:
@@ -83,7 +58,7 @@ public class Simulator {
                         Event nextTownSend = new TruckSend(timeInNextTown,
                                                            fromNextTown,
                                                            t);
-                        timeline.addEvent(nextTownSend);
+                        Calendar.addEvent(nextTownSend);
                     }
                     break;
                     
@@ -92,16 +67,17 @@ public class Simulator {
                     System.err.println("Unexpected event occured");
                     return;
             }
-            logger.note(current.log());
+            Logger.note(current.log());
         }
-        logger.closeLog();
+        Logger.closeLog();
     }
+
 
     /**
      * Returns summary of all trucks and customers
-     * to be used by logger
+     * to be used by Logger
      */
-    public void getSummary() {
+    public static void getSummary() {
         // TODO rov
     }
 }
