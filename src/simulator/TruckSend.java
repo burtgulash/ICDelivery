@@ -1,20 +1,19 @@
 package simulator;
 
-import stats.LogEntry;
 import stats.Truck;
-import graph.Path;
 
 class TruckSend extends TruckEvent {
-	// redundant ?
-	private Path toDestination;
+    private int src, dst;
 
-	TruckSend(int time, Path path, Truck truck) {
-		super(time, EventType.TRUCK_SEND, truck);
-		toDestination = path;
-	}
+    TruckSend(int time, Truck truck, int src, int dst) {
+        super(time, truck);
+        this.src = src;
+        this.dst = dst;
+    }
 
-	@Override
-	LogEntry log () {
-			return new LogEntry(super.time(), "Truck n."+ truck.getId()+" was sent to "+ toDestination.town()+ "." );
-	}
+    @Override 
+    protected int doWork() {
+        truck.setTown(dst);
+        return Simulator.CONTINUE;
+    }
 }

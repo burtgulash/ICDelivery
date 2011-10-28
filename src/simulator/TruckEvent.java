@@ -3,10 +3,13 @@ package simulator;
 import stats.Truck;
 
 abstract class TruckEvent extends Event {
-	Truck truck;
+    Truck truck;
 
-	TruckEvent (int time, EventType type, Truck truck) {
-		super(time, type);
-		this.truck = truck;
-	}
+    TruckEvent (int time, Truck truck) {
+        super(time);
+        this.truck = truck;
+    }
+
+	@Override
+	protected abstract int doWork();
 }

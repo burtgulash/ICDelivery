@@ -1,57 +1,50 @@
 package stats;
 
 import stats.Order;
-import graph.Path;
-
-// import time constants
-import simulator.Times.*;
 
 
 public class Truck {
-	private Order assignedOrder;
+    public static int MAX_CAPACITY = 10;
+    private static int truckCount  = 0;
+    private int truckId;
 
-	// remaining Path to destination for this truck
-	private Path currentPath;
-	private int cargo;
-	private static int truckCount = 0;
-	private int truckId;
+    private Order assigned;
+    private int loadedCargo;
+    private int currentTown;
 
-	public Truck(Order assigned, Path path, int cargo) {
-		assignedOrder = assigned;
-		currentPath = path;
-		this.cargo = cargo;
-		truckId = ++truckCount;
-	}
 
-	public int timeToNextTown () {
-		assert(!arrived());
-		int length = currentPath.pathLength() - currentPath.rest().pathLength();
+    public Truck(Order assigned) {
+        truckId = ++truckCount;
 
-		// change to constants
-		return length * 60 / 70 + 1;
-	}
+        this.assigned = assigned;
+        this.loadedCargo = 0;
+    }
 
-	/**
-	 * Check if the truck has arrived to destination
-	 */
-	public boolean arrived() {
-		return currentPath.rest() == null;
-	}
+    
+    public Order assignedOrder(){
+        return assigned;
+    }
 
-	/**
-	 * Send truck to next town
-	 */
-	public Path advance() {
-		currentPath = currentPath.rest();
-		return currentPath;
-	}
-	
-	public Order assignedOrderInfo(){
-		return assignedOrder;
-	}
-	
-	public int getId(){
-		return truckId;
-	}
-	
+    public int loaded() {
+        return loadedCargo;
+    }
+
+    public void load(int amount) {
+        loadedCargo += amount;
+    }
+
+    public void unload(int amount) {
+        loadedCargo -= amount;
+    }
+    
+    public void setTown(int town) {
+        currentTown = town;
+    }
+    public int currentTown() {
+        return currentTown;
+    }
+    
+    public int getId(){
+        return truckId;
+    }
 }

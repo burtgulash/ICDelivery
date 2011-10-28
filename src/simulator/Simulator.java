@@ -1,6 +1,5 @@
 package simulator;
 
-import stats.Logger;
 import stats.CustomerList;
 import stats.Order;
 import stats.Truck;
@@ -9,99 +8,32 @@ import graph.Graph;
 import graph.Path;
 
 public class Simulator {
-    // singleton reference
-    private static Simulator onlySimulator;
-    
-
-    Calendar timeline;
-    Scheduler scheduler;
-    Logger logger;
-    CustomerList customerList;
-
+    protected static Scheduler scheduler;
+    protected final static int TERMINATE = 0;
+    protected final static int CONTINUE  = 1;
 
     /**
-      * Constructor for Simulator, provide all needed components
+     * Static constructor
+     *
+     * Provide with one of Scheduler strategy implementations
      */
-    public static Simulator getSimulatorObject(Scheduler s,
-                                               Calendar  cal,
-                                               CustomerList cust,
-                                               Logger log)
-    {
-        if (onlySimulator == null)
-            onlySimulator = new Simulator(s, cal, cust, log);
-        return onlySimulator;
+    public static void init(Scheduler s) {
+        scheduler  = s;
     }
-
-    // keep private, Simulator is singleton
-    private Simulator(Scheduler s, 
-                      Calendar cal, 
-                      CustomerList cust,
-                      Logger log)
-    {
-        scheduler    = s;
-        timeline     = cal;
-        customerList = cust;
-        logger = log;
-    }
-
 
     /**
      * Core of the simulation, events are handled here
      */
-    public void mainLoop() {
+    public static void mainLoop() {
         Event current;
+        int purpose;
 
-        MAIN_LOOP:
-        while (true) {
-            current = timeline.nextEvent();
+        do {
+            current  = Calendar.nextEvent();
+            purpose  = current.doWork();
 
-            switch (current.type) {
-                case STOP:
-                    break MAIN_LOOP;
+            // current.log();
 
-                case ORDER:
-                    Order currentOrder = ((OrderEvent) current).order;
-                    scheduler.receiveOrder(currentOrder);
-                    break;
-
-
-                case TRUCK_LOAD:
-                    break;
-
-
-                case TRUCK_SEND:
-                    TruckSend e = (TruckSend) current;
-                    Truck t = e.truck;
-                    if (t.arrived()) {
-                        // unload -->> ??  UnloadEvent ??
-                        // send back
-                    } else {
-                        // advance truck by one town
-                        // refactor to separate method
-                        int timeInNextTown = e.time() + t.timeToNextTown();
-                        Path  fromNextTown = t.advance();
-                        Event nextTownSend = new TruckSend(timeInNextTown,
-                                                           fromNextTown,
-                                                           t);
-                        timeline.addEvent(nextTownSend);
-                    }
-                    break;
-                    
-
-                default:
-                    System.err.println("Unexpected event occured");
-                    return;
-            }
-            logger.note(current.log());
-        }
-        logger.closeLog();
-    }
-
-    /**
-     * Returns summary of all trucks and customers
-     * to be used by logger
-     */
-    public void getSummary() {
-        // TODO rov
+        } while (purpose != TERMINATE);
     }
 }

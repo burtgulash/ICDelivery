@@ -2,17 +2,17 @@ package simulator;
 
 import stats.Truck;
 
-class TruckLoad extends TruckEvent {
+class TruckUnload extends TruckEvent {
     int amount;
 
-    TruckLoad(int time, int amount, Truck truck) {
+    TruckUnload(int time, int amount, Truck truck) {
         super(time, truck);
         this.amount = amount;
     }
 
     @Override
     protected int doWork() {
-        truck.load(amount);
+        truck.unload(amount);
         return Simulator.CONTINUE;
     }
 }

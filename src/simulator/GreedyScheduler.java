@@ -4,9 +4,13 @@ import stats.Order;
 import stats.Truck;
 
 import graph.Graph;
+import graph.Path;
 import graph.ShortestPaths;
 import graph.FloydWarshall;
-import graph.Path;
+
+// import constants
+import static simulator.Times.*;
+
 
 
 /**
@@ -15,44 +19,21 @@ import graph.Path;
  * Assigns one Truck to one Order and sends it as soon as possible.
  * Only minimizes distance costs.
  *
- *
- * Only one instance should exist because computing shortestPaths is 
- * expensive.
  */
 public class GreedyScheduler implements Scheduler {
-
-    // constants begin
+    private final int TERMINATION_TIME;
     private final int DEPOT;
 
-    private final int ROUND_UP        = 1;
-    private final int MINUTES_IN_HOUR = 60;
-
-    private final int MIN_ACCEPT_TIME = 6  * MINUTES_IN_HOUR;  // 6 hodin rano
-    private final int MAX_ACCEPT_TIME = 18 * MINUTES_IN_HOUR; // 18 hodin vecer
-    private final int DAY             = 24 * MINUTES_IN_HOUR;
-
-    private final int SPEED           = 70;   // km/h
-    private final int LOADING_TIME    = 15;   // minuters
-    private final int UNLOADING_TIME  = LOADING_TIME;
-
-    private final int BASE_COST       = 5;    // kc/km
-    private final int TRANSPORT_COST  = 1;    // per container
-    private final int UNLOAD_COST     = 100;
-    private final int WAITING_COST    = 150;
-    // constants end
-
+    private final int TRUCK_SPEED = 70; // in km/h
 
     private ShortestPaths costMinimizer;
-    private Calendar cal;
-    
-
 
     /**
      * Constructor for Greedy Scheduler
      */
-    public GreedyScheduler (Graph graph, Calendar cal, int depot) {
+    public GreedyScheduler (Graph graph, int depot, int terminationTime) {
         DEPOT = depot;
-        this.cal = cal;
+        TERMINATION_TIME = terminationTime;
         costMinimizer = new FloydWarshall(graph);
     }
 
@@ -62,134 +43,123 @@ public class GreedyScheduler implements Scheduler {
      * Receives order and immediately sends result to Dispatcher
      */
     public void receiveOrder(Order received) {
-        // find shortest Path to customer
-        int customerVertex = received.customer.vertex;
-        Path shortestPath  = costMinimizer.shortestPath(DEPOT, customerVertex);
-        assert(shortestPath != null);
-        
-        // create plan for received Order
+        assert(received.sentBy().customerVertex() != DEPOT);
+
+
+        // create Trip that will handle the Order
         int receivedTime   = received.received();
-        int amount         = received.amount();
-        assert(amount > 0);
+        int customer       = received.sentBy().customerVertex();
+        int amount  = received.amount();
+        Path shortestPath  = costMinimizer.shortestPath(DEPOT, customer);
 
-        Trip currentPlan   = new Trip(receivedTime, shortestPath, amount);
-        
+        Trip plan = new Trip(receivedTime, shortestPath, amount, TRUCK_SPEED);
 
-        // delay if needed
-        // arrival time in minutes at the day of arrival
-        int endTime = currentPlan.arrivalTime % DAY;
-        if (endTime < MIN_ACCEPT_TIME)
-            currentPlan.delay(MIN_ACCEPT_TIME - endTime);
-        else if(endTime > MAX_ACCEPT_TIME)
-            currentPlan.delay(DAY + MIN_ACCEPT_TIME - endTime);
-
-
-        // accept the Order
-        dispatch(currentPlan, received);
-    }
-
-    /**
-     * Takes care of inserting Routing events into calendar
-     * and communicating with statistics package
-     */
-    private void dispatch(Trip successfullyPlanned, Order order) {
-
-        // Initialize dispatch variables
-        // fully load the truck
-        int orderedAmount = order.amount();
-        Trip t = successfullyPlanned;
-        Truck truck = new Truck(order, t.path, orderedAmount);
-
-
-        // Create loading event
-        Event load  = new TruckLoad(t.startTime, orderedAmount, truck);
-
-        // Create send event
-        Event send  = new TruckSend(t.dispatchTime, t.path, truck);
-
-        // Create return events
-        int customerVertex = order.customer.vertex;
-        Path shortestBack  = costMinimizer.shortestPath(customerVertex, DEPOT);
-        assert(shortestBack != null);
-        Event goBack = new TruckSend(t.endTime, shortestBack, truck);
-
-
-        // Send them to Calendar
-        cal.addEvent(load);
-        cal.addEvent(send);
-        // TODO unload event
-        cal.addEvent(goBack);
-        
-        // BIG TODO update statistics
-
-        // TODO update Truck List
-        // TODO update Orders List
-        // TODO ??? update Customers List ???
-    }
-
-
-    @Override
-    /**
-     * Greedy scheduler does not implement this method as it never
-     * holds any Trucks, they are immediately dispatched.
-     */
-    public void forceDispatch() {
-    }
-
-
-
-
-
-    /**
-     * Private class for internal purposes of Scheduler
-     * 
-     * Stores cost and time of the trip to be assigned to Truck
-     */
-    private class Trip {
-        Path path;
-        int orderedAmount;
-        int totalCost;
-
-        int endTime;
-        int startTime;
-        int dispatchTime;
-        int arrivalTime;
-
-
-
-        /**
-         * Constructs temporary storage Trip given Path to customer
-         */
-        private Trip (int receivedTime, Path toDestination, int orderedAmount) {
-            // dispatch as soon as possible
-
-            path = toDestination;
-            int tripLength = path.pathLength();
-
-            startTime = receivedTime;
-            dispatchTime = startTime + LOADING_TIME   * orderedAmount;
-            arrivalTime = startTime  + tripLength     * MINUTES_IN_HOUR/SPEED
-                                     + ROUND_UP;
-
-            endTime = arrivalTime    + UNLOADING_TIME * orderedAmount;
-            
-
-            // unnecessary to compute
-            totalCost   = BASE_COST      * tripLength    + 
-                          TRANSPORT_COST * tripLength    * orderedAmount +
-                          UNLOAD_COST    * orderedAmount + 
-                          WAITING_COST   * 0;
+    
+        // if Trip is planned out of accepting interval, delay it to
+        // nearest accepting interval [MIN_ACCEPT, MAX_ACCEPT]
+        if (plan.arrivesBefore(MIN_ACCEPT.time()) || 
+            plan.arrivesAfter(MAX_ACCEPT.time()))
+        {
+            int delayTime = DAY.time()
+                            - plan.endTime % DAY.time()
+                            + MIN_ACCEPT.time();
+            plan.delay(delayTime);
         }
 
+        // the Trip should be successfully planned now
 
-        /**
-         * Delay the trip by delay time
-         */
-        private void delay(int delayTime) {
-            startTime     += delayTime;
-            dispatchTime  += delayTime;
-            arrivalTime   += delayTime;
-            endTime       += delayTime;
+        if (!plan.arrivesBefore(TERMINATION_TIME))
+            ;// reject the Order
+
+
+        // success, assign a Truck and dispatch
+        dispatchTrucks(plan, received);
+    }
+
+
+    /**
+     * Dispatch as many truck as needed to satisfy the order
+     */
+    private void dispatchTrucks(Trip success, Order received) {
+        int customer = received.sentBy().customerVertex();
+
+        // assign new Truck while there are containers to be delivered
+        int loadAmount = received.toSatisfy();
+        Truck assigned = new Truck(received);
+        received.satisfy(loadAmount);
+
+        sendTruck(assigned, success, loadAmount);
+        sendBack(assigned, success, customer);
+    }
+
+    /**
+     * Create and send a truck loaded with given loadAmount
+     */
+    private void sendTruck(Truck truck, Trip trip, int loadAmount) {
+        // add load event
+        Event load = new TruckLoad(trip.startTime, loadAmount, truck);
+        Calendar.addEvent(load);
+
+
+        Path p = trip.path;
+        int fromTime = trip.dispatchTime;
+        int toTime   = fromTime +  p.distanceToNext() * 
+                                   TRUCK_SPEED / MINUTES_IN_HOUR.time();
+        int src      = DEPOT;
+        int dst      = p.to();
+
+        // Throw all Path events to Calendar
+        while (p.rest() != null) {
+            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
+            Calendar.addEvent(advanceByTown);
+
+            p = p.rest();
+            src = dst;
+            dst = p.to();
+            fromTime = toTime;
+            toTime = fromTime + p.distanceToNext() * 
+                                TRUCK_SPEED / MINUTES_IN_HOUR.time();
         }
+
+        // add arrival event
+        // src and fromTime are now set as if the truck was leaving destination
+        Event arrived = new TruckArrive(fromTime, truck, src);
+        Calendar.addEvent(arrived);
+
+        // add unload event        
+        // +1 to prevent unload/arrived swap in log
+        Event unload = new TruckUnload(fromTime + 1, loadAmount, truck);
+        Calendar.addEvent(unload);
+    }
+
+
+    private void sendBack(Truck truck, Trip trip, int customer) {
+        // Reverse original path
+        Path p = Path.reversed(customer, trip.path);
+
+        int fromTime = trip.endTime;
+        int toTime   = fromTime + p.distanceToNext() * 
+                                  TRUCK_SPEED / MINUTES_IN_HOUR.time();
+        int src      = customer;
+        int dst      = p.to();
+
+        // Throw all Path events to Calendar
+        while (p.rest() != null) {
+            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
+            Calendar.addEvent(advanceByTown);
+
+            p = p.rest();
+            src = dst;
+            dst = p.to();
+            fromTime = toTime;
+            toTime = fromTime + p.distanceToNext() * 
+                                TRUCK_SPEED / MINUTES_IN_HOUR.time();
+        }
+
+        assert(DEPOT == src);
+
+        // arrive at DEPOT
+        Event arrived = new TruckArrive(fromTime, truck, src);
+        Calendar.addEvent(arrived);
     }
 }

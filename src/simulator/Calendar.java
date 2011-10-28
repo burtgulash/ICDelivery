@@ -11,42 +11,30 @@ import priorityQueue.PriorityQueue;
  */
 class Calendar {
 
-	// singleton reference
-	private static Calendar onlyCalendar;
+    private static PriorityQueue<Event> queue;
+    
 
-	private PriorityQueue<Event> queue;
-	
-	public static Calendar getCalendarObject(int terminationTime) {
-		if (onlyCalendar == null)
-			onlyCalendar = new Calendar(terminationTime);
-		return onlyCalendar;
-	}
+    // Private constructor for Calendar singleton
+    public static void init(int terminationTime) {
+        queue = new PriorityQueue<Event>();
 
-	// Private constructor for Calendar singleton
-	private Calendar(int terminationTime) {
-		queue = new PriorityQueue<Event>();
-
-		// make sure we terminate
-		addEvent(new StopEvent(terminationTime));
-	}
+        // make sure we terminate
+        addEvent(new StopEvent(terminationTime));
+    }
 
 
 
-	/**
-	 * Adds event into calendar
-	 */
-	void addEvent(Event event) {
-		queue.insert(event);
-	}
+    /**
+     * Adds event into calendar
+     */
+    static void addEvent(Event event) {
+        queue.insert(event);
+    }
 
-	/**
-	 * Returns next event in timeline
-	 */
-	Event nextEvent() {
-		Event extractedEvent = queue.extractMin();
-
-		// log what happened
-		extractedEvent.log();
-		return extractedEvent;
-	}
+    /**
+     * Returns next event in timeline
+     */
+    static Event nextEvent() {
+        return queue.extractMin();
+    }
 }

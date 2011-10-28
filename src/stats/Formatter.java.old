@@ -7,12 +7,10 @@ import java.io.IOException;
 
 abstract class Formatter {
 	
-	final FileType type;
 	BufferedWriter bfr;
 	File file;
 	
-	public Formatter(String fileName, FileType type){
-		this.type = type;
+	public Formatter(String fileName) {
 		this.file = new File(fileName);
 		initFileWrite();
 	}

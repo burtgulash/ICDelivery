@@ -1,19 +1,22 @@
 package simulator; // change later
 
 public enum Times {
-    MIN_ACCEPT_TIME (360),
-    MAX_ACCEPT_TIME (1080),
-    DAY             (1440),
 
-    LOADING_TIME    (15),
-    UNLOADING_TIME  (15);
+    MINUTES_IN_HOUR (60),
 
-	private final int minutes;
-	private Times (int minutes) {
-		this.minutes = minutes;
-	}
+    MIN_ACCEPT (360),
+    MAX_ACCEPT (1080),
+    DAY        (1440),
 
-	public int minutes() {
-		return minutes;
-	}
+    LOAD    (15),
+    UNLOAD  (15);
+
+    private final int time;
+    private Times (int time) {
+        this.time = time;
+    }
+
+    public int time() {
+        return time;
+    }
 }
