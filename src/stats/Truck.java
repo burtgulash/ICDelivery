@@ -4,27 +4,37 @@ import stats.Order;
 
 
 public class Truck {
-    private static int truckCount = 0;
+	public static int MAX_CAPACITY = 10;
+    private static int truckCount  = 0;
     private int truckId;
 
     private Order assigned;
     private int loadedCargo;
 
-    // remaining Path to destination for this truck
-    private int currentTown;
 
-
-    public Truck(Order assigned, int loadedCargo) {
+    public Truck(Order assigned) {
         truckId = ++truckCount;
 
         this.assigned = assigned;
-        this.loadedCargo = loadedCargo;
+        this.loadedCargo = 0;
     }
 
     
     public Order assignedOrder(){
         return assigned;
     }
+
+	public int loaded() {
+		return loadedCargo;
+	}
+
+	public void load(int amount) {
+		loadedCargo += amount;
+	}
+
+	public void unload(int amount) {
+		loadedCargo -= amount;
+	}
     
     public int getId(){
         return truckId;

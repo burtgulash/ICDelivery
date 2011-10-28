@@ -18,9 +18,4 @@ public interface Scheduler {
      * Receives Order from Simulator class and sends response to Dispatcher
      */
     public void receiveOrder(Order order);
-
-    /**
-     * Forces the scheduler to release every car in its wait queue
-     */
-    public void forceDispatch();
 }

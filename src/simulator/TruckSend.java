@@ -1,14 +1,13 @@
 package simulator;
 
 import stats.Truck;
-import graph.Path;
 
 class TruckSend extends TruckEvent {
-    // redundant ?
-    private Path toDestination;
+    private int src, dst;
 
-    TruckSend(int time, Path path, Truck truck) {
+    TruckSend(int time, Truck truck, int src, int dst) {
         super(time, EventType.TRUCK_SEND, truck);
-        toDestination = path;
+        this.src = src;
+        this.dst = dst;
     }
 }

@@ -9,7 +9,7 @@ import priorityQueue.PriorityQueue;
  * Only one instance should exist and it should be publicly available
  * to every class that communicates by Events
  */
-static class Calendar {
+class Calendar {
 
     private static PriorityQueue<Event> queue;
     

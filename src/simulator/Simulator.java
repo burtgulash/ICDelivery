@@ -1,6 +1,5 @@
 package simulator;
 
-import stats.Logger;
 import stats.CustomerList;
 import stats.Order;
 import stats.Truck;

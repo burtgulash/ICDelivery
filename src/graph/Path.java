@@ -40,10 +40,19 @@ public class Path {
     }
 
 
+	/**
+	 * Returns distance to next(that is to 'vertex') town
+	 */
+	public int distanceToNext() {
+		if (rest == null)
+			return weight;
+		return weight - rest.weight;
+	}
+
     /**
-     * get //TODO(next) current town
+     * next town vertex
      */
-    public int town() {
+    public int to() {
         return vertex;
     }
 

@@ -1,11 +1,10 @@
 package simulator;
 
 import stats.CustomerList;
-import stats.Logger;
 import graph.Graph;
 
 
-public static class Initializer {
+public class Initializer {
     /**
      * Initializes simulation from given parameters
      */
@@ -16,8 +15,8 @@ public static class Initializer {
 
     {
         // Initialize components begin
-        Scheduler s = new GreedyScheduler(graph, depotVertex);
-		Simulator.init(s);
+        Scheduler s = new GreedyScheduler(graph, depotVertex, simulationTime);
+        Simulator.init(s);
         Calendar.init(simulationTime);
         // TODO Logger.init();
         CustomerList.init(graph.vertices());

@@ -1,6 +1,8 @@
 package stats;
 
 
+import simulator.Trip;
+
 /**
  * Class Order
  *
@@ -10,7 +12,8 @@ public class Order {
     private Trip assigned; // null if Order declined
     private final Customer customer; // creator of Order
     
-    private int amount;   // num of containers
+    private int orderedAmount;   // num of containers
+    private int toBeSatisfiedAmount;
     private int servedBy; // id of truck
     
     private final int receivedTime;
@@ -33,9 +36,10 @@ public class Order {
     public Order(int receivedTime, int customerNum, int amount) {
         orderId = ++orderCount;
 
-        this.receivedTime = receivedTime;
-        this.amount = amount;
-        customer = CustomerList.get(customerNum);
+        this.receivedTime    = receivedTime;
+        orderedAmount        = amount;
+        toBeSatisfiedAmount  = amount;
+        customer             = CustomerList.get(customerNum);
     }
 
     /**
@@ -45,19 +49,36 @@ public class Order {
         return receivedTime;
     }
 
-	/**
-	 * Return customer that sent this Order
-	 */
-	public Customer sentBy() {
-		return customer;
-	}
+    /**
+     * Return customer that sent this Order
+     */
+    public Customer sentBy() {
+        return customer;
+    }
 
 
     /**
      * Return ordered amount of containers
      */
     public int amount() {
-        return amount;
+        return orderedAmount;
+    }
+
+
+    /**
+     * Return amount of containers delivered at the end of Simulation
+     */
+    public int toSatisfy() {
+        return toBeSatisfiedAmount;
+    }
+
+    /**
+     * satisfies order by specified number of containers
+     */
+    public void satisfy(int containers) {
+        assert(containers > 0);
+        assert(containers <= toBeSatisfiedAmount);
+        toBeSatisfiedAmount -= containers;
     }
     
     /**
