@@ -105,4 +105,15 @@ public class Path {
             restWeight = p1.rest.weight;
         return prepend(p1.vertex, p1.weight - restWeight, concat(p1.rest, p2));
     }
+
+
+
+	// remove
+	@Override
+    public  String toString() {
+        String res = "PATH: " + vertex + "";
+        for (Path iter = rest; iter != null; iter = iter.rest)
+            res += ", " + iter.vertex;
+        return res;
+    }
 }

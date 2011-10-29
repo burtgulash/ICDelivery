@@ -1,3 +1,6 @@
+package simulator;
+
+
 /**
  * OrderGenerator interface
  *

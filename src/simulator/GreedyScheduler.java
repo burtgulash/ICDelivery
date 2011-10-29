@@ -7,6 +7,7 @@ import graph.Graph;
 import graph.Path;
 import graph.ShortestPaths;
 import graph.FloydWarshall;
+import graph.Dijkstra;
 
 // import constants
 import static simulator.Times.*;
@@ -34,7 +35,7 @@ public class GreedyScheduler implements Scheduler {
     public GreedyScheduler (Graph graph, int depot, int terminationTime) {
         DEPOT = depot;
         TERMINATION_TIME = terminationTime;
-        costMinimizer = new FloydWarshall(graph);
+        costMinimizer = new Dijkstra(graph);
     }
 
 
@@ -43,14 +44,16 @@ public class GreedyScheduler implements Scheduler {
      * Receives order and immediately sends result to Dispatcher
      */
     public void receiveOrder(Order received) {
+        System.out.println("sent by: " + received.sentBy().customerVertex());
         assert(received.sentBy().customerVertex() != DEPOT);
 
 
         // create Trip that will handle the Order
         int receivedTime   = received.received();
         int customer       = received.sentBy().customerVertex();
-        int amount  = received.amount();
+        int amount         = received.amount();
         Path shortestPath  = costMinimizer.shortestPath(DEPOT, customer);
+        System.out.println(shortestPath);
 
         Trip plan = new Trip(receivedTime, shortestPath, amount, TRUCK_SPEED);
 
@@ -110,6 +113,7 @@ public class GreedyScheduler implements Scheduler {
 
         // Throw all Path events to Calendar
         while (p.rest() != null) {
+System.out.printf("will be sent from %d to %d at %d\n", src, dst, fromTime);
             Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
             Calendar.addEvent(advanceByTown);
 
@@ -120,22 +124,28 @@ public class GreedyScheduler implements Scheduler {
             toTime = fromTime + p.distanceToNext() * 
                                 TRUCK_SPEED / MINUTES_IN_HOUR.time();
         }
+System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
+        Event toLastTown = new TruckSend(fromTime, truck, src, dst);
+        Calendar.addEvent(toLastTown);
 
         // add arrival event
         // src and fromTime are now set as if the truck was leaving destination
-        Event arrived = new TruckArrive(fromTime, truck, src);
+System.out.printf("will arrive at %5d:%5d\n", trip.arrivalTime, toTime);
+		// assert(trip.arrivalTime == toTime);
+        Event arrived = new TruckArrive(trip.arrivalTime, truck, src);
         Calendar.addEvent(arrived);
 
         // add unload event        
         // +1 to prevent unload/arrived swap in log
-        Event unload = new TruckUnload(fromTime + 1, loadAmount, truck);
+System.out.printf("will unload at %5d\n", trip.endTime);
+        Event unload = new TruckUnload(trip.arrivalTime + 1, loadAmount, truck);
         Calendar.addEvent(unload);
     }
 
 
     private void sendBack(Truck truck, Trip trip, int customer) {
         // Reverse original path
-        Path p = Path.reversed(customer, trip.path);
+        Path p = Path.reversed(DEPOT, trip.path);
 
         int fromTime = trip.endTime;
         int toTime   = fromTime + p.distanceToNext() * 
@@ -145,6 +155,7 @@ public class GreedyScheduler implements Scheduler {
 
         // Throw all Path events to Calendar
         while (p.rest() != null) {
+System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
             Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
             Calendar.addEvent(advanceByTown);
 
@@ -155,11 +166,15 @@ public class GreedyScheduler implements Scheduler {
             toTime = fromTime + p.distanceToNext() * 
                                 TRUCK_SPEED / MINUTES_IN_HOUR.time();
         }
+System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
+        Event toDepot = new TruckSend(fromTime, truck, src, dst);
+        Calendar.addEvent(toDepot);
 
-        assert(DEPOT == src);
+        System.out.println(DEPOT + " and src: " + dst);
+        assert(DEPOT == dst);
 
         // arrive at DEPOT
-        Event arrived = new TruckArrive(fromTime, truck, src);
+        Event arrived = new TruckArrive(toTime, truck, src);
         Calendar.addEvent(arrived);
     }
 }

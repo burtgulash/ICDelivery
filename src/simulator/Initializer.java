@@ -20,5 +20,25 @@ public class Initializer {
         Calendar.init(simulationTime);
         // TODO Logger.init();
         CustomerList.init(graph.vertices());
+
+
+        int maxAmount = 5;
+        int mean      = 60;
+        OrderGenerator gen = new UniformGenerator(maxAmount, mean, depotVertex);
+        generateOrders(gen, simulationTime, 2, mean);
+    }
+
+
+    private static void generateOrders(OrderGenerator gen, 
+                                       int simulationTime, 
+                                       int startOrders, int mean) 
+    {
+        int START_TIME = 0;
+
+        for (int i = 0; i < startOrders; i++) 
+            gen.generateAt(START_TIME);
+                
+        for (int i = 0; i < simulationTime/mean; i++)
+            gen.generateNext();
     }
 }

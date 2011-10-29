@@ -18,15 +18,9 @@ public class CrossImplementationTest {
 
 
     @Test
-    public void crossFloydWarshallsTest() {
-        crossImplementationTest(new FloydWarshall(graph),
-                                new OptimizedFloydWarshall(graph));
-    }
-
-    @Test
     public void crossFloydWarshallDijkstraTest() {
         crossImplementationTest(new Dijkstra(graph),
-                                new OptimizedFloydWarshall(graph));
+                                new FloydWarshall(graph));
     }
 
 

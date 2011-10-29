@@ -39,15 +39,9 @@ public class ShortestPathsTest {
     }
 
 
-
     @Test
     public void hardCodedTestFloydWarshall () {
         hardCodedTest(new FloydWarshall(g));    
-    }
-
-    @Test
-    public void hardCodedTestOptimizedFloydWarshall () {
-        hardCodedTest(new OptimizedFloydWarshall(g));    
     }
 
     @Test
