@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,6 +41,9 @@ public class GraphLoader {
         try {
             reader = new BufferedReader(new FileReader(graphFile));
             graph = parseGraphFile(reader, loadGraphFile(reader));
+        } catch (FileNotFoundException fnf) {
+            System.err.printf("File %s not found\n", fileName);
+            graph = null;
         } catch (IOException e) {
             System.err.println("Error, couldn't read graph file!");
             graph = null;
@@ -117,7 +121,7 @@ public class GraphLoader {
                 int dst       = Integer.parseInt(edgeMatcher.group(1));
                 int weight    = Integer.parseInt(edgeMatcher.group(2));
 
-				// insert bidirectional edge
+                // insert bidirectional edge
                 graph.addEdge(src, dst, weight);
                 graph.addEdge(dst, src, weight);
             }
