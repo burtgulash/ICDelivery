@@ -15,4 +15,10 @@ class TruckUnload extends TruckEvent {
         truck.unload(amount);
         return Simulator.CONTINUE;
     }
+
+    @Override
+    protected String log() {
+        return String.format("Truck %5d unloading %2d containers", 
+                             truck.getId(), amount);
+    }
 }

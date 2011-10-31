@@ -10,4 +10,9 @@ class StopEvent extends Event {
     protected int doWork() {
         return Simulator.TERMINATE;
     }
+
+    @Override
+    protected String log () {
+        return "Simulation terminated";
+    }
 }

@@ -32,8 +32,8 @@ public class Simulator {
             current  = Calendar.nextEvent();
             purpose  = current.doWork();
 
-            // current.log();
-
+			// handled by logger later
+            System.out.printf("%5d : %s\n", current.time(), current.log());
         } while (purpose != TERMINATE);
     }
 }

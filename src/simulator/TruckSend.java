@@ -16,4 +16,10 @@ class TruckSend extends TruckEvent {
         truck.setTown(dst);
         return Simulator.CONTINUE;
     }
+
+    @Override
+    protected String log() {
+        return String.format("Truck %5d sent from %3d to %3d", 
+                             truck.getId(), src, dst);
+    }
 }

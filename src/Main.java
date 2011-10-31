@@ -23,10 +23,18 @@ public class Main {
         loadParams();
         parseCmdArgs(args);
 
+
+        int orderMean = 300;
+        int maxTonsPerOrder = 5;
+
+		
         Initializer.initSimulation(GraphLoader.getGraph(fileName), 
                                    DEPOT,
                                    simTime,
-                                   pauseTime);
+                                   pauseTime, 
+                                   orderMean, 
+                                   startOrderCount,
+                                   maxTonsPerOrder);
 
         Simulator.mainLoop();
     }
@@ -61,7 +69,7 @@ public class Main {
             }
         }
         else{
-            System.out.println(HELP);
+            // System.out.println(HELP);
         }
         
     }
@@ -108,6 +116,7 @@ public class Main {
         startOrderCount = Config.getStartOrderCount();
         fileName = Config.getgraphFileName();
         logFile = Config.getLogFileName();
+
     }
 }
 

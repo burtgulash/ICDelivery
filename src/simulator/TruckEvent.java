@@ -10,6 +10,9 @@ abstract class TruckEvent extends Event {
         this.truck = truck;
     }
 
-	@Override
-	protected abstract int doWork();
+    @Override
+    protected abstract int doWork();
+
+    @Override
+    protected abstract String log();
 }

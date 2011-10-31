@@ -16,10 +16,9 @@ class TruckArrive extends TruckEvent {
         return Simulator.CONTINUE;
     }
     
-    /**
-     * Return town of arrival
-     */
-    public int arrivedTo() {
-        return arrivedTo;
+    @Override
+    protected String log () {
+        return String.format("Truck %5d arrived to %3d", 
+                             truck.getId(), arrivedTo);
     }
 }

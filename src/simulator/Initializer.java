@@ -11,7 +11,10 @@ public class Initializer {
     public static void initSimulation (Graph graph,
                                        int depotVertex,
                                        int simulationTime,
-                                       int pauseTime)
+                                       int pauseTime,
+                                       int orderMean,
+                                       int startOrders,
+                                       int maxOrderAmount)
 
     {
         // Initialize components
@@ -22,10 +25,9 @@ public class Initializer {
         CustomerList.init(graph.vertices());
 
 
-        int maxAmount = 5;
-        int mean      = 60;
-        OrderGenerator gen = new UniformGenerator(maxAmount, mean, depotVertex);
-        generateOrders(gen, simulationTime, 2, mean);
+        OrderGenerator gen = new UniformGenerator(maxOrderAmount, 
+                                                  orderMean, depotVertex);
+        generateOrders(gen, simulationTime, startOrders, orderMean);
     }
 
 

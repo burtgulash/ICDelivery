@@ -11,14 +11,14 @@ public class Trip {
 
     Path path;
     private final int SPEED;
-	private int orderedAmount;
+    private int orderedAmount;
 
     // only package protected constructor
     Trip (int startTime, Path path, int orderedAmount, int truckSpeed) {
         this.startTime      = startTime;
         this.path           = path;
         this.SPEED          = truckSpeed;
-		this.orderedAmount  = orderedAmount;
+        this.orderedAmount  = orderedAmount;
 
         computeTimes();
     }
@@ -35,6 +35,10 @@ public class Trip {
         dispatchTime  += delayTime;
         arrivalTime   += delayTime;
         endTime       += delayTime;
+    }
+    
+    boolean arrivesAfterEnd(int terminationTime) {
+        return endTime >= terminationTime;
     }
 
     boolean arrivesBefore(int timeInDay) {

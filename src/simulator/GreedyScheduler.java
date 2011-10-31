@@ -35,7 +35,7 @@ public class GreedyScheduler implements Scheduler {
     public GreedyScheduler (Graph graph, int depot, int terminationTime) {
         DEPOT = depot;
         TERMINATION_TIME = terminationTime;
-        costMinimizer = new Dijkstra(graph);
+        costMinimizer = new FloydWarshall(graph);
     }
 
 
@@ -44,37 +44,43 @@ public class GreedyScheduler implements Scheduler {
      * Receives order and immediately sends result to Dispatcher
      */
     public void receiveOrder(Order received) {
-        System.out.println("sent by: " + received.sentBy().customerVertex());
         assert(received.sentBy().customerVertex() != DEPOT);
 
 
         // create Trip that will handle the Order
-        int receivedTime   = received.received();
+		// +1 to prevent status events happening before receiving
+        int receivedTime   = received.received() + 1;
         int customer       = received.sentBy().customerVertex();
         int amount         = received.amount();
         Path shortestPath  = costMinimizer.shortestPath(DEPOT, customer);
-        System.out.println(shortestPath);
 
         Trip plan = new Trip(receivedTime, shortestPath, amount, TRUCK_SPEED);
 
     
         // if Trip is planned out of accepting interval, delay it to
         // nearest accepting interval [MIN_ACCEPT, MAX_ACCEPT]
-        if (plan.arrivesBefore(MIN_ACCEPT.time()) || 
-            plan.arrivesAfter(MAX_ACCEPT.time()))
-        {
-            int delayTime = DAY.time()
-                            - plan.endTime % DAY.time()
-                            + MIN_ACCEPT.time();
-            plan.delay(delayTime);
-        }
+        int delayTime = 0;
+        if (plan.arrivesBefore(MIN_ACCEPT.time()))
+            delayTime = MIN_ACCEPT.time() - plan.endTime % DAY.time();
+        if (plan.arrivesAfter(MAX_ACCEPT.time()))
+            delayTime = DAY.time()
+                        - plan.endTime % DAY.time()
+                        + MIN_ACCEPT.time();
+        // delay
+        plan.delay(delayTime);
+
 
         // the Trip should be successfully planned now
 
-        if (!plan.arrivesBefore(TERMINATION_TIME))
-            ;// reject the Order
+        if (plan.arrivesAfterEnd(TERMINATION_TIME)) {
+            Event reject = new OrderStatusEvent(receivedTime, received, false);
+			Calendar.addEvent(reject);
+            return;
+        }
 
 
+		Event accept = new OrderStatusEvent(receivedTime, received, true);
+		Calendar.addEvent(accept);
         // success, assign a Truck and dispatch
         dispatchTrucks(plan, received);
     }
@@ -90,6 +96,12 @@ public class GreedyScheduler implements Scheduler {
         int loadAmount = received.toSatisfy();
         Truck assigned = new Truck(received);
         received.satisfy(loadAmount);
+
+		// assign event
+		int assignedTime = received.received() + 1;
+		Event assign = new AssignEvent(assignedTime, loadAmount, 
+                                       assigned, received);
+		Calendar.addEvent(assign);
 
         sendTruck(assigned, success, loadAmount);
         sendBack(assigned, success, customer);
@@ -113,7 +125,6 @@ public class GreedyScheduler implements Scheduler {
 
         // Throw all Path events to Calendar
         while (p.rest() != null) {
-System.out.printf("will be sent from %d to %d at %d\n", src, dst, fromTime);
             Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
             Calendar.addEvent(advanceByTown);
 
@@ -124,20 +135,17 @@ System.out.printf("will be sent from %d to %d at %d\n", src, dst, fromTime);
             toTime = fromTime + p.distanceToNext() * 
                                 TRUCK_SPEED / MINUTES_IN_HOUR.time();
         }
-System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
         Event toLastTown = new TruckSend(fromTime, truck, src, dst);
         Calendar.addEvent(toLastTown);
 
         // add arrival event
         // src and fromTime are now set as if the truck was leaving destination
-System.out.printf("will arrive at %5d:%5d\n", trip.arrivalTime, toTime);
-		// assert(trip.arrivalTime == toTime);
-        Event arrived = new TruckArrive(trip.arrivalTime, truck, src);
+        // assert(trip.arrivalTime == toTime);
+        Event arrived = new TruckArrive(trip.arrivalTime, truck, dst);
         Calendar.addEvent(arrived);
 
         // add unload event        
         // +1 to prevent unload/arrived swap in log
-System.out.printf("will unload at %5d\n", trip.endTime);
         Event unload = new TruckUnload(trip.arrivalTime + 1, loadAmount, truck);
         Calendar.addEvent(unload);
     }
@@ -155,7 +163,6 @@ System.out.printf("will unload at %5d\n", trip.endTime);
 
         // Throw all Path events to Calendar
         while (p.rest() != null) {
-System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
             Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
             Calendar.addEvent(advanceByTown);
 
@@ -166,15 +173,13 @@ System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
             toTime = fromTime + p.distanceToNext() * 
                                 TRUCK_SPEED / MINUTES_IN_HOUR.time();
         }
-System.out.printf("will be sent from %3d to %3d at %5d\n", src, dst, fromTime);
         Event toDepot = new TruckSend(fromTime, truck, src, dst);
         Calendar.addEvent(toDepot);
 
-        System.out.println(DEPOT + " and src: " + dst);
         assert(DEPOT == dst);
 
         // arrive at DEPOT
-        Event arrived = new TruckArrive(toTime, truck, src);
+        Event arrived = new TruckArrive(toTime, truck, dst);
         Calendar.addEvent(arrived);
     }
 }
