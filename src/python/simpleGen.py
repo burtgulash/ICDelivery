@@ -65,15 +65,17 @@ def treeToGraph(graph, MAXDEGREE, edge_count):
     return graph
 
 
-def makeWeighted(graph, MAXWEIGHT):
+def makeWeighted(graph, mu, sigma):
     """ makes directed graph from undirected """
     for v in graph:
         weightedAdjList = []
 
         for e in graph[v]:
-            # make sure the graph is not weighted
-            assert not isinstance(e, tuple)
-            weight = random.randint(1, MAXWEIGHT - 1)
+            # add weights with normal distribution
+            weight = random.gauss(mu - 1, sigma)
+            # ensure positive weight
+            weight = abs(int(weight)) + 1
+
             weightedAdjList += [(e, weight)]
 
         graph[v] = weightedAdjList
@@ -97,31 +99,34 @@ def countEdges(graph):
     return sum(len(graph[v]) for v in graph)
 
 
-usageString = """usage: simpleGen.py MAXDEGREE MAXWEIGHT VERTICES DENSITY
-    MAXDEGREE <- maximal degree for each vertex
-    MAXWEIGHT <- maximal weight of every edge
-    VERTICES  <- number of vertices of graph
-    DENSITY   <- EDGES/VERTICES ratio, more means more edges
+usageString = """usage: simpleGen.py MAXDEGREE VERTICES DENSITY MU SIGMA
+    MAXDEGREE  <- maximal degree for each vertex
+    VERTICES   <- number of vertices of graph
+    DENSITY    <- EDGES/VERTICES ratio, more means more edges
+    MU         <- Expected value for edge weight (normal distribution)
+    SIGMA      <- standard deviation for edge weight
 
     # small testing graph:
-    simpleGen.py 10 20 20 5
+    simpleGen.py 10 20 5 50 20
 
     # simulation grade graph:
-    simpleGen.py 500 20 3000 50"""
+    simpleGen.py 500 3000 100 50 20"""
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print >> sys.stderr, usageString
         sys.exit(1)
 
     try:
         MAXDEGREE = int(sys.argv[1])
-        MAXWEIGHT = int(sys.argv[2])
-        VERTICES  = int(sys.argv[3])
-        DENSITY   = int(sys.argv[4])
+        VERTICES  = int(sys.argv[2])
+        DENSITY   = int(sys.argv[3])
+        MU        = int(sys.argv[4])
+        SIGMA     = int(sys.argv[5])
 
-        if MAXDEGREE <= 0 or MAXWEIGHT <= 1 or VERTICES <= 1 or DENSITY <= 0:
+        if MAXDEGREE <= 0 or VERTICES <= 1 or DENSITY <= 0 \
+                or MU <= 1 or SIGMA <= 0:
             raise ValueError
     except ValueError:
         print >> sys.stderr, "argument parsing error"
@@ -133,7 +138,7 @@ if __name__ == "__main__":
     # graph factory begin
     graph = makeConnectedGraph(vertices)
     graph = treeToGraph   (graph, MAXDEGREE, edge_count)
-    graph = makeWeighted  (graph, MAXWEIGHT)
+    graph = makeWeighted  (graph, MU, SIGMA)
     # graph factory end
 
 

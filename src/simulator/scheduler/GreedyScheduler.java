@@ -35,7 +35,7 @@ public class GreedyScheduler implements Scheduler {
     public GreedyScheduler (Graph graph, int depot, int terminationTime) {
         DEPOT = depot;
         TERMINATION_TIME = terminationTime;
-        costMinimizer = new FloydWarshall(graph);
+        costMinimizer = new Dijkstra(graph);
     }
 
 
