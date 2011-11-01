@@ -7,6 +7,13 @@ import priorityQueue.Queable;
 import priorityQueue.PriorityQueue;
 
 
+/**
+ * Class Dijkstra
+ *
+ * Implementation of Dijkstra's shortest paths algorithm.
+ * Stores previously computed shortest-paths trees as there are lots of
+ * repeating requests for shortest paths in the simulation.
+ */
 public class Dijkstra implements ShortestPaths {
     // number of remembered trees
     // the higher the higher memory consumption 
@@ -23,10 +30,16 @@ public class Dijkstra implements ShortestPaths {
     
     // cursor is current position in memo to save to
     private int cursor;
+    // shortest-path trees are stored in memo
     private int[][] memo;
     private int[] memoVertex;
 
 
+
+    /**
+     * Constructs implementation of Dijkstra's algorithm.
+     * @param graph A graph to compute shortest paths from.
+     */
     public Dijkstra(Graph graph) {
         this.graph  = graph;
         cursor      = 0;
@@ -37,7 +50,12 @@ public class Dijkstra implements ShortestPaths {
             memoVertex[i] = NIL;
     }
 
-    // Initialize Priority Queue and previous-tree for given source vertex
+
+    /**
+     * Initialize priority queue and previous-tree for given source vertex
+     *
+     * @param src source vertex
+     */
     private void init(int src) {
         queue = new PriorityQueue<NotSeenPath>();
         previous = new int[graph.vertices()];
@@ -56,7 +74,12 @@ public class Dijkstra implements ShortestPaths {
 
 
     /**
-     * Backtracks path from src to dst in 'previous' tree
+     * Constructs shortest path from computed shortest-paths tree
+     *
+     * @param src source vertex of shortestPath
+     * @param dst destination vertex of shortestPath
+     * @param prev shortest-path tree
+     * @return Shortest path from src to dst.
      */
     private Path traceBack(int src, int dst, int[] prev) {
         Path p = null;
@@ -74,8 +97,10 @@ public class Dijkstra implements ShortestPaths {
 
 
     /**
-     * Check if we have memoized previous-tree for given src vertex
-     * @return memoized tree
+     * Check if we have memoized previous-tree for given source vertex
+     *
+     * @param src source vertex
+     * @return Memoized shortest-path tree represented as previous-map
      */
     private int[] inMemo(int src) {
         assert(src != NIL);
@@ -89,6 +114,13 @@ public class Dijkstra implements ShortestPaths {
 
 
     @Override
+    /**
+     * Computes shortest path between given vertices.
+     *
+     * @param src source vertex of the path
+     * @param dst destination vertex of the path
+     * @return shortest path from src to dst.
+     */
     public Path shortestPath(int src, int dst) {
         // Path from self to self is known immediately
         if (src == dst)

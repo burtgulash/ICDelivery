@@ -1,9 +1,7 @@
 package graph;
 
 /**
- * Optimized Floyd-Warshall implementation of ShortestPaths interface
- * Does not operate on Path data structures, the complexity is truly Theta(n^3)
- * and not O(n^4) as in naive implementation.
+ * Loop optimized Floyd-Warshall implementation of ShortestPaths interface
  */
 public class FloydWarshall implements ShortestPaths {
     private final int NO_INTERMEDIATE = -1;
@@ -13,12 +11,19 @@ public class FloydWarshall implements ShortestPaths {
     // weight half-matrix
     private int[][] wMat;
 
+    /**
+     * Create a new Floyd Warshall data structure from given graph.
+     * @param graph Input graph
+     */
     public FloydWarshall(Graph graph) {
         initialize(graph);
-        allPairsShortestPaths();
+        loop();
     }
 
-	// Create weight half-matrix and half-matrix storing decisions of k vertex
+    /**
+     * Initialize weight half-matrix and k-half-matrix for algorithm loop
+     * @param graph Input graph
+     */
     private void initialize(Graph graph) {
         int v = graph.vertices();
         kMat = new int[v][];
@@ -41,9 +46,11 @@ public class FloydWarshall implements ShortestPaths {
     }
     
 
-    // Floyd-Warshall O(n^3) algorithm loop optimized
+    /**
+     * Floyd-Warshall O(n^3) algorithm 
+     */
     // Performs about 2.5x faster than without loop optimizations
-    private void allPairsShortestPaths() {
+    private void loop() {
         int v = wMat.length;
 
         // weight of path (i -> k)
@@ -97,6 +104,13 @@ public class FloydWarshall implements ShortestPaths {
 
 
     @Override
+    /**
+     * Computes shortest path between given vertices.
+     *
+     * @param src source vertex of the path
+     * @param dst destination vertex of the path
+     * @return shortest path from src to dst.
+     */
     public Path shortestPath(int src, int dst) {
         int v = wMat.length;
         assert(0 <= src && src < v);

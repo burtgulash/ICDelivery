@@ -3,18 +3,20 @@ package graph;
 /**
  * Class graph
  *
- * Stored as unidirectional graph but responds to queries as if it was
- * bidirectional.
+ * Stored as two-way directed graph.
+ * Vertices are integers in sequence ranging from 0 to N.
  */
 public class Graph {
+	/** vertex array */
     Edge[] v;
     
     
     /**
-     *  Constructs graph with numVertices vertices
+     * Constructs graph with specified amount of vertices.
+	 * @param vertexCount
      */
-    public Graph(int numVertices) {
-        v = new Edge[numVertices];
+    public Graph(int vertexCount) {
+        v = new Edge[vertexCount];
 
         // add dummy edges
         for (int i = 0; i < v.length; i++)
@@ -23,7 +25,10 @@ public class Graph {
     
     
     /**
-     * Adds edge from src to dst with given weight
+     * Adds an edge into the graph.
+	 * @param src source vertex
+	 * @param dst destination vertex
+	 * @param weight weight of the edge
      */
     void addEdge(int src, int dst, int weight) {
         Edge dummy = v[src];
@@ -34,7 +39,8 @@ public class Graph {
     
 
     /**
-     * Number of vertices of graph
+     * Number of vertices of the graph.
+	 * @return number of vertices.
      */
     public int vertices() {
         return v.length;
@@ -42,7 +48,9 @@ public class Graph {
 
 
     /**
-     * Returns weight from src to dst or +inf, if no edge
+     * Returns weight of an edge or +infinity, if the edge doesn't exist
+	 * @param src source vertex of the edge
+	 * @param dst destination vertex of the edge
      */
     int cost (int src, int dst) {
         for (Edge iter = v[src].next; iter != null; iter = iter.next)
