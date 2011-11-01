@@ -19,7 +19,7 @@ public class CrossImplementationTest {
 
     @Test
     public void crossFloydWarshallDijkstraTest() {
-        crossImplementationTest(new Dijkstra(graph),
+        crossImplementationTest(new Dijkstra(graph, 0),
                                 new FloydWarshall(graph));
     }
 

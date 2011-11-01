@@ -24,7 +24,6 @@ public class Dijkstra implements ShortestPaths {
 
 
     // result tree represented as map(vertex -> previous vertex)
-    private int[] previous;
     private PriorityQueue<NotSeenPath> queue;
     private Graph graph;
     
@@ -33,21 +32,31 @@ public class Dijkstra implements ShortestPaths {
     // shortest-path trees are stored in memo
     private int[][] memo;
     private int[] memoVertex;
+    
+    // optimization: compute shortest-path tree for depot vertex as it will
+    // be used most
+    private int[] depot_memo;
+    private final int DEPOT;
 
 
 
     /**
      * Constructs implementation of Dijkstra's algorithm.
+     *
      * @param graph A graph to compute shortest paths from.
+     * @param depotVertex compute shortest-path tree for depot vertex only once
      */
-    public Dijkstra(Graph graph) {
+    public Dijkstra(Graph graph, int depotVertex) {
         this.graph  = graph;
+        DEPOT       = depotVertex;
         cursor      = 0;
         memo        = new int[MEMO_SIZE][];
         memoVertex  = new int[MEMO_SIZE];
 
         for (int i = 0; i < MEMO_SIZE; i++)
             memoVertex[i] = NIL;
+
+        depot_memo = computeShortestPathTree(DEPOT);
     }
 
 
@@ -55,10 +64,11 @@ public class Dijkstra implements ShortestPaths {
      * Initialize priority queue and previous-tree for given source vertex
      *
      * @param src source vertex
+     * @return NILed out shortest-path tree
      */
-    private void init(int src) {
+    private int[] init(int src) {
+        int[] previous = new int[graph.vertices()];
         queue = new PriorityQueue<NotSeenPath>();
-        previous = new int[graph.vertices()];
 
         int v = graph.vertices();
         for (int i = 0; i < v; i++) {
@@ -70,6 +80,8 @@ public class Dijkstra implements ShortestPaths {
             queue.changePriority(iter.destination, iter.weight);
             previous[iter.destination] = src;
         }
+
+        return previous;
     }
 
 
@@ -113,27 +125,15 @@ public class Dijkstra implements ShortestPaths {
 
 
 
-    @Override
     /**
-     * Computes shortest path between given vertices.
+     * Dijkstra's algorithm, runs in O(V logV), fails if graph not connected
      *
-     * @param src source vertex of the path
-     * @param dst destination vertex of the path
-     * @return shortest path from src to dst.
+     * @param src compute shortest-paths tree for this vertex
+     * @return Shortest-paths tree.
      */
-    public Path shortestPath(int src, int dst) {
-        // Path from self to self is known immediately
-        if (src == dst)
-            return new Path(dst, 0, null);
-
-        // Check if path already precomputed
-        int[] memoized = inMemo(src);
-        if (memoized != null)
-            return traceBack(src, dst, memoized);
-
-
+    private int[] computeShortestPathTree(int src) {
         // initialize queue and prev-tree
-        init(src);
+        int[] previous = init(src);
 
         // Compute whole tree and store to memo
         NotSeenPath current;
@@ -148,19 +148,48 @@ public class Dijkstra implements ShortestPaths {
                 int newWeight = curWeight + n.weight;
                 int next = n.destination;
 
-                // benchmark this conditional
+                // benchmark this conditional later
                 if (newWeight < queue.priority(next)) {
                     queue.changePriority(next, curWeight + n.weight);
                     previous[next] = curVertex;
                 }
             }
         }
+        
+         return previous;
+    }
 
-        // store computed tree to memo
+
+    @Override
+    /**
+     * Computes shortest path between given vertices.
+     *
+     * @param src source vertex of the path
+     * @param dst destination vertex of the path
+     * @return shortest path from src to dst.
+     */
+    public Path shortestPath(int src, int dst) {
+        // Path from self to self is known immediately
+        if (src == dst)
+            return new Path(dst, 0, null);
+
+        // if path goes from DEPOT, we already have tree precomputed
+        if (src == DEPOT)
+            return traceBack(src, dst, depot_memo);
+
+        // Check if path already precomputed
+        int[] memoized = inMemo(src);
+        if (memoized != null)
+            return traceBack(src, dst, memoized);
+
+        // if not, compute it
+        int[] previous = computeShortestPathTree(src);
+
+        // and store to memo
         cursor = (cursor + 1) % MEMO_SIZE;
         memo[cursor] = previous;
         memoVertex[cursor] = src;
-        
+
 
         return traceBack(src, dst, previous);
     }

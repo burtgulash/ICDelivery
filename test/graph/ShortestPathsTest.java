@@ -46,7 +46,7 @@ public class ShortestPathsTest {
 
     @Test
     public void hardCodedTestDijkstra () {
-        hardCodedTest(new Dijkstra(g));
+        hardCodedTest(new Dijkstra(g, 0));
     }
 
 

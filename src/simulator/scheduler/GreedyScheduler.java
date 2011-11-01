@@ -37,7 +37,7 @@ public class GreedyScheduler implements Scheduler {
     public GreedyScheduler (Graph graph) {
         DEPOT = Simulator.DEPOT;
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
-        costMinimizer = new Dijkstra(graph);
+        costMinimizer = new Dijkstra(graph, DEPOT);
     }
 
 
