@@ -2,6 +2,7 @@ package simulator;
 
 import stats.CustomerList;
 import graph.Graph;
+import stats.Logger;
 
 
 public class Initializer {
@@ -21,7 +22,7 @@ public class Initializer {
         Scheduler s = new GreedyScheduler(graph, depotVertex, simulationTime);
         Simulator.init(s);
         Calendar.init(simulationTime);
-        // TODO Logger.init();
+        Logger.init(System.out);
         CustomerList.init(graph.vertices());
 
 

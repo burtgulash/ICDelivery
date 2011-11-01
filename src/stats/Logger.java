@@ -1,12 +1,25 @@
 package stats;
 
+import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.LinkedList;
+
 import static simulator.Times.*;
 
 public class Logger {
+	private static List<PrintWriter> writers;
 	private Logger() {/*,*/}
 
+	public static void init (OutputStream... outs) {
+		writers = new LinkedList<PrintWriter>();
+		for (OutputStream out : outs)
+			writers.add(new PrintWriter(out, true));
+	}
+
 	public static void log(int time, String message) {
-		System.out.printf("%s |  %s\n", ascTime(time), message);
+		for (PrintWriter writer : writers) 
+			writer.println(String.format("%s | %s", ascTime(time), message));
 	}
 
 	private static String ascTime(int time) {
