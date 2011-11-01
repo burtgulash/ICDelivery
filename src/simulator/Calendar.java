@@ -18,11 +18,11 @@ class Calendar {
      *
      * @param terminationTime time when the simulation will end
      */
-    public static void init(int terminationTime) {
+    public static void init() {
         queue = new PriorityQueue<Event>();
 
         // make sure we terminate
-        addEvent(new StopEvent(terminationTime));
+        addEvent(new StopEvent(Simulator.TERMINATION_TIME));
     }
 
 

@@ -16,17 +16,30 @@ import graph.Path;
  * successful termination of the application.
  */
 public class Simulator {
-    protected static Scheduler scheduler;
-    protected final static int TERMINATE = 0;
-    protected final static int CONTINUE  = 1;
+    static Scheduler scheduler;
+    static int DEPOT;
+    static int TERMINATION_TIME;
+    final static int TERMINATE = 0;
+    final static int CONTINUE  = 1;
 
     /**
      * Initializes simulation.
      *
-     * @param s Scheduler strategy to be used within the simulation.
+     * @param depotVertex vertex in city-map chosen as truck depot/warehouse...
+     * @param simulationTime time of termination
      */
-    public static void init(Scheduler s) {
-        scheduler  = s;
+    public static void init(int depotVertex, int simulationTime) {
+        DEPOT             = depotVertex;
+        TERMINATION_TIME  = simulationTime;
+    }
+
+    /**
+     * Sets the scheduler of simulation to different scheduler.
+     *
+     * @param s new Scheduler
+     */
+    public static void setScheduler(Scheduler s) {
+        scheduler = s;
     }
 
     /**

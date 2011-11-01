@@ -19,7 +19,12 @@ class TruckSend extends TruckEvent {
 
     @Override
     protected String log() {
-        return String.format("Truck %5d sent from %3d to %3d", 
-                             truck.getId(), src, dst);
+        String srcString = 
+               src == Simulator.DEPOT ? "HOME" : String.format("%4d", src);
+        String dstString = 
+               dst == Simulator.DEPOT ? "HOME" : String.format("%4d", dst);
+
+        return String.format("Truck %5d sent from %s to %s", 
+                             truck.getId(), srcString, dstString);
     }
 }

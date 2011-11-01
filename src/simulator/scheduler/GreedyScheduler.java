@@ -34,9 +34,9 @@ public class GreedyScheduler implements Scheduler {
      * @param terminationTime time of end, trucks won't be sent if they would 
                               arrive after this time
      */
-    public GreedyScheduler (Graph graph, int depot, int terminationTime) {
-        DEPOT = depot;
-        TERMINATION_TIME = terminationTime;
+    public GreedyScheduler (Graph graph) {
+        DEPOT = Simulator.DEPOT;
+        TERMINATION_TIME = Simulator.TERMINATION_TIME;
         costMinimizer = new Dijkstra(graph);
     }
 
@@ -180,10 +180,6 @@ public class GreedyScheduler implements Scheduler {
         Event toLastTown = new TruckSend(fromTime, truck, src, dst);
         Calendar.addEvent(toLastTown);
 
-        // add arrival event
-        Event arrived = new TruckArrive(toTime, truck, dst);
-        Calendar.addEvent(arrived);
-                                                 
 
         // add unload event        
         // +1 to prevent unload/arrived swap in log
@@ -226,8 +222,8 @@ public class GreedyScheduler implements Scheduler {
         assert(DEPOT == dst);
 
         // arrive at DEPOT
-        Event arrived = new TruckArrive(toTime, truck, dst);
-        Calendar.addEvent(arrived);
+        Event returned = new TruckReturn(toTime, truck);
+        Calendar.addEvent(returned);
     }
 
     

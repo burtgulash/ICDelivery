@@ -5,6 +5,11 @@ import graph.Graph;
 import stats.Logger;
 
 
+/**
+ * Initializer class
+ *
+ * Takes care of initialization of most of the components in correct order.
+ */
 public class Initializer {
     /**
      * Initializes simulation from given parameters
@@ -19,9 +24,12 @@ public class Initializer {
 
     {
         // Initialize components
-        Scheduler s = new GreedyScheduler(graph, depotVertex, simulationTime);
-        Simulator.init(s);
-        Calendar.init(simulationTime);
+        // Initialize Simulator first!
+        Simulator.init(depotVertex, simulationTime);
+        Calendar.init();
+        Scheduler s = new GreedyScheduler(graph);
+        Simulator.setScheduler(s);
+
         Logger.init(System.out);
         CustomerList.init(graph.vertices());
 

@@ -25,7 +25,7 @@ public class Main {
 
 
         int orderMean = 800;
-        int maxTonsPerOrder = 50;
+        int maxTonsPerOrder = 10;
 
         
         Initializer.initSimulation(GraphLoader.getGraph(fileName), 
