@@ -1,4 +1,9 @@
 import graph.GraphLoader;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import simulator.Initializer;
 import simulator.Simulator;
 
@@ -8,7 +13,56 @@ import java.util.regex.Matcher;
 
 public class Main {
 
-    static String NL = String.format("%n");
+    public static void main(String[] args) {
+        try {
+            parse(args);
+        } catch(MissingValueException ex) {
+            System.err.println("Missing value after " + ex.arg);
+            System.exit(1);
+        } catch(InvalidArgumentException ex) {
+            System.err.println("Invalid argument: " + ex.invalidArg);
+            System.exit(1);
+        } catch (NumberFormatException ex) {
+            System.err.println("Argument parsing error");
+            System.exit(1);
+        } catch (IndexOutOfBoundsException ex) {
+            System.err.println("Missing argument");
+            System.exit(1);
+        }
+
+        if (pauseTime < 0)
+            pauseTime = simTime + 1;
+
+        OutputStream file = null;
+        try {
+            if (outFile != null)
+                file = new FileOutputStream(outFile);
+        } catch (FileNotFoundException fnf) {
+            System.err.printf("File %s can't be opened for writing%n", outFile);
+            System.exit(1);
+        } catch (SecurityException sex) {
+            System.err.printf("Don't have permission to write to %s%n",outFile);
+            System.exit(1);
+        }
+
+        Initializer.initSimulation(GraphLoader.getGraph(graphFile),
+                                   HOME,
+                                   simTime, 
+                                   pauseTime,
+                                   orderMean,
+                                   startOrderCount,
+                                   maxTonsPerOrder,
+                                   beQuiet,
+                                   file);
+
+        Simulator.mainLoop();
+    }
+
+
+
+
+    static final String NL = String.format("%n");
+    static final int HOME = 0;
 
     static int simTime = 7200;
     static int pauseTime = -1;
@@ -20,7 +74,7 @@ public class Main {
     static int maxTonsPerOrder = 5;
     
     public static final String HELP = 
-"Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny" + NL +
+"Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny" + NL + NL +
 "Usage: main [OPTIONS...] GRAPHFILE" + NL +
 "  -h | --help        <- print help" + NL + 
 "  -q | --quiet       <- don't print to screen" + NL +
@@ -164,6 +218,7 @@ public class Main {
         }
     }
 
+    // debugging
     private static void printConfig() {
         System.out.println("quiet    :   " + beQuiet);    
         System.out.println("time     :   " + simTime);    
@@ -175,28 +230,6 @@ public class Main {
         System.out.println("max      :   " + maxTonsPerOrder);    
     }
 
-    public static void main(String[] args) {
-        try {
-            parse(args);
-        } catch(MissingValueException ex) {
-            System.err.println("Missing value after " + ex.arg);
-            System.exit(1);
-        } catch(InvalidArgumentException ex) {
-            System.err.println("Invalid argument: " + ex.invalidArg);
-            System.exit(1);
-        } catch (NumberFormatException ex) {
-            System.err.println("Argument parsing error");
-            System.exit(1);
-        } catch (IndexOutOfBoundsException ex) {
-            System.err.println("Missing argument");
-            System.exit(1);
-        }
-
-        printConfig();
-        
-
-        // Simulator.mainLoop();
-    }
 
     
 }

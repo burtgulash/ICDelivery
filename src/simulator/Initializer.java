@@ -1,5 +1,7 @@
 package simulator;
 
+import java.io.OutputStream;
+
 import stats.TruckStack;
 import stats.CustomerList;
 import stats.Logger;
@@ -17,28 +19,35 @@ public class Initializer {
      * Initializes simulation from given parameters
      */
     public static void initSimulation (Graph graph,
-                                       int depotVertex,
+                                       int homeVertex,
                                        int simulationTime,
                                        int pauseTime,
                                        int orderMean,
                                        int startOrders,
-                                       int maxOrderAmount)
+                                       int maxOrderAmount,
+                                       boolean quiet,
+                                       OutputStream file)
 
     {
         // Initialize components
         // Initialize Simulator first!
-        Simulator.init(depotVertex, simulationTime);
+        Simulator.init(homeVertex, simulationTime);
         Calendar.init();
         Scheduler s = new GreedyScheduler(graph);
         Simulator.setScheduler(s);
 
-        Logger.init(System.out);
         CustomerList.init(graph.vertices());
         TruckStack.init();
 
+        Logger.init();
+        if (!quiet)
+            Logger.addOutput(System.out);
+        if (file != null)
+            Logger.addOutput(file);
+
 
         OrderGenerator gen = new UniformGenerator(maxOrderAmount, 
-                                                  orderMean, depotVertex);
+                                                  orderMean, homeVertex);
         generateOrders(gen, simulationTime, startOrders, orderMean);
     }
 

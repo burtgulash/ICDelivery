@@ -11,10 +11,12 @@ public class Logger {
     private static List<PrintWriter> writers;
     private Logger() {/*,*/}
 
-    public static void init (OutputStream... outs) {
+    public static void init () {
         writers = new LinkedList<PrintWriter>();
-        for (OutputStream out : outs)
-            writers.add(new PrintWriter(out, true));
+    }
+
+    public static void addOutput(OutputStream out) {
+        writers.add(new PrintWriter(out, true));
     }
 
     public static void log(int time, String message) {
