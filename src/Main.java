@@ -2,121 +2,217 @@ import graph.GraphLoader;
 import simulator.Initializer;
 import simulator.Simulator;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 
 public class Main {
+
+    static String NL = String.format("%n");
+
+    static int simTime = 7200;
+    static int pauseTime = -1;
+    static int startOrderCount = 0;
+    static String graphFile = "test.graph";
+    static String outFile = null;
+    static boolean beQuiet = false;
+    static int orderMean  = 10;
+    static int maxTonsPerOrder = 5;
     
-    public static final String HELP = "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny\n" +
-            "Usage: main <options>\n"+
-            "where options include:\n"+
-            "-p <minutes>\t\t Sets time when the simulation will be paused\n"+
-            "-h \t\t\t Displays this help message\n"+
-            "-n <number> \t\t Sets number of orders generated on start of simulation\n";
-    public static int simTime;
-    public static int pauseTime;
-    public static int startOrderCount;
-    public static String fileName;
-    public static String logFile;
+    public static final String HELP = 
+"Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny" + NL +
+"Usage: main [OPTIONS...] GRAPHFILE" + NL +
+"  -h | --help        <- print help" + NL + 
+"  -q | --quiet       <- don't print to screen" + NL +
+"  -t | --time        <- total time of simulation" + NL +
+"  -i | --initial     <- number of initial orders" + NL +
+"  -p | --pause       <- time of first pause" + NL +
+"  -o | --output      <- output file for log" + NL +
+"  -g | --graph       <- input  file containing graph" + NL +
+"  -m | --mean        <- mean of interval between orders" + NL +
+"  -M | --max         <- maximal amount that can be ordered by one customer";
+
     
     private static int DEPOT = 0;
 
+    static void parse(String[] argv) 
+                     throws IndexOutOfBoundsException, 
+                            NumberFormatException, 
+                            InvalidArgumentException,
+                            MissingValueException
+    {
+        String tmp = "";
+        Matcher m;
+        String help     = "-h|--help";
+        String quiet    = "-q|--quiet";
+        String orders   = "(?:-i|--initial=)(\\d*)|--initial";
+        String time     = "(?:-t|--time=)(\\d*)|--time";
+        String pause    = "(?:-p|--pause=)(\\d*)|--pause";
+        String mean     = "(?:-m|--mean=)(\\d*)|--mean";
+        String max      = "(?:-M|--max=)(\\d*)|--max";
+        String out      = "--output=(\\S+)|-o|--output";
+        String graph    = "--graph=(\\S+)|-g|--graph";
+
+
+        for (int i = 0; i < argv.length; i++) {
+            if (!argv[i].startsWith("-")) {
+                graphFile = argv[i];
+            } 
+            else {
+                if (argv[i].matches(help)) {
+                    System.out.println(HELP);
+                    System.exit(1);
+                }
+
+                else if (argv[i].matches(orders)) {
+                    m = Pattern.compile(orders).matcher(argv[i]);
+                    m.find();
+
+                    tmp = m.group(1);
+                    if (tmp == null || tmp.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        tmp = argv[++i]; 
+                    }
+                    startOrderCount = Integer.parseInt(tmp);
+                }
+
+                else if (argv[i].matches(mean)) {
+                    m = Pattern.compile(mean).matcher(argv[i]);
+                    m.find();
+
+                    tmp = m.group(1);
+                    if (tmp == null || tmp.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        tmp = argv[++i];
+                    }
+                    orderMean = Integer.parseInt(tmp);
+                }
+
+                else if (argv[i].matches(max)) {
+                    m = Pattern.compile(max).matcher(argv[i]);
+                    m.find();
+
+                    tmp = m.group(1);
+                    if (tmp == null || tmp.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        tmp = argv[++i];
+                    }
+                    maxTonsPerOrder = Integer.parseInt(tmp);
+                }
+
+                else if (argv[i].matches(pause)) {
+                    m = Pattern.compile(pause).matcher(argv[i]);
+                    m.find();
+
+                    tmp = m.group(1);
+                    if (tmp == null || tmp.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        tmp = argv[++i];
+                    }
+                    pauseTime = Integer.parseInt(tmp);
+                }
+
+                else if (argv[i].matches(time)) {
+                    m = Pattern.compile(time).matcher(argv[i]);
+                    m.find();
+
+                    tmp = m.group(1);
+                    if (tmp == null || tmp.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        tmp = argv[++i];
+                    }
+                    simTime = Integer.parseInt(tmp);
+                }
+
+                else if (argv[i].matches(quiet)) {
+                    beQuiet = true;
+                }
+
+                else if (argv[i].matches(out)) {
+                    m = Pattern.compile(out).matcher(argv[i]);
+                    m.find();
+
+                    outFile = m.group(1);
+                    if (outFile == null || outFile.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        outFile = argv[++i];
+                    }
+                }
+
+                else if (argv[i].matches(graph)) {
+                    m = Pattern.compile(graph).matcher(argv[i]);
+                    m.find();
+
+                    graphFile = m.group(1);
+                    if (graphFile == null || graphFile.equals("")) {
+                        if (argv[i].endsWith("="))
+                            throw new MissingValueException(argv[i]);
+                        graphFile = argv[++i];
+                    }
+                }
+
+                else {
+                    throw new InvalidArgumentException(argv[i]);
+                }
+            }
+        }
+    }
+
+    private static void printConfig() {
+        System.out.println("quiet    :   " + beQuiet);    
+        System.out.println("time     :   " + simTime);    
+        System.out.println("initial  :   " + startOrderCount);    
+        System.out.println("pause    :   " + pauseTime);    
+        System.out.println("output   :   " + outFile);    
+        System.out.println("graph    :   " + graphFile);    
+        System.out.println("mean     :   " + orderMean);    
+        System.out.println("max      :   " + maxTonsPerOrder);    
+    }
+
     public static void main(String[] args) {
-        loadParams();
-        parseCmdArgs(args);
-
-
-        int orderMean = 20;
-        int maxTonsPerOrder = 100;
-
-        
-        Initializer.initSimulation(GraphLoader.getGraph(fileName), 
-                                   DEPOT,
-                                   simTime - 1,
-                                   pauseTime, 
-                                   orderMean, 
-                                   startOrderCount,
-                                   maxTonsPerOrder);
-
-        Simulator.mainLoop();
-    }
-    
-    /**
-     * 
-     * Parses command line arguments and sets options of simulation
-     * 
-     * @param args command line arguments
-     */
-    
-
-    // ty kravo begin
-    static void parseCmdArgs(String[] args){
-        if (args.length > 0){
-          for (int i = 0; i < args.length; i++){
-               if(args[i].matches("-[phn]")){
-                switch (args[i].charAt(1)){
-                  case 'p': if (i+1 < args.length){
-                            pauseTime = Integer.parseInt(args[++i]);
-                            }else System.out.println("Bad argument! Expected number after flag -p");
-                            break;
-                  case 'h': System.out.println(HELP); break;
-                  case 'n': if (i+1 < args.length){
-                            startOrderCount = Integer.parseInt(args[++i]);
-                            } else System.out.println("Bad argument! Expected number after flag -n");
-                            break;
-                  default:System.out.println("Unrecognized switch \"-" + args[i].charAt(1) +"\"!"  );
-                }
-            }else
-                System.out.println("Unrecognized argument \"" + args[i] +"\"!"  );
-            }
+        try {
+            parse(args);
+        } catch(MissingValueException ex) {
+            System.err.println("Missing value after " + ex.arg);
+            System.exit(1);
+        } catch(InvalidArgumentException ex) {
+            System.err.println("Invalid argument: " + ex.invalidArg);
+            System.exit(1);
+        } catch (NumberFormatException ex) {
+            System.err.println("Argument parsing error");
+            System.exit(1);
+        } catch (IndexOutOfBoundsException ex) {
+            System.err.println("Missing argument");
+            System.exit(1);
         }
-        else{
-            // System.out.println(HELP);
-        }
-        
-    }
-     
-    
-    // ty kravo end
 
-
-    //TODO
-    // decide on format of pause-time input, in case of simple minute format this method can be removed
-    static int setPauseTime(String time) throws NumberFormatException{
-        int t = 0;
+        printConfig();
         
 
-        for(int i = 0; i < time.length();i++){
-            if (time.charAt(i) > 97 && time.charAt(i) < 110 ){
-                switch (time.charAt(i)){
-                case 'd': t += Integer.parseInt(time.substring(0, i))*1440;
-                
-                            time = time.substring(i+1);
-                            i = 0;
-                            break;
-                case 'h':t += Integer.parseInt(time.substring(0, i))*60;
-                            
-                            time = time.substring(i+1);
-                            i = 0;
-                            break;
-                case 'm':t += Integer.parseInt(time.substring(0, i));
-                            
-                            time = time.substring(i);
-                            i = 0;
-                            break;
-                default: break;
-                }
-            }
-        }
-        return t;
+        // Simulator.mainLoop();
     }
-    
-    static void loadParams(){
-        Config.readConfig();
-        simTime = Config.getSimTime();
-        pauseTime = Config.getPauseTime();
-        startOrderCount = Config.getStartOrderCount();
-        fileName = Config.getgraphFileName();
-        logFile = Config.getLogFileName();
 
+    
+}
+
+class MissingValueException extends Exception {
+    final String arg;
+    MissingValueException(String arg) {
+        super();
+        this.arg = arg;
     }
 }
 
+class InvalidArgumentException extends Exception {
+    final String invalidArg;
+    InvalidArgumentException(String arg) {
+        super();
+        invalidArg = arg;
+    }
+}
