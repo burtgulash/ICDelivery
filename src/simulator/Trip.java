@@ -2,12 +2,14 @@ package simulator;
 
 import graph.Path;
 import static simulator.Times.*;
+import static simulator.Costs.*;
 
 public class Trip {
     int startTime;
     int dispatchTime;
     int arrivalTime;
     int endTime;
+    private int totalCost;
 
     Path path;
     private final int SPEED;
@@ -19,6 +21,7 @@ public class Trip {
         this.path           = path;
         this.SPEED          = truckSpeed;
         this.orderedAmount  = orderedAmount;
+        totalCost           = 0;
 
         computeTimes();
     }
@@ -28,6 +31,12 @@ public class Trip {
         arrivalTime  = dispatchTime  + path.pathLength() * 
                                        SPEED / MINUTES_IN_HOUR.time();
         endTime      = arrivalTime   + orderedAmount * UNLOAD.time();
+    }
+
+    private void computeCost() {
+        totalCost += path.pathLength() * 
+                     (BASE.cost() + orderedAmount * TRANSPORT.cost()); 
+        totalCost += orderedAmount * UNLOADING.cost();
     }
 
     void delay(int delayTime) {
@@ -48,4 +57,8 @@ public class Trip {
     boolean arrivesAfter(int timeInDay) {
         return endTime % DAY.time() > timeInDay;
     }
+
+	int tripCost() {
+		return totalCost;
+	}
 }

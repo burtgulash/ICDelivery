@@ -4,7 +4,7 @@ public enum Costs {
 
     BASE       (5),
     TRANSPORT  (1),
-    UNLOAD     (100),
+    UNLOADING  (100),
     WAITING    (150);
 
 	private final int cost;

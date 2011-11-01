@@ -30,7 +30,7 @@ public class Main {
 		
         Initializer.initSimulation(GraphLoader.getGraph(fileName), 
                                    DEPOT,
-                                   simTime,
+                                   simTime - 1,
                                    pauseTime, 
                                    orderMean, 
                                    startOrderCount,

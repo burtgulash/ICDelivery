@@ -48,7 +48,7 @@ public class GreedyScheduler implements Scheduler {
 
 
         // create Trip that will handle the Order
-		// +1 to prevent status events happening before receiving
+        // +1 to prevent status events happening before receiving
         int receivedTime   = received.received() + 1;
         int customer       = received.sentBy().customerVertex();
         int amount         = received.amount();
@@ -73,14 +73,12 @@ public class GreedyScheduler implements Scheduler {
         // the Trip should be successfully planned now
 
         if (plan.arrivesAfterEnd(TERMINATION_TIME)) {
-            Event reject = new OrderStatusEvent(receivedTime, received, false);
-			Calendar.addEvent(reject);
+            Event reject = new OrderRejectEvent(receivedTime, received);
+            Calendar.addEvent(reject);
             return;
         }
 
 
-		Event accept = new OrderStatusEvent(receivedTime, received, true);
-		Calendar.addEvent(accept);
         // success, assign a Truck and dispatch
         dispatchTrucks(plan, received);
     }
@@ -97,11 +95,11 @@ public class GreedyScheduler implements Scheduler {
         Truck assigned = new Truck(received);
         received.satisfy(loadAmount);
 
-		// assign event
-		int assignedTime = received.received() + 1;
-		Event assign = new AssignEvent(assignedTime, loadAmount, 
+        // assign event
+        int assignedTime = received.received() + 1;
+        Event assign = new AssignEvent(assignedTime, loadAmount, 
                                        assigned, received);
-		Calendar.addEvent(assign);
+        Calendar.addEvent(assign);
 
         sendTruck(assigned, success, loadAmount);
         sendBack(assigned, success, customer);
