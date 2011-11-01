@@ -3,13 +3,11 @@ package simulator;
 import stats.Order;
 
 
-class OrderStatusEvent extends Event {
+class OrderRejectEvent extends Event {
     Order order;
-    boolean status;
     
-    OrderStatusEvent(int time, Order order, boolean status) {
+    OrderRejectEvent(int time, Order order) {
 		super(time);
-        this.status = status;
         this.order  = order;
     }
 
@@ -21,7 +19,6 @@ class OrderStatusEvent extends Event {
 
     @Override
     protected String log() {
-        String statusString = status ? "accepted" : "rejected";
-        return String.format("Order %5d %s", order.getId(), statusString);
+        return String.format("Order %5d rejected", order.getId());
     }
 }

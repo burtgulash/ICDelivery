@@ -3,6 +3,7 @@ package simulator;
 import stats.CustomerList;
 import stats.Order;
 import stats.Truck;
+import stats.Logger;
 
 import graph.Graph;
 import graph.Path;
@@ -32,8 +33,7 @@ public class Simulator {
             current  = Calendar.nextEvent();
             purpose  = current.doWork();
 
-			// handled by logger later
-            System.out.printf("%5d : %s\n", current.time(), current.log());
+			Logger.log(current.time(), current.log());
         } while (purpose != TERMINATE);
     }
 }
