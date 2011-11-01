@@ -2,6 +2,7 @@ package simulator;
 
 import stats.Order;
 import stats.Truck;
+import stats.TruckStack;
 
 import graph.Graph;
 import graph.Path;
@@ -34,7 +35,8 @@ public class GreedyScheduler implements Scheduler {
      * @param terminationTime time of end, trucks won't be sent if they would 
                               arrive after this time
      */
-    public GreedyScheduler (Graph graph) {
+    public 
+    GreedyScheduler (Graph graph) {
         DEPOT = Simulator.DEPOT;
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
         costMinimizer = new Dijkstra(graph, DEPOT);
@@ -46,7 +48,8 @@ public class GreedyScheduler implements Scheduler {
      * Receives order and immediately dispatches trucks
      * @param received Order to handle
      */
-    public void receiveOrder(Order received) {
+    public void 
+    receiveOrder(Order received) {
         assert(received.sentBy().customerVertex() != DEPOT);
 
 
@@ -84,13 +87,15 @@ public class GreedyScheduler implements Scheduler {
      *                deliver in time
      * @param received original received order
      */
-    private void dispatchTrucks(Trip success, Order received) {
+    private void 
+    dispatchTrucks(Trip success, Order received) {
         int customer = received.sentBy().customerVertex();
 
         // assign new truck while there are containers to be delivered
         int orderAmount = received.amount();
         while (orderAmount > 0) {
             Truck truck = new Truck();
+            TruckStack.add(truck);
 
             // assign as many containers as the Truck can take
             int assignedAmount = Math.min(Truck.MAX_CAPACITY, orderAmount);
@@ -155,7 +160,8 @@ public class GreedyScheduler implements Scheduler {
      * @param truck truck to be dispatched
      * @param trip  send the truck on this trip
      */
-    private void sendTruck(Truck truck, Trip trip, int loadAmount) {
+    private void 
+    sendTruck(Truck truck, Trip trip, int loadAmount) {
 
 
         Path p = trip.path;
@@ -194,7 +200,8 @@ public class GreedyScheduler implements Scheduler {
      * @param trip  trip to be reversed
      * @param customer original trip destination vertex
      */
-    private void sendBack(Truck truck, Trip trip, int customer) {
+    private void 
+    sendBack(Truck truck, Trip trip, int customer) {
         // Reverse original path
         Path p = Path.reversed(DEPOT, trip.path);
 
@@ -231,7 +238,8 @@ public class GreedyScheduler implements Scheduler {
      * Delays the trip such that it arrives in acceptable time
      * @param trip trip to be delayed
      */
-    private void delayIfNeeded(Trip trip) {
+    private void 
+    delayIfNeeded(Trip trip) {
         int delayTime = 0;
         int arrivalTimeInDay     = trip.arrivalTime % DAY.time();
         int completionTimeInDay  = trip.endTime     % DAY.time();

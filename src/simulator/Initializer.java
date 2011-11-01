@@ -1,8 +1,10 @@
 package simulator;
 
+import stats.TruckStack;
 import stats.CustomerList;
-import graph.Graph;
 import stats.Logger;
+
+import graph.Graph;
 
 
 /**
@@ -32,6 +34,7 @@ public class Initializer {
 
         Logger.init(System.out);
         CustomerList.init(graph.vertices());
+        TruckStack.init();
 
 
         OrderGenerator gen = new UniformGenerator(maxOrderAmount, 
