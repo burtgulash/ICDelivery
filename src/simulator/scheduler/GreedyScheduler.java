@@ -98,9 +98,9 @@ public class GreedyScheduler implements Scheduler {
 
             // Construct new trip for each truck and delay such that 
             // no waiting is needed
-            Trip truckTrip = new Trip(success.startTime, 
-                                      success.path, 
-                                      assignedAmount);
+            Trip truckTrip = 
+                  new Trip(success.startTime, success.path, assignedAmount);
+
             // Now we know travelCost for this truck, update in Truck 
             truck.setTravelCost(truckTrip.tripCost());
 

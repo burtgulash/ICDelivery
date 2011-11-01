@@ -24,8 +24,8 @@ public class Main {
         parseCmdArgs(args);
 
 
-        int orderMean = 800;
-        int maxTonsPerOrder = 10;
+        int orderMean = 20;
+        int maxTonsPerOrder = 100;
 
         
         Initializer.initSimulation(GraphLoader.getGraph(fileName), 
