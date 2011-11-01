@@ -1,6 +1,7 @@
 package simulator;
 
 import graph.Path;
+import stats.Truck;
 import static simulator.Times.*;
 import static simulator.Costs.*;
 
@@ -12,31 +13,29 @@ public class Trip {
     private int totalCost;
 
     Path path;
-    private final int SPEED;
-    private int orderedAmount;
+    private int assignedAmount;
 
     // only package protected constructor
-    Trip (int startTime, Path path, int orderedAmount, int truckSpeed) {
+    Trip (int startTime, Path path, int assignedAmount) {
         this.startTime      = startTime;
         this.path           = path;
-        this.SPEED          = truckSpeed;
-        this.orderedAmount  = orderedAmount;
+        this.assignedAmount    = assignedAmount;
         totalCost           = 0;
 
         computeTimes();
     }
 
     private void computeTimes() {
-        dispatchTime = startTime     + orderedAmount * LOAD.time();
+        dispatchTime = startTime     + assignedAmount * LOAD.time();
         arrivalTime  = dispatchTime  + path.pathLength() * 
-                                       SPEED / MINUTES_IN_HOUR.time();
-        endTime      = arrivalTime   + orderedAmount * UNLOAD.time();
+                                       MINUTES_IN_HOUR.time() / Truck.SPEED;
+        endTime      = arrivalTime   + assignedAmount * UNLOAD.time();
     }
 
     private void computeCost() {
         totalCost += path.pathLength() * 
-                     (BASE.cost() + orderedAmount * TRANSPORT.cost()); 
-        totalCost += orderedAmount * UNLOADING.cost();
+                     (BASE.cost() + assignedAmount * TRANSPORT.cost()); 
+        totalCost += assignedAmount * UNLOADING.cost();
     }
 
     void delay(int delayTime) {
@@ -45,20 +44,8 @@ public class Trip {
         arrivalTime   += delayTime;
         endTime       += delayTime;
     }
-    
-    boolean arrivesAfterEnd(int terminationTime) {
-        return endTime >= terminationTime;
-    }
 
-    boolean arrivesBefore(int timeInDay) {
-        return endTime % DAY.time() < timeInDay;
+    int tripCost() {
+        return totalCost;
     }
-
-    boolean arrivesAfter(int timeInDay) {
-        return endTime % DAY.time() > timeInDay;
-    }
-
-	int tripCost() {
-		return totalCost;
-	}
 }

@@ -1,7 +1,7 @@
 package stats;
 
-
-import simulator.Trip;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class Order
@@ -9,12 +9,12 @@ import simulator.Trip;
  * Used by scheduler and statistics keeper
  */
 public class Order {
-    private Trip assigned; // null if Order declined
+    private List<Truck> trucks;      // trucks that serve this order
     private final Customer customer; // creator of Order
     
     private int orderedAmount;   // num of containers
-    private int toBeSatisfiedAmount;
-    private int servedBy; // id of truck
+    private int satisfied;       // containers delivered so far
+    private int onWay;           // containers on road
     
     private final int receivedTime;
 
@@ -38,8 +38,21 @@ public class Order {
 
         this.receivedTime    = receivedTime;
         orderedAmount        = amount;
-        toBeSatisfiedAmount  = amount;
+        satisfied            = 0;
+        onWay                = 0;
         customer             = CustomerList.get(customerNum);
+        trucks               = new LinkedList<Truck>();
+    }
+
+
+    /**
+     * Assign truck to this order
+     * @param truck Truck that got assigned to this order
+     * @param assignedAmount containers, that will be delivered by the truck
+     */
+    public void assignTruck(Truck truck, int assignedAmount) {
+        trucks.add(truck);
+        onWay += assignedAmount;
     }
 
     /**
@@ -68,17 +81,18 @@ public class Order {
     /**
      * Return amount of containers delivered at the end of Simulation
      */
-    public int toSatisfy() {
-        return toBeSatisfiedAmount;
+    public int satisfied() {
+        return satisfied;
     }
 
     /**
      * satisfies order by specified number of containers
      */
     public void satisfy(int containers) {
-        assert(containers > 0);
-        assert(containers <= toBeSatisfiedAmount);
-        toBeSatisfiedAmount -= containers;
+        onWay     -= containers;
+        assert(onWay >= 0);
+        satisfied += containers;
+        assert(satisfied <= orderedAmount);
     }
     
     /**

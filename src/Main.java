@@ -24,10 +24,10 @@ public class Main {
         parseCmdArgs(args);
 
 
-        int orderMean = 300;
-        int maxTonsPerOrder = 5;
+        int orderMean = 800;
+        int maxTonsPerOrder = 50;
 
-		
+        
         Initializer.initSimulation(GraphLoader.getGraph(fileName), 
                                    DEPOT,
                                    simTime - 1,
