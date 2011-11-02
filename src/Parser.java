@@ -60,7 +60,7 @@ public class Parser {
 
         System.err.println(usage);
         for (Option option : options)
-            System.err.println(String.format("    -%s | --%s \t\t%s",
+            System.err.println(String.format("    -%s | --%s   \t\t%s",
                                   option.abbr, option.name, option.help));
     }
 

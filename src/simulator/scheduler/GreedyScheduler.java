@@ -233,7 +233,7 @@ public class GreedyScheduler implements Scheduler {
         Calendar.addEvent(returned);
     }
 
-    
+
     /**
      * Delays the trip such that it arrives in acceptable time
      * @param trip trip to be delayed
@@ -243,16 +243,17 @@ public class GreedyScheduler implements Scheduler {
         int delayTime = 0;
         int arrivalTimeInDay     = trip.arrivalTime % DAY.time();
         int completionTimeInDay  = trip.endTime     % DAY.time();
+        // arrives next day in morning, then completionTime <= arrivalTime
+        boolean arrivesNextDay   = completionTimeInDay <= arrivalTimeInDay;
 
         // delay if too early
         if (arrivalTimeInDay < MIN_ACCEPT.time())
             delayTime = MIN_ACCEPT.time() - trip.arrivalTime % DAY.time();
 
         // delay to next day if too late
-        if (completionTimeInDay > MAX_ACCEPT.time())
-            delayTime = DAY.time()
-                        - trip.arrivalTime % DAY.time()
-                        + MIN_ACCEPT.time();
+        else if (completionTimeInDay > MAX_ACCEPT.time() || arrivesNextDay)
+            delayTime = 
+                DAY.time() - trip.arrivalTime % DAY.time() + MIN_ACCEPT.time();
 
         trip.delay(delayTime);
     }

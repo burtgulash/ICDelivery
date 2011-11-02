@@ -25,9 +25,9 @@ public class Main {
         p.addIntegerOption("pause", "p", "time of first pause", -1);
         p.addIntegerOption("mean", "m", "mean of interval between orders", 10);
         p.addIntegerOption("max", "M", 
-                     "maximal amount that can be ordered by one customer", 5);
+                     "amount that can be ordered by one customer", 5);
 
-        p.addStringOption("output", "o", "output file for log", "log.txt");
+        p.addStringOption("output", "o", "output file for log", "");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
         String[] arg = null;
@@ -64,7 +64,7 @@ public class Main {
 
         OutputStream file = null;
         try {
-            if (outFile != null)
+            if (outFile != null && !outFile.equals(""))
                 file = new FileOutputStream(outFile);
         } catch (FileNotFoundException fnf) {
             System.err.printf("File %s can't be opened for writing%n", outFile);

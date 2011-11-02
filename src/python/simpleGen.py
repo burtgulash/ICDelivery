@@ -107,10 +107,10 @@ usageString = """usage: simpleGen.py MAXDEGREE VERTICES DENSITY MU SIGMA
     SIGMA      <- standard deviation for edge weight
 
     # small testing graph:
-    simpleGen.py 10 20 5 50 20
+    simpleGen.py 10 20 5 70 20
 
     # simulation grade graph:
-    simpleGen.py 500 3000 100 50 20"""
+    simpleGen.py 500 3000 5 70 20"""
 
 
 if __name__ == "__main__":
