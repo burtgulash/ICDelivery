@@ -1,5 +1,7 @@
 package simulator;
 
+import stats.Order;
+
 
 /**
  * OrderGenerator interface
@@ -8,6 +10,6 @@ package simulator;
  * and sent to Calendar
  */
 public interface OrderGenerator {
-	public void generateAt(int time);
-	public void generateNext();	
+    public Order generateAt(int time);
+    public Order generateNext();    
 }

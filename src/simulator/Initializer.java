@@ -5,8 +5,11 @@ import java.io.OutputStream;
 import stats.TruckStack;
 import stats.CustomerList;
 import stats.Logger;
+import stats.Order;
 
 import graph.Graph;
+
+import static simulator.Times.*;
 
 
 /**
@@ -46,8 +49,8 @@ public class Initializer {
             Logger.addOutput(file);
 
 
-        OrderGenerator gen = new UniformGenerator(maxOrderAmount, 
-                                                  orderMean, homeVertex);
+        OrderGenerator gen = new ExponentialGenerator(orderMean, 
+                                                  maxOrderAmount, homeVertex);
         generateOrders(gen, simulationTime, startOrders, orderMean);
     }
 
@@ -57,11 +60,26 @@ public class Initializer {
                                        int startOrders, int mean) 
     {
         int START_TIME = 0;
+        int HALF_DAY   = DAY.time() / 2;
 
-        for (int i = 0; i < startOrders; i++) 
-            gen.generateAt(START_TIME);
-                
-        for (int i = 0; i < simulationTime/mean; i++)
-            gen.generateNext();
+        Order generated;
+        for (int i = 0; i < startOrders; i++) {
+            generated = gen.generateAt(START_TIME);
+            sendOrder(generated);
+        }
+
+        while (true) {
+            generated = gen.generateNext();
+            if (generated.received() >= simulationTime - HALF_DAY)
+                break;
+            sendOrder(generated);
+        }
+    }
+
+
+    // send order to calendar
+    private static void sendOrder(Order order) {
+        Event orderEvent = new OrderEvent(order.received(), order);
+        Calendar.addEvent(orderEvent);
     }
 }

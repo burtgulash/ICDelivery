@@ -24,7 +24,7 @@ public class CustomerList {
      * Finds customer by id/customerVertex
      */
     public static Customer get(int customerId) {
-        assert(0 <= customerId && customerId < list.length);
+        assert(0 <= customerId && customerId < numCustomers());
         assert(list[customerId] != null);
         return list[customerId];
     }
