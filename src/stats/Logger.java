@@ -1,11 +1,10 @@
-package stats;
+import static constant.Times.*;
 
 import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.LinkedList;
 
-import static simulator.Times.*;
 
 public class Logger {
     private static List<PrintWriter> writers;

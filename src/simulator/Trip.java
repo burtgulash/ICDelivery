@@ -1,9 +1,8 @@
-package simulator;
+import static constant.Times.*;
+import static constant.Costs.*;
 
 import graph.Path;
-import stats.Truck;
-import static simulator.Times.*;
-import static simulator.Costs.*;
+
 
 public class Trip {
     int startTime;

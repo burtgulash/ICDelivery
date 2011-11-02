@@ -1,4 +1,3 @@
-package stats;
 
 /**
  * Customer object is needed to keep track of statistics

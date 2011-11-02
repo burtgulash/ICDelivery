@@ -1,4 +1,4 @@
-package simulator; // change later
+package constant;
 
 public enum Times {
 

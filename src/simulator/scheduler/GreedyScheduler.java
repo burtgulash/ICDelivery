@@ -1,8 +1,4 @@
-package simulator;
-
-import stats.Order;
-import stats.Truck;
-import stats.TruckStack;
+import static constant.Times.*;
 
 import graph.Graph;
 import graph.Path;
@@ -11,7 +7,6 @@ import graph.FloydWarshall;
 import graph.Dijkstra;
 
 // import constants
-import static simulator.Times.*;
 
 
 

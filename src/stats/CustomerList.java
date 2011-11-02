@@ -1,6 +1,3 @@
-package stats;
-
-
 /**
  * Customers class to keep list of all Customers
  */

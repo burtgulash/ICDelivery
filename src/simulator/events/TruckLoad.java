@@ -1,7 +1,3 @@
-package simulator;
-
-import stats.Truck;
-
 class TruckLoad extends TruckEvent {
     int amount;
 

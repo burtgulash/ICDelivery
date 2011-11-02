@@ -30,12 +30,12 @@ public class PriorityQueueTest {
             assertTrue(curPriority >= lastPriority);
             lastPriority = curPriority;
         }
-        
+
         assertTrue(pq.checkMinHeapProperty());
         assertEquals(numInsertions - numExtracts, pq.length());
     }
 
-    
+
     @Test
     public void changePriorityTest() {
         PriorityQueue<Testing> pq = new PriorityQueue<Testing>();
@@ -44,7 +44,7 @@ public class PriorityQueueTest {
 
 
     // ---------------------------------------------- \\
-        
+
         for (int i = 1; i <= numInsertions; i++) {
             int priority = i * 19 % 103; // Random nums
             pq.insert(new Testing(priority));
@@ -114,7 +114,7 @@ public class PriorityQueueTest {
             // IDs divisible by testModulus already removed
             assertTrue(curId % testModulus != 0);
             pq.remove(curId);
-            
+
             // already deleted item must not be present in priority queue
             assertFalse(toBeDeleted.contains(curId));
         }

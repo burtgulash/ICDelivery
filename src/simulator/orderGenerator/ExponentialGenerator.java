@@ -1,13 +1,10 @@
-package simulator;
+import static constant.Times.*;
 
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
 
-import stats.Order;
-import stats.CustomerList;
 
-import static simulator.Times.*;
 
 /**
  * Generates orders with exponential distribution.
@@ -32,7 +29,7 @@ public class ExponentialGenerator implements OrderGenerator {
      */
     public ExponentialGenerator(int mean, int maxAmount, int home) {
         used            = new HashSet<Integer>();
-        rand            = new Random();
+        rand            = new Random(1337);
         used.add(home);
 
         customers       = CustomerList.numCustomers();

@@ -1,10 +1,3 @@
-package simulator;
-
-import stats.CustomerList;
-import stats.Order;
-import stats.Truck;
-import stats.Logger;
-
 import graph.Graph;
 import graph.Path;
 

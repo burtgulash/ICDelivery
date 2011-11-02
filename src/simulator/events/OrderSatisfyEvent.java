@@ -1,8 +1,3 @@
-package simulator;
-
-import stats.Order;
-import static simulator.Times.*;
-
 class OrderSatisfyEvent extends Event {
     private Order order;
     private int satisfyAmount;

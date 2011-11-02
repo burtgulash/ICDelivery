@@ -1,8 +1,5 @@
-package stats;
-
 import java.util.List;
 import java.util.LinkedList;
-import stats.Order;
 
 
 public class Truck {

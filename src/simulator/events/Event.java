@@ -1,12 +1,10 @@
-package simulator;
-
 import priorityQueue.Queable;
 
 abstract class Event implements Queable {
     private static int eventCount;
     private int id;
     private int time;
-    
+
     Event(int time) {
         eventCount++;
         id = eventCount;
@@ -34,12 +32,12 @@ abstract class Event implements Queable {
     public int priority(){
         return time;
     }
-    
+
     @Override
     public void setPriority(int newPriority){
         time = newPriority;
     }
-    
+
     @Override
     public int id(){
         return id;

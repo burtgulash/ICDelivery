@@ -1,9 +1,3 @@
-package simulator;
-
-import stats.Truck;
-import stats.Order;
-
-
 class AssignEvent extends Event {
     private Truck truck;
     private Order order;

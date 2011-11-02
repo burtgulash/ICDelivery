@@ -1,15 +1,9 @@
-package simulator;
+import static constant.Times.*;
 
 import java.io.OutputStream;
 
-import stats.TruckStack;
-import stats.CustomerList;
-import stats.Logger;
-import stats.Order;
-
 import graph.Graph;
 
-import static simulator.Times.*;
 
 
 /**

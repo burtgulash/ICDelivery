@@ -1,5 +1,3 @@
-package simulator;
-
 import priorityQueue.PriorityQueue;
 
 
@@ -11,7 +9,7 @@ import priorityQueue.PriorityQueue;
  */
 class Calendar {
     private static PriorityQueue<Event> queue;
-    
+
 
     /**
      * Initialized static Calendar object.

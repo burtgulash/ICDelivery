@@ -56,7 +56,7 @@ public class ShortestPathsTest {
 
         // hardcoded graph has 6 vertices
         assertEquals(6, g.vertices());
-    
+
 
         // check all shortest paths in matrix lower triangle
         assertEquals(0, sp.shortestPath(0, 0).weight);
@@ -65,7 +65,7 @@ public class ShortestPathsTest {
         assertEquals(7,  sp.shortestPath(0, 3).weight);
         assertEquals(4,  sp.shortestPath(0, 4).weight);
         assertEquals(9,  sp.shortestPath(0, 5).weight);
-        
+
         assertEquals(0,  sp.shortestPath(1, 1).weight);
         assertEquals(3,  sp.shortestPath(1, 2).weight);
         assertEquals(4,  sp.shortestPath(1, 3).weight);

@@ -1,7 +1,3 @@
-package simulator;
-
-import stats.Truck;
-
 class TruckSend extends TruckEvent {
     private int src, dst;
 

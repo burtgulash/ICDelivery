@@ -14,7 +14,7 @@ public class PathTest {
                      new Path(2, 9,
                      new Path(3, 6,
                      new Path(4, 3, null))));
-            
+
 
         assertEquals(str(concatenated), 
             "(1, 12), (2, 9), (3, 6), (4, 3)");
@@ -23,15 +23,15 @@ public class PathTest {
     }
 
 
-	@Test
-	public void reverseTest () {
+    @Test
+    public void reverseTest () {
         Path testPath = new Path(1, 18, 
                         new Path(2, 12,
                         new Path(3, 7,
                         new Path(4, 3, null))));
-		Path reversed = Path.reversed(0, testPath);
-		assertEquals("(3, 18), (2, 15), (1, 11), (0, 6)", str(reversed));
-	}
+        Path reversed = Path.reversed(0, testPath);
+        assertEquals("(3, 18), (2, 15), (1, 11), (0, 6)", str(reversed));
+    }
 
     // debugging toString method for Path
     private static String str(Path p) {

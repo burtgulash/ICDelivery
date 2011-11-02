@@ -5,9 +5,6 @@ import java.io.OutputStream;
 import graph.Graph;
 import graph.GraphLoader;
 
-import simulator.Initializer;
-import simulator.Simulator;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 

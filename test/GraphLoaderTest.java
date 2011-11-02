@@ -9,10 +9,10 @@ import graph.*;
 
 
 public class GraphLoaderTest {
-    
+
     final String testFile = "test.graph";
     Graph g;
-    
+
     @Test
     public void testLoader(){
         File readFile = new File(testFile);
