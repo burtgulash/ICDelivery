@@ -1,8 +1,9 @@
-import graph.GraphLoader;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+
+import graph.Graph;
+import graph.GraphLoader;
 
 import simulator.Initializer;
 import simulator.Simulator;
@@ -70,7 +71,11 @@ public class Main {
             System.exit(1);
         }
 
-        Initializer.initSimulation(GraphLoader.getGraph(graphFile),
+		Graph graph = GraphLoader.getGraph(graphFile);
+		if (graph == null)
+			System.exit(1);
+
+        Initializer.initSimulation(graph,
                                    HOME,
                                    simTime, 
                                    pauseTime,

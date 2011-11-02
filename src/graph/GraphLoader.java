@@ -49,6 +49,7 @@ public class GraphLoader {
             graph = null;
         } catch (MalformedGraphFileException ex) {
             System.err.println("File is not graph");
+            System.err.println("Error on line " + ex.lineNumber);
             graph = null;
         } finally {
             if (reader != null) {
@@ -59,6 +60,8 @@ public class GraphLoader {
                 }
             }
         }
+        if (graph != null && graph.vertices() == 0)
+            graph = null;
 
         return graph;
     }
@@ -79,7 +82,14 @@ public class GraphLoader {
         
         return nodeList;    
     }
-    
+
+
+
+    // possibly time consuming
+    private static boolean checkLine(String line) {
+        String lineRegex = "\\d+\\s*\\{(?:\\d+:\\d+;\\s*)*\\}";
+        return Pattern.matches(lineRegex, line);
+    }
 
     
     private static Graph parseGraphFile(BufferedReader reader, 
@@ -92,27 +102,35 @@ public class GraphLoader {
         
         Graph graph = new Graph(numVertices);
                 
+        int lineNumber = 0;
         for (String line : nodeList) {
+            lineNumber++;
+
+            if (!checkLine(line))
+                throw new MalformedGraphFileException(lineNumber);
+
             mVertex = vertexPattern.matcher(line);
                         
             if (mVertex.find()) {
                 try {
                     vertexNumber = Integer.parseInt(mVertex.group().trim());
                 } catch(NumberFormatException ex) {
-                    throw new MalformedGraphFileException();
+                    throw new MalformedGraphFileException(lineNumber);
                 }
             }
 
             if (vertexNumber < numVertices)
-                addEdges(graph, vertexNumber, line);
+                addEdges(graph, vertexNumber, line, lineNumber);
             else
-                throw new MalformedGraphFileException();
+                throw new MalformedGraphFileException(lineNumber);
         }
         return graph;
     }
 
+
+
     // Add edges from src vertex into graph 
-    private static void addEdges(Graph graph, int src, String line) {
+    private static void addEdges(Graph graph, int src, String line, int i) {
         Pattern edgePattern = Pattern.compile("(\\d+):(\\d+)");
         Matcher edgeMatcher = edgePattern.matcher(line);
 
@@ -126,13 +144,17 @@ public class GraphLoader {
                 graph.addEdge(dst, src, weight);
             }
         } catch (NumberFormatException ex) {
-            throw new MalformedGraphFileException();
+            throw new MalformedGraphFileException(i);
+        }
+    }
+
+
+    private static class MalformedGraphFileException extends RuntimeException {
+        final int lineNumber;
+        public MalformedGraphFileException(int lineNumber) {
+            super();
+            this.lineNumber = lineNumber;
         }
     }
 }
 
-class MalformedGraphFileException extends RuntimeException {
-    public MalformedGraphFileException() {
-        super();
-    }
-}

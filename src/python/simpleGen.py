@@ -88,7 +88,7 @@ def dump(graph):
 
     for v in sorted(graph.keys()):
         adjListStr = "; ".join(map(edgeStr, graph[v]))
-        print "%s {%s}" % (str(v), adjListStr)
+        print "%s {%s;}" % (str(v), adjListStr)
 
 
 def maxDeg(graph):

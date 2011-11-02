@@ -6,10 +6,10 @@ import static org.junit.Assert.*;
 import java.io.*;
 
 public class ShortestPathsTest {
-    final String graphString =  "0 {3:7; 4:4}\n" +
-                                "1 {2:3; 3:4; 5:6}\n" +
-                                "2 {3:5}\n" +
-                                "3 {5:2}\n" +
+    final String graphString =  "0 {3:7; 4:4;}\n" +
+                                "1 {2:3; 3:4; 5:6;}\n" +
+                                "2 {3:5;}\n" +
+                                "3 {5:2;}\n" +
                                 "4 {}\n" +
                                 "5 {}\n";
 
