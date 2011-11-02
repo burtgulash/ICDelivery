@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         Parser p = new Parser(
            "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny", 
-           "usage:");
+           "usage: java -jar sim.jar [OPTIONS...] GRAPHFILE");
 
         p.addBooleanOption("quiet", "q", "don't print to screen");
         p.addIntegerOption("time", "t", "total time of simulation", 7200);
@@ -30,8 +30,9 @@ public class Main {
         p.addStringOption("output", "o", "output file for log", "log.txt");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
+        String[] arg = null;
         try {
-            p.parse(args);
+            arg = p.parse(args);
         } catch(Parser.MissingValueException ex) {
             System.err.println("Missing value after " + ex.arg);
             System.exit(1);
@@ -55,6 +56,8 @@ public class Main {
         String graphFile     = (String) p.getValue("graph");
         String outFile       = (String) p.getValue("output");
 
+        if (arg.length >= 1)
+            graphFile = arg[0];
 
         if (pauseTime < 0)
             pauseTime = simTime + 1;
@@ -71,9 +74,9 @@ public class Main {
             System.exit(1);
         }
 
-		Graph graph = GraphLoader.getGraph(graphFile);
-		if (graph == null)
-			System.exit(1);
+        Graph graph = GraphLoader.getGraph(graphFile);
+        if (graph == null)
+            System.exit(1);
 
         Initializer.initSimulation(graph,
                                    HOME,

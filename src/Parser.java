@@ -20,7 +20,9 @@ public class Parser {
 
     private Map<String, Object> values;
     private List<Option> options;
+
     private String chapeau;
+    private String usage;
 
 
 
@@ -31,9 +33,10 @@ public class Parser {
      * @param usage usage string
      */
     public Parser(String title, String usage) {
-        values   = new HashMap<String, Object>();
-        options  = new LinkedList<Option>();
-        chapeau  = title;
+        values      = new HashMap<String, Object>();
+        options     = new LinkedList<Option>();
+        chapeau     = title;
+        this.usage  = usage;
 
         options.add(new HelpOption());
     }
@@ -55,7 +58,7 @@ public class Parser {
             System.err.println();
         }
 
-        System.err.println("usage:");
+        System.err.println(usage);
         for (Option option : options)
             System.err.println(String.format("    -%s | --%s \t\t%s",
                                   option.abbr, option.name, option.help));
