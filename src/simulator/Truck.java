@@ -10,7 +10,7 @@ public class Truck {
 
     // assigned Order list
     private List<Order> assignedOrders;
-	// private List<Trip>  completedTrips;
+    // private List<Trip>  completedTrips;
     private int loadedCargo;
 
     // total cost of actions of this truck after it returns to DEPOT

@@ -31,6 +31,14 @@ public class Customer {
         return tot;
     }
 
+    public int deliveredContainers() {
+        int tot = 0;
+        for (Order o : orderHistory)
+            if (o.accepted())
+                tot += o.amount();
+        return tot;
+    }
+
     public int totalContainers() {
         int tot = 0;
         for (Order o : orderHistory)

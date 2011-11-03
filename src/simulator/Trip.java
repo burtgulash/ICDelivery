@@ -67,7 +67,7 @@ abstract class Trip {
 
         Event toLastTown = new TruckSend(fromTime, truck, src, dst);
 
-		Event arrived = 
+        Event arrived = 
              new TruckArrivedEvent(fromTime + 1, truck, dst, tripCost());
 
         Calendar.addEvent(toLastTown);

@@ -28,22 +28,22 @@ public class TruckStack {
         return ret;
     }
 
-	public static int totalCost() {
-		int tot = 0;
-		for (Map.Entry KVpair : allTrucks.entrySet()) {
-			int truckId = (Integer) KVpair.getKey();
-			tot += allTrucks.get(truckId).totalTravelCost();
-		}
-			
-		return tot;
-	}
+    public static int totalCost() {
+        int tot = 0;
+        for (Map.Entry KVpair : allTrucks.entrySet()) {
+            int truckId = (Integer) KVpair.getKey();
+            tot += allTrucks.get(truckId).totalTravelCost();
+        }
+
+        return tot;
+    }
 
 
     public static void summary() {
-		DecimalFormat formatter = new DecimalFormat(",###");
+        DecimalFormat formatter = new DecimalFormat(",###");
 
-		String totalCost  = formatter.format(totalCost());
-		String dispatched = formatter.format(allTrucks.size());
-        System.out.printf("TOTAL COST         : %s CZK%n", totalCost);
+        String totalCost  = formatter.format(totalCost());
+        String dispatched = formatter.format(allTrucks.size());
+        System.out.printf("TOTAL COST           : %s CZK%n", totalCost);
     }
 }

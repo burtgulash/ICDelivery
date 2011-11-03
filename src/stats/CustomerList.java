@@ -50,6 +50,13 @@ public class CustomerList {
         return tot;
     }
 
+    private static int deliveredContainers() {
+        int tot = 0;
+        for (Customer c : list)
+            tot += c.deliveredContainers();
+        return tot;
+    }
+
     private static int totalContainers() {
         int tot = 0;
         for (Customer c : list)
@@ -58,8 +65,9 @@ public class CustomerList {
     }
 
     public static void summary() {
-        System.out.printf("Orders accepted    : %d/%d%n", 
+        System.out.printf("Orders accepted      : %4d/%4d%n", 
                                     acceptedOrders(), totalOrders());
-        System.out.printf("Containers ordered : %d%n", totalContainers());
+        System.out.printf("Containers delivered : %4d/%4d%n", 
+                            deliveredContainers(), totalContainers());
     }
 }
