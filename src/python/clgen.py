@@ -1,5 +1,14 @@
 #! /usr/bin/python
 
+# Clustered graph generator
+#
+# Generates small graphs (clusters), then connects them together 
+# to one big graph.
+# Inter-cluster edges are weighted 4 times more than ordinary edges
+# as they represent highways
+#
+
+
 import sys, random
 
 MAXDEGREE       = 0
@@ -144,7 +153,7 @@ def dump(graph):
         print "%s {%s}" % (str(v), adjListStr)
 
 
-usageString = """usage: clGen.py MAXDEGREE VERTICES CLUSTERS DENSITY MU SIGMA
+usageString = """usage: clgen.py MAXDEGREE VERTICES CLUSTERS DENSITY MU SIGMA
     MAXDEGREE  <- maximal degree for each vertex
     VERTICES   <- number of vertices of graph
     CLUSTERS   <- number of clusters in graph
@@ -153,10 +162,10 @@ usageString = """usage: clGen.py MAXDEGREE VERTICES CLUSTERS DENSITY MU SIGMA
     SIGMA      <- standard deviation for edge weight
 
     # small testing graph:
-    simpleGen.py 10 20 3 4 50 20
+    clgen.py 10 20 3 4 50 20
 
     # simulation grade graph:
-    simpleGen.py 500 3000 50 5 50 20"""
+    clgen.py 500 3000 50 5 50 20"""
 
 
 if __name__ == "__main__":
@@ -201,5 +210,4 @@ if __name__ == "__main__":
     # print graph summary
     print >> sys.stderr
     print >> sys.stderr, "MAX DEGREE : %15d" % maxDegree
-    print >> sys.stderr, "AVG DEGREE : %15d edges per vertex" \
-                                      % (inserted_edges * 2 / VERTICES)
+    print >> sys.stderr, "AVG DEGREE : %15d" % (inserted_edges * 2 / VERTICES)
