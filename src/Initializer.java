@@ -74,8 +74,8 @@ public class Initializer {
     // send order to calendar
     private static void sendOrder(Order order) {
         Event orderEvent = new OrderEvent(order.received(), order);
-		// update order in customer
-		order.sentBy().addOrder(order);
+        // update order in customer
+        order.sentBy().addOrder(order);
         Calendar.addEvent(orderEvent);
     }
 }

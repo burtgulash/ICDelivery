@@ -107,7 +107,7 @@ public class Order {
         accepted = true;
     }
 
-	public boolean accepted() {
-		return accepted;
-	}
+    public boolean accepted() {
+        return accepted;
+    }
 }

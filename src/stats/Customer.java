@@ -19,24 +19,24 @@ public class Customer {
         orderHistory.add(order);
     }
 
-	public int totalOrders() {
-		return orderHistory.size();
-	}
+    public int totalOrders() {
+        return orderHistory.size();
+    }
 
-	public int acceptedOrders() {
-		int tot = 0;
-		for (Order o : orderHistory)
-			if(o.accepted())
-				tot++;
-		return tot;
-	}
+    public int acceptedOrders() {
+        int tot = 0;
+        for (Order o : orderHistory)
+            if(o.accepted())
+                tot++;
+        return tot;
+    }
 
-	public int totalContainers() {
-		int tot = 0;
-		for (Order o : orderHistory)
-			tot += o.amount();
-		return tot;
-	}
+    public int totalContainers() {
+        int tot = 0;
+        for (Order o : orderHistory)
+            tot += o.amount();
+        return tot;
+    }
 
     public int customerId() {
         return vertex;

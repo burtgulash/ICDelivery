@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  */
 public class GraphLoader {
-    
+
     /**
      * Reads graph from file
      * @return parsed Graph data structure
@@ -76,10 +76,10 @@ public class GraphLoader {
     {
         List<String> nodeList = new ArrayList<String>();
         String s;    
-        
+
         while ((s = reader.readLine()) != null)
             nodeList.add(s);
-        
+
         return nodeList;    
     }
 
@@ -91,7 +91,7 @@ public class GraphLoader {
         return Pattern.matches(lineRegex, line);
     }
 
-    
+
     private static Graph parseGraphFile(BufferedReader reader, 
                                         List<String> nodeList)
     {
@@ -99,9 +99,9 @@ public class GraphLoader {
         Matcher mVertex;
         int vertexNumber = 0;
         int numVertices  = nodeList.size();
-        
+
         Graph graph = new Graph(numVertices);
-                
+
         int lineNumber = 0;
         for (String line : nodeList) {
             lineNumber++;
@@ -110,7 +110,7 @@ public class GraphLoader {
                 throw new MalformedGraphFileException(lineNumber);
 
             mVertex = vertexPattern.matcher(line);
-                        
+
             if (mVertex.find()) {
                 try {
                     vertexNumber = Integer.parseInt(mVertex.group().trim());

@@ -44,7 +44,7 @@ public class FloydWarshall implements ShortestPaths {
             }
         }
     }
-    
+
 
     /**
      * Floyd-Warshall O(n^3) algorithm 
@@ -132,7 +132,7 @@ public class FloydWarshall implements ShortestPaths {
         if (intermediate == NO_INTERMEDIATE)
             return new Path(dst, weight, null);
 
-        
+
         // Construct the Path as Path(i -> k) + Path(k -> j).
         Path src_to_k = shortestPath(src, intermediate);
         Path k_to_dst = shortestPath(intermediate, dst);

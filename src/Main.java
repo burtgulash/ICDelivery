@@ -87,8 +87,8 @@ public class Main {
 
         Simulator.mainLoop();
 
-		System.out.println();
-		TruckStack.summary();
-		CustomerList.summary();
+        System.out.println();
+        TruckStack.summary();
+        CustomerList.summary();
     }
 }

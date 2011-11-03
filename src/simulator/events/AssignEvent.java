@@ -1,13 +1,13 @@
 class AssignEvent extends Event {
     private Truck truck;
     private Order order;
-	private int satisfyAmount;
+    private int satisfyAmount;
 
     AssignEvent(int time, int amount, Truck truck, Order order) {
         super(time);
         this.truck = truck;
         this.order = order;
-		satisfyAmount = amount;
+        satisfyAmount = amount;
     }
 
     @Override

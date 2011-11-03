@@ -48,7 +48,7 @@ public class Parser {
         this(null, "usage:");
     }
 
-    
+
     /**
      * Prints help.
      */
@@ -93,7 +93,7 @@ public class Parser {
                  NumberFormatException 
     {
         List<String> leftOvers = new LinkedList<String>();
-        
+
         outer:
         for (int i = 0; i < args.length; i++) {
             // if it is an option
@@ -179,7 +179,7 @@ public class Parser {
         options.add(new StringOption(longName, shortName, regex, help));
         values.put(longName, defaultValue);
     }
-    
+
 
 
     /**

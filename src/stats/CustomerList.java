@@ -35,12 +35,12 @@ public class CustomerList {
         return list.length;
     }
 
-	private static int acceptedOrders() {
-		int tot = 0;
-		for (Customer c : list)
-			tot += c.acceptedOrders();
-		return tot;
-	}
+    private static int acceptedOrders() {
+        int tot = 0;
+        for (Customer c : list)
+            tot += c.acceptedOrders();
+        return tot;
+    }
 
 
     private static int totalOrders() {

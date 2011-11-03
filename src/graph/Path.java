@@ -20,7 +20,7 @@ public class Path {
     int weight;
     // rest of the path
     Path rest;
-    
+
 
     /**
      * Path constructor, only used in graph algorithms

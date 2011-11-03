@@ -2,7 +2,7 @@ class OrderRejectEvent extends Event {
     Order order;
 
     OrderRejectEvent(int time, Order order) {
-		super(time);
+        super(time);
         this.order  = order;
     }
 

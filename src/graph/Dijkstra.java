@@ -26,13 +26,13 @@ public class Dijkstra implements ShortestPaths {
     // result tree represented as map(vertex -> previous vertex)
     private PriorityQueue<NotSeenPath> queue;
     private Graph graph;
-    
+
     // cursor is current position in memo to save to
     private int cursor;
     // shortest-path trees are stored in memo
     private int[][] memo;
     private int[] memoVertex;
-    
+
     // optimization: compute shortest-path tree for depot vertex as it will
     // be used most
     private int[] depot_memo;
@@ -96,7 +96,7 @@ public class Dijkstra implements ShortestPaths {
     private Path traceBack(int src, int dst, int[] prev) {
         Path p = null;
         int oneBack;
-        
+
         while (dst != src) {
             oneBack = prev[dst];
             assert(oneBack != NIL);
@@ -155,7 +155,7 @@ public class Dijkstra implements ShortestPaths {
                 }
             }
         }
-        
+
          return previous;
     }
 
@@ -210,7 +210,7 @@ public class Dijkstra implements ShortestPaths {
             dstVertex  = dst;
             bestWeight = w;
         }
-        
+
         @Override
         public int id() {
             return dstVertex;

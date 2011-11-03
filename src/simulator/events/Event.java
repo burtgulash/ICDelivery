@@ -24,7 +24,7 @@ abstract class Event implements Queable {
         return time;
     }
 
-	protected abstract String log ();
+    protected abstract String log ();
 
 
     // DONT USE THESE METHODES
