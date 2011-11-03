@@ -86,5 +86,9 @@ public class Main {
                                    file);
 
         Simulator.mainLoop();
+
+		System.out.println();
+		TruckStack.summary();
+		CustomerList.summary();
     }
 }

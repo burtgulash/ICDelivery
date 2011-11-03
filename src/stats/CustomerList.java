@@ -4,7 +4,7 @@
 public class CustomerList {
     private static Customer[] list;
 
-    
+
     /**
      * Static constructor
      *
@@ -25,7 +25,7 @@ public class CustomerList {
         assert(list[customerId] != null);
         return list[customerId];
     }
-    
+
     /**
      * Returns number of customers
      * @return number of customers
@@ -33,5 +33,33 @@ public class CustomerList {
     public static int numCustomers() {
         assert(list != null);
         return list.length;
+    }
+
+	private static int acceptedOrders() {
+		int tot = 0;
+		for (Customer c : list)
+			tot += c.acceptedOrders();
+		return tot;
+	}
+
+
+    private static int totalOrders() {
+        int tot = 0;
+        for (Customer c : list)
+            tot += c.totalOrders();
+        return tot;
+    }
+
+    private static int totalContainers() {
+        int tot = 0;
+        for (Customer c : list)
+            tot += c.totalContainers();
+        return tot;
+    }
+
+    public static void summary() {
+        System.out.printf("Orders accepted    : %d/%d%n", 
+                                    acceptedOrders(), totalOrders());
+        System.out.printf("Containers ordered : %d%n", totalContainers());
     }
 }

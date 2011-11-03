@@ -9,16 +9,18 @@ import java.util.List;
 public class Order {
     private List<Truck> trucks;      // trucks that serve this order
     private final Customer customer; // creator of Order
-    
+
     private int orderedAmount;   // num of containers
     private int satisfied;       // containers delivered so far
     private int onWay;           // containers on road
-    
+
     private final int receivedTime;
 
     // for Order tracking purposes
     private static int orderCount = 0;
     private int orderId;
+
+    private boolean accepted = false;
 
 
     /**
@@ -92,11 +94,20 @@ public class Order {
         satisfied += containers;
         assert(satisfied <= orderedAmount);
     }
-    
+
     /**
      * Returns id of this Order
      */
     public int getId(){
         return orderId;
     }
+
+
+    public void accept() {
+        accepted = true;
+    }
+
+	public boolean accepted() {
+		return accepted;
+	}
 }

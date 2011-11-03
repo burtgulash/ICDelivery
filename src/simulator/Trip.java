@@ -1,50 +1,71 @@
+import graph.Path;
+
 import static constant.Times.*;
 import static constant.Costs.*;
 
 import graph.Path;
 
 
-public class Trip {
-    int startTime;
-    int dispatchTime;
-    int arrivalTime;
-    int endTime;
-    private int totalCost;
+public abstract class Trip {
+    protected int startTime;
+    protected int endTime;
+    protected int totalCost;
 
-    Path path;
-    private int assignedAmount;
+    protected Path path;
 
-    // only package protected constructor
-    Trip (int startTime, Path path, int assignedAmount) {
+    public Trip (int startTime, Path path) {
         this.startTime      = startTime;
         this.path           = path;
-        this.assignedAmount    = assignedAmount;
-        totalCost           = 0;
-
-        computeTimes();
     }
 
-    private void computeTimes() {
-        dispatchTime = startTime     + assignedAmount * LOAD.time();
-        arrivalTime  = dispatchTime  + path.pathLength() * 
-                                       MINUTES_IN_HOUR.time() / Truck.SPEED;
-        endTime      = arrivalTime   + assignedAmount * UNLOAD.time();
+    public int startTime() {
+        return startTime;
     }
 
-    private void computeCost() {
-        totalCost += path.pathLength() * 
-                     (BASE.cost() + assignedAmount * TRANSPORT.cost()); 
-        totalCost += assignedAmount * UNLOADING.cost();
+    public int endTime() {
+        return endTime;
     }
 
-    void delay(int delayTime) {
-        startTime     += delayTime;
-        dispatchTime  += delayTime;
-        arrivalTime   += delayTime;
-        endTime       += delayTime;
+    public Path path() {
+        return path;
     }
 
-    int tripCost() {
+    protected abstract void computeTimes();
+    protected abstract void computeCost();
+    public abstract void delay(int delayTime);
+
+    public final int tripCost() {
         return totalCost;
+    }
+
+
+    /**
+     * Adds send-events to Calendar.
+     * 
+     * @param dispatchAt dispatch the truck at this time
+     * @src   path doesn't remember source vertex, provide it
+     * @truck truck to dispatch
+     */
+    public void sendTruck(int dispatchAt, int src, Truck truck) {
+        Path p       = path;
+        int fromTime = dispatchAt;
+        int toTime   = fromTime +  p.distanceToNext() * 
+                                   MINUTES_IN_HOUR.time() / Truck.SPEED;
+        int dst      = p.to();
+
+        while (p.rest() != null) {
+            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
+            Calendar.addEvent(advanceByTown);
+
+            p = p.rest();
+            src = dst;
+            dst = p.to();
+            fromTime = toTime;
+            toTime = fromTime + path.distanceToNext() * 
+                                MINUTES_IN_HOUR.time() / Truck.SPEED;
+        }
+
+        Event toLastTown = new TruckSend(fromTime, truck, src, dst);
+        Calendar.addEvent(toLastTown);
     }
 }

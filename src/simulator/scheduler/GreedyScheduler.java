@@ -6,9 +6,6 @@ import graph.ShortestPaths;
 import graph.FloydWarshall;
 import graph.Dijkstra;
 
-// import constants
-
-
 
 /**
  * Greedy Scheduler
@@ -19,7 +16,7 @@ import graph.Dijkstra;
  */
 public class GreedyScheduler implements Scheduler {
     private final int TERMINATION_TIME;
-    private final int DEPOT;
+    private final int HOME;
 
     private ShortestPaths costMinimizer;
 
@@ -32,9 +29,9 @@ public class GreedyScheduler implements Scheduler {
      */
     public 
     GreedyScheduler (Graph graph) {
-        DEPOT = Simulator.DEPOT;
+        HOME = Simulator.HOME;
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
-        costMinimizer = new Dijkstra(graph, DEPOT);
+        costMinimizer = new Dijkstra(graph, HOME);
     }
 
 
@@ -45,7 +42,7 @@ public class GreedyScheduler implements Scheduler {
      */
     public void 
     receiveOrder(Order received) {
-        assert(received.sentBy().customerVertex() != DEPOT);
+        assert(received.sentBy().customerVertex() != HOME);
 
 
         // create Trip that will handle the Order
@@ -53,23 +50,25 @@ public class GreedyScheduler implements Scheduler {
         int receivedTime   = received.received() + 1;
         int customer       = received.sentBy().customerVertex();
         int amount         = received.amount();
-        Path shortestPath  = costMinimizer.shortestPath(DEPOT, customer);
+        Path shortestPath  = costMinimizer.shortestPath(HOME, customer);
 
         // plan with MAX_CAPACITY, that will return latest time of completion
         // Fully loaded trucks then will be sent in parallel
         // but don't just reject the order if orderedAmount was low
         int planAmount = Math.min(Truck.MAX_CAPACITY, amount);
-        Trip plan = new Trip(receivedTime, shortestPath, planAmount);
+        DeliveryTrip plan = 
+              new DeliveryTrip(receivedTime, shortestPath, planAmount);
         delayIfNeeded(plan);
 
 
         // reject if completion after simulation time
-        if (plan.endTime >= TERMINATION_TIME) {
+        if (plan.endTime() >= TERMINATION_TIME) {
             Event reject = new OrderRejectEvent(receivedTime, received);
             Calendar.addEvent(reject);
             return;
         }
-
+        // else accept the order
+        received.accept();
 
         // success, assign Trucks and dispatch them
         dispatchTrucks(plan, received);
@@ -98,21 +97,27 @@ public class GreedyScheduler implements Scheduler {
 
             // Construct new trip for each truck and delay such that 
             // no waiting is needed
-            Trip truckTrip = 
-                  new Trip(success.startTime, success.path, assignedAmount);
+            DeliveryTrip truckTrip = 
+                  new DeliveryTrip(success.startTime(), 
+                                   success.path(), assignedAmount);
+            delayIfNeeded(truckTrip);
 
+            ReturnTrip sendBack = 
+                  new ReturnTrip(success.endTime() + 1, 
+                                 Path.reversed(HOME, success.path()));
+
+
+            // TODO TruckSendEvent should update cost in Truck
             // Now we know travelCost for this truck, update in Truck 
             truck.setTravelCost(truckTrip.tripCost());
 
-            delayIfNeeded(truckTrip);
 
 
-            prepareTruck(truck, received, assignedAmount, 
-                         truckTrip.startTime, truckTrip.endTime);
+            prepareTruck(truck, truckTrip, received, assignedAmount);
 
             // Dispatch the truck
-            sendTruck(truck, truckTrip, assignedAmount);
-            sendBack(truck, truckTrip, customer);
+            truckTrip.sendTruck(truck);
+            sendBack.sendTruck(customer, truck);
         }
     }
 
@@ -127,7 +132,7 @@ public class GreedyScheduler implements Scheduler {
      * @param end   end   time of trip
      */
     private void 
-    prepareTruck(Truck truck, Order order, int amount, int start, int end) {
+    prepareTruck(Truck truck, DeliveryTrip trip, Order order, int amount) {
             // Greedy Scheduler will only assign one Order per Trucko
             truck.assignOrder(order);
             order.assignTruck(truck, amount); 
@@ -138,94 +143,19 @@ public class GreedyScheduler implements Scheduler {
                    new AssignEvent(assignedTime, amount, truck, order);
 
             Event load = 
-                   new TruckLoad(start, amount, truck);
+                   new TruckLoad(trip.startTime(), amount, truck);
+
+            Event unload = 
+                   new TruckUnload(trip.arrivalTime(), amount, truck);
 
             Event completion = 
-                   new OrderSatisfyEvent(end, order, amount);
+                   new OrderSatisfyEvent(trip.endTime(), order, amount);
+
 
             Calendar.addEvent(assign);
             Calendar.addEvent(load);
+            Calendar.addEvent(unload);
             Calendar.addEvent(completion);
-    }
-
-
-
-    /**
-     * Send a truck loaded with given loadAmount
-     * @param truck truck to be dispatched
-     * @param trip  send the truck on this trip
-     */
-    private void 
-    sendTruck(Truck truck, Trip trip, int loadAmount) {
-
-
-        Path p = trip.path;
-        int fromTime = trip.dispatchTime;
-        int toTime   = fromTime +  p.distanceToNext() * 
-                                   MINUTES_IN_HOUR.time() / Truck.SPEED;
-        int src      = DEPOT;
-        int dst      = p.to();
-
-        // Throw all Path events to Calendar
-        while (p.rest() != null) {
-            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
-            Calendar.addEvent(advanceByTown);
-
-            p = p.rest();
-            src = dst;
-            dst = p.to();
-            fromTime = toTime;
-            toTime = fromTime + p.distanceToNext() * 
-                                MINUTES_IN_HOUR.time() / Truck.SPEED;
-        }
-        Event toLastTown = new TruckSend(fromTime, truck, src, dst);
-        Calendar.addEvent(toLastTown);
-
-
-        // add unload event        
-        // +1 to prevent unload/arrived swap in log
-        Event unload = new TruckUnload(trip.arrivalTime, loadAmount, truck);
-        Calendar.addEvent(unload);
-    }
-
-
-    /**
-     * Sends the truck back to DEPOT
-     * @param truck truck to be sent back
-     * @param trip  trip to be reversed
-     * @param customer original trip destination vertex
-     */
-    private void 
-    sendBack(Truck truck, Trip trip, int customer) {
-        // Reverse original path
-        Path p = Path.reversed(DEPOT, trip.path);
-
-        int fromTime = trip.endTime;
-        int toTime   = fromTime + p.distanceToNext() * 
-                                  MINUTES_IN_HOUR.time() / Truck.SPEED;
-        int src      = customer;
-        int dst      = p.to();
-
-        // Throw all Path events to Calendar
-        while (p.rest() != null) {
-            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
-            Calendar.addEvent(advanceByTown);
-
-            p = p.rest();
-            src = dst;
-            dst = p.to();
-            fromTime = toTime;
-            toTime = fromTime + p.distanceToNext() * 
-                                MINUTES_IN_HOUR.time() / Truck.SPEED;
-        }
-        Event toDepot = new TruckSend(fromTime, truck, src, dst);
-        Calendar.addEvent(toDepot);
-
-        assert(DEPOT == dst);
-
-        // arrive at DEPOT
-        Event returned = new TruckReturn(toTime, truck);
-        Calendar.addEvent(returned);
     }
 
 
@@ -234,21 +164,21 @@ public class GreedyScheduler implements Scheduler {
      * @param trip trip to be delayed
      */
     private void 
-    delayIfNeeded(Trip trip) {
+    delayIfNeeded(DeliveryTrip trip) {
         int delayTime = 0;
-        int arrivalTimeInDay     = trip.arrivalTime % DAY.time();
-        int completionTimeInDay  = trip.endTime     % DAY.time();
+        int arrivalTimeInDay     = trip.arrivalTime() % DAY.time();
+        int completionTimeInDay  = trip.endTime()     % DAY.time();
         // arrives next day in morning, then completionTime <= arrivalTime
         boolean arrivesNextDay   = completionTimeInDay <= arrivalTimeInDay;
 
         // delay if too early
         if (arrivalTimeInDay < MIN_ACCEPT.time())
-            delayTime = MIN_ACCEPT.time() - trip.arrivalTime % DAY.time();
+            delayTime = MIN_ACCEPT.time() - trip.arrivalTime() % DAY.time();
 
         // delay to next day if too late
         else if (completionTimeInDay > MAX_ACCEPT.time() || arrivesNextDay)
-            delayTime = 
-                DAY.time() - trip.arrivalTime % DAY.time() + MIN_ACCEPT.time();
+           delayTime = 
+              DAY.time() - trip.arrivalTime() % DAY.time() + MIN_ACCEPT.time();
 
         trip.delay(delayTime);
     }

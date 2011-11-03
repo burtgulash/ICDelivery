@@ -5,7 +5,7 @@ class TruckReturn extends TruckEvent {
 
     @Override
     protected int doWork() {
-        truck.setTown(Simulator.DEPOT);
+        truck.setTown(Simulator.HOME);
         return Simulator.CONTINUE;
     }
 

@@ -25,4 +25,9 @@ public class TruckStack {
         assert(ret != null);
         return ret;
     }
+
+
+    public static void summary() {
+        System.out.printf("Trucks dispatched  : %d%n", allTrucks.size());    
+    }
 }

@@ -10,7 +10,7 @@ import graph.Path;
  */
 public class Simulator {
     static Scheduler scheduler;
-    static int DEPOT;
+    static int HOME;
     static int TERMINATION_TIME;
     final static int TERMINATE = 0;
     final static int CONTINUE  = 1;
@@ -22,7 +22,7 @@ public class Simulator {
      * @param simulationTime time of termination
      */
     public static void init(int depotVertex, int simulationTime) {
-        DEPOT             = depotVertex;
+        HOME             = depotVertex;
         TERMINATION_TIME  = simulationTime;
     }
 
