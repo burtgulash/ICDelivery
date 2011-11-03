@@ -87,7 +87,7 @@ public class GraphLoader {
 
     // possibly time consuming
     private static boolean checkLine(String line) {
-        String lineRegex = "\\d+\\s*\\{(?:\\d+:\\d+;\\s*)*\\}";
+        String lineRegex = "\\d+\\s*\\{(?:\\d+:\\d+;?\\s*)*\\}";
         return Pattern.matches(lineRegex, line);
     }
 
