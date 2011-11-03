@@ -6,35 +6,35 @@ import static constant.Costs.*;
 import graph.Path;
 
 
-public abstract class Trip {
+abstract class Trip {
     protected int startTime;
     protected int endTime;
     protected int totalCost;
 
     protected Path path;
 
-    public Trip (int startTime, Path path) {
+    Trip (int startTime, Path path) {
         this.startTime      = startTime;
         this.path           = path;
     }
 
-    public int startTime() {
+    int startTime() {
         return startTime;
     }
 
-    public int endTime() {
+    int endTime() {
         return endTime;
     }
 
-    public Path path() {
+    Path path() {
         return path;
     }
 
     protected abstract void computeTimes();
     protected abstract void computeCost();
-    public abstract void delay(int delayTime);
+    abstract void delay(int delayTime);
 
-    public final int tripCost() {
+    final int tripCost() {
         return totalCost;
     }
 
@@ -46,7 +46,7 @@ public abstract class Trip {
      * @src   path doesn't remember source vertex, provide it
      * @truck truck to dispatch
      */
-    public void sendTruck(int dispatchAt, int src, Truck truck) {
+    void sendTruck(int dispatchAt, int src, Truck truck) {
         Path p       = path;
         int fromTime = dispatchAt;
         int toTime   = fromTime +  p.distanceToNext() * 
@@ -66,6 +66,11 @@ public abstract class Trip {
         }
 
         Event toLastTown = new TruckSend(fromTime, truck, src, dst);
+
+		Event arrived = 
+             new TruckArrivedEvent(fromTime + 1, truck, dst, tripCost());
+
         Calendar.addEvent(toLastTown);
+        Calendar.addEvent(arrived);
     }
 }

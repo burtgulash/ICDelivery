@@ -3,13 +3,13 @@ import graph.Path;
 import static constant.Times.*;
 import static constant.Costs.*;
 
-public class DeliveryTrip extends Trip {
+class DeliveryTrip extends Trip {
     private int dispatchTime;
     private int arrivalTime;
 
     private int assignedAmount;
 
-    public DeliveryTrip (int startTime, Path path, int assignedAmount) {
+    DeliveryTrip (int startTime, Path path, int assignedAmount) {
         super(startTime, path);
         this.assignedAmount = assignedAmount;
 
@@ -17,11 +17,11 @@ public class DeliveryTrip extends Trip {
         computeCost();
     }
 
-    public int dispatchTime() {
+    int dispatchTime() {
         return dispatchTime;
     }
 
-    public int arrivalTime() {
+    int arrivalTime() {
         return arrivalTime;
     }
 
@@ -41,7 +41,7 @@ public class DeliveryTrip extends Trip {
     }
 
     @Override
-    public void delay(int delayTime) {
+    void delay(int delayTime) {
         startTime     += delayTime;
         dispatchTime  += delayTime;
         arrivalTime   += delayTime;
@@ -49,7 +49,7 @@ public class DeliveryTrip extends Trip {
     }
 
 
-    public void sendTruck(Truck truck) {
+    void sendTruck(Truck truck) {
         sendTruck(dispatchTime, Simulator.HOME, truck);
     }
 }

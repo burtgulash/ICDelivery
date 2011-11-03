@@ -16,7 +16,6 @@ import graph.Dijkstra;
  */
 public class GreedyScheduler implements Scheduler {
     private final int TERMINATION_TIME;
-    private final int HOME;
 
     private ShortestPaths costMinimizer;
 
@@ -29,9 +28,8 @@ public class GreedyScheduler implements Scheduler {
      */
     public 
     GreedyScheduler (Graph graph) {
-        HOME = Simulator.HOME;
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
-        costMinimizer = new Dijkstra(graph, HOME);
+        costMinimizer = new Dijkstra(graph, Simulator.HOME);
     }
 
 
@@ -42,7 +40,7 @@ public class GreedyScheduler implements Scheduler {
      */
     public void 
     receiveOrder(Order received) {
-        assert(received.sentBy().customerVertex() != HOME);
+        assert(received.sentBy().customerVertex() != Simulator.HOME);
 
 
         // create Trip that will handle the Order
@@ -50,7 +48,8 @@ public class GreedyScheduler implements Scheduler {
         int receivedTime   = received.received() + 1;
         int customer       = received.sentBy().customerVertex();
         int amount         = received.amount();
-        Path shortestPath  = costMinimizer.shortestPath(HOME, customer);
+        Path shortestPath  = 
+                     costMinimizer.shortestPath(Simulator.HOME, customer);
 
         // plan with MAX_CAPACITY, that will return latest time of completion
         // Fully loaded trucks then will be sent in parallel
@@ -97,26 +96,27 @@ public class GreedyScheduler implements Scheduler {
 
             // Construct new trip for each truck and delay such that 
             // no waiting is needed
-            DeliveryTrip truckTrip = 
+            DeliveryTrip deliveryTrip = 
                   new DeliveryTrip(success.startTime(), 
                                    success.path(), assignedAmount);
-            delayIfNeeded(truckTrip);
+            delayIfNeeded(deliveryTrip);
 
             ReturnTrip sendBack = 
                   new ReturnTrip(success.endTime() + 1, 
-                                 Path.reversed(HOME, success.path()));
+                               Path.reversed(Simulator.HOME, success.path()));
 
 
             // TODO TruckSendEvent should update cost in Truck
             // Now we know travelCost for this truck, update in Truck 
-            truck.setTravelCost(truckTrip.tripCost());
+            truck.updateTravelCost(deliveryTrip);
+            truck.updateTravelCost(sendBack);
 
 
 
-            prepareTruck(truck, truckTrip, received, assignedAmount);
+            prepareTruck(truck, deliveryTrip, received, assignedAmount);
 
             // Dispatch the truck
-            truckTrip.sendTruck(truck);
+            deliveryTrip.sendTruck(truck);
             sendBack.sendTruck(customer, truck);
         }
     }

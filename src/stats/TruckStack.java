@@ -1,6 +1,8 @@
 import java.util.Map;
 import java.util.TreeMap;
 
+import java.text.DecimalFormat;
+
 
 /**
  * Class TruckStack
@@ -26,8 +28,22 @@ public class TruckStack {
         return ret;
     }
 
+	public static int totalCost() {
+		int tot = 0;
+		for (Map.Entry KVpair : allTrucks.entrySet()) {
+			int truckId = (Integer) KVpair.getKey();
+			tot += allTrucks.get(truckId).totalTravelCost();
+		}
+			
+		return tot;
+	}
+
 
     public static void summary() {
-        System.out.printf("Trucks dispatched  : %d%n", allTrucks.size());    
+		DecimalFormat formatter = new DecimalFormat(",###");
+
+		String totalCost  = formatter.format(totalCost());
+		String dispatched = formatter.format(allTrucks.size());
+        System.out.printf("TOTAL COST         : %s CZK%n", totalCost);
     }
 }

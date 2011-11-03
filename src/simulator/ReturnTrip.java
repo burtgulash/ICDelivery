@@ -3,8 +3,8 @@ import graph.Path;
 import static constant.Times.*;
 import static constant.Costs.*;
 
-public class ReturnTrip extends Trip {
-    public ReturnTrip (int startTime, Path toHOME) {
+class ReturnTrip extends Trip {
+    ReturnTrip (int startTime, Path toHOME) {
         super(startTime, toHOME);
 
         computeTimes();
@@ -23,12 +23,12 @@ public class ReturnTrip extends Trip {
     }
 
     @Override
-    public void delay(int delayTime) {
+    void delay(int delayTime) {
         startTime += delayTime;
         endTime += delayTime;
     }
 
-    public void sendTruck(int customer, Truck truck) {
+    void sendTruck(int customer, Truck truck) {
         sendTruck(startTime, customer, truck);
     }
 }
