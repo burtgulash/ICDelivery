@@ -35,8 +35,8 @@ class DeliveryTrip extends Trip {
 
     @Override
     protected void computeCost() {
-        totalCost += path.pathLength() * 
-                     (BASE.cost() + assignedAmount * TRANSPORT.cost()); 
+        totalCost = path.pathLength() * 
+                    (BASE.cost() + assignedAmount * TRANSPORT.cost()); 
         totalCost += assignedAmount * UNLOADING.cost();
     }
 

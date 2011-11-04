@@ -19,7 +19,7 @@ class ReturnTrip extends Trip {
 
     @Override
     protected void computeCost() {
-        totalCost += path.pathLength() * BASE.cost(); 
+        totalCost = path.pathLength() * BASE.cost(); 
     }
 
     @Override
