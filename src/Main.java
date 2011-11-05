@@ -5,9 +5,6 @@ import java.io.OutputStream;
 import graph.Graph;
 import graph.GraphLoader;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 
 public class Main {
 
@@ -27,19 +24,7 @@ public class Main {
         p.addStringOption("output", "o", "output file for log", "");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
-        String[] arg = null;
-        try {
-            arg = p.parse(args);
-        } catch(Parser.MissingValueException ex) {
-            System.err.println("Missing value after " + ex.arg);
-            System.exit(1);
-        } catch(Parser.UnknownArgumentException ex) {
-            System.err.println("Invalid argument: " + ex.arg);
-            System.exit(1);
-        } catch (NumberFormatException ex) {
-            System.err.println("Number parsing error");
-            System.exit(1);
-        }
+        String[] leftOvers = loadArgs(p, args);
 
 
         int HOME = 0;
@@ -53,13 +38,36 @@ public class Main {
         String graphFile     = (String) p.getValue("graph");
         String outFile       = (String) p.getValue("output");
 
-        if (arg.length >= 1)
-            graphFile = arg[0];
+        if (leftOvers.length >= 1)
+            graphFile = leftOvers[0];
 
+		// set pause after termination time if it is not specified
         if (pauseTime < 0)
             pauseTime = simTime + 1;
 
-        OutputStream file = null;
+		// open output file
+        OutputStream file = openOutFile(outFile);
+
+        Graph graph = GraphLoader.getGraph(graphFile);
+        if (graph == null)
+            System.exit(1);
+
+        Initializer.initSimulation(graph, HOME, simTime, pauseTime, orderMean,
+                                   startOrderCount, maxTonsPerOrder, quiet,
+                                   file);
+
+		// run the simulation
+        Simulator.mainLoop();
+
+
+		// print end summary
+        System.out.println();
+        TruckStack.summary();
+        CustomerList.summary();
+    }
+
+	private static OutputStream openOutFile(String outFile) {
+		OutputStream file = null;
         try {
             if (outFile != null && !outFile.equals(""))
                 file = new FileOutputStream(outFile);
@@ -71,24 +79,24 @@ public class Main {
             System.exit(1);
         }
 
-        Graph graph = GraphLoader.getGraph(graphFile);
-        if (graph == null)
+		return file;
+	}
+
+	private static String[] loadArgs(Parser p, String [] args) {
+		String[] leftOvers = null;
+        try {
+            leftOvers = p.parse(args);
+        } catch(Parser.MissingValueException ex) {
+            System.err.println("Missing value after " + ex.arg);
             System.exit(1);
+        } catch(Parser.UnknownArgumentException ex) {
+            System.err.println("Invalid argument: " + ex.arg);
+            System.exit(1);
+        } catch (NumberFormatException ex) {
+            System.err.println("Number parsing error");
+            System.exit(1);
+        }
 
-        Initializer.initSimulation(graph,
-                                   HOME,
-                                   simTime, 
-                                   pauseTime,
-                                   orderMean,
-                                   startOrderCount,
-                                   maxTonsPerOrder,
-                                   quiet,
-                                   file);
-
-        Simulator.mainLoop();
-
-        System.out.println();
-        TruckStack.summary();
-        CustomerList.summary();
-    }
+		return leftOvers;
+	}
 }

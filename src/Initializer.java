@@ -7,24 +7,17 @@ import graph.Graph;
 
 
 /**
- * Initializer class
- *
- * Takes care of initialization of most of the components in correct order.
+ * Takes care of initialization of simulator components in correct order.
  */
 public class Initializer {
     /**
      * Initializes simulation from given parameters
      */
-    public static void initSimulation (Graph graph,
-                                       int homeVertex,
-                                       int simulationTime,
-                                       int pauseTime,
-                                       int orderMean,
-                                       int startOrders,
-                                       int maxOrderAmount,
-                                       boolean quiet,
+    public static void initSimulation (Graph graph, int homeVertex, 
+                                       int simulationTime, int pauseTime, 
+                                       int orderMean, int startOrders, 
+                                       int maxOrderAmount, boolean quiet, 
                                        OutputStream file)
-
     {
         // Initialize components
         // Initialize Simulator first!
@@ -36,21 +29,26 @@ public class Initializer {
         CustomerList.init(graph.vertices());
         TruckStack.init();
 
+		// initialize logger and outfile
         Logger.init();
         if (!quiet)
             Logger.addOutput(System.out);
         if (file != null)
             Logger.addOutput(file);
 
+		// add pause
+		Event pause = new PauseEvent(pauseTime);
+		Calendar.addEvent(pause);
 
+
+		// add all initially known orders
         OrderGenerator gen = new ExponentialGenerator(orderMean, 
                                                   maxOrderAmount, homeVertex);
         generateOrders(gen, simulationTime, startOrders, orderMean);
     }
 
 
-    private static void generateOrders(OrderGenerator gen, 
-                                       int simulationTime, 
+    private static void generateOrders(OrderGenerator gen, int simulationTime, 
                                        int startOrders, int mean) 
     {
         int START_TIME = 0;
@@ -59,23 +57,14 @@ public class Initializer {
         Order generated;
         for (int i = 0; i < startOrders; i++) {
             generated = gen.generateAt(START_TIME);
-            sendOrder(generated);
+            Simulator.sendOrder(generated);
         }
 
         while (true) {
             generated = gen.generateNext();
             if (generated.received() >= simulationTime - HALF_DAY)
                 break;
-            sendOrder(generated);
+            Simulator.sendOrder(generated);
         }
-    }
-
-
-    // send order to calendar
-    private static void sendOrder(Order order) {
-        Event orderEvent = new OrderEvent(order.received(), order);
-        // update order in customer
-        order.sentBy().addOrder(order);
-        Calendar.addEvent(orderEvent);
     }
 }

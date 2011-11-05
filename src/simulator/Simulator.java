@@ -15,6 +15,7 @@ public class Simulator {
     final static int TERMINATE = 0;
     final static int CONTINUE  = 1;
 
+
     /**
      * Initializes simulation.
      *
@@ -26,6 +27,7 @@ public class Simulator {
         TERMINATION_TIME  = simulationTime;
     }
 
+
     /**
      * Sets the scheduler of simulation to different scheduler.
      *
@@ -34,6 +36,21 @@ public class Simulator {
     public static void setScheduler(Scheduler s) {
         scheduler = s;
     }
+
+
+	/**
+	 * Only place where Order Events should be created.
+	 *
+	 * @param order Order that will be sent to Calendar
+	 */
+    public static void sendOrder(Order order) {
+        Event orderEvent = new OrderEvent(order.received(), order);
+        // update order in customer
+        order.sentBy().addOrder(order);
+        Calendar.addEvent(orderEvent);
+    }
+
+
 
     /**
      * Core of the simulation, events are handled here.
