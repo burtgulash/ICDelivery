@@ -20,6 +20,7 @@ public class ExponentialGenerator implements OrderGenerator {
     private int home;
 
     private Random rand;
+	private Random amountRand;
 
     /**
      * Construct exponential generator
@@ -30,6 +31,7 @@ public class ExponentialGenerator implements OrderGenerator {
     public ExponentialGenerator(int mean, int maxAmount, int home) {
         used            = new HashSet<Integer>();
         rand            = new Random(1337);
+		amountRand      = new Random(101);
         used.add(home);
 
         customers       = CustomerList.numCustomers();
@@ -56,12 +58,23 @@ public class ExponentialGenerator implements OrderGenerator {
         } while (used.contains(customer));
         used.add(customer);
 
-        int amount = rand.nextInt(maxAmount - 1) + 1;
+		int amount = normalAmount();
 
         lastGenerated = time;
         Order generated  = new Order(time, customer, amount);
         return generated;
     }
+
+	private int normalAmount() {
+		double normal = amountRand.nextGaussian();
+
+		// transform
+		double amountMean = (1 + maxAmount) / 2;
+		double amountSD = Math.max(1.0, amountMean / 3);
+		double transformed = normal * amountSD + amountMean;
+		int amount = Math.abs((int) transformed) % maxAmount + 1;
+		return amount;
+	}
 
 
     @Override

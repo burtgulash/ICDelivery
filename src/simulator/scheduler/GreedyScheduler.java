@@ -25,12 +25,18 @@ public class GreedyScheduler implements Scheduler {
      * @param depot depot vertex in graph
      * @param terminationTime time of end, trucks won't be sent if they would 
                               arrive after this time
+	 * @param sp ShortestPaths implementation to be used by this scheduler
      */
     public 
-    GreedyScheduler (Graph graph) {
+    GreedyScheduler (Graph graph, ShortestPaths sp) {
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
-        costMinimizer = new Dijkstra(graph, Simulator.HOME);
+		costMinimizer = sp;
     }
+
+	public
+	GreedyScheduler(Graph graph) {
+		this(graph, new Dijkstra(graph, Simulator.HOME));
+	}
 
 
     @Override
@@ -149,7 +155,8 @@ public class GreedyScheduler implements Scheduler {
                    new TruckUnload(trip.arrivalTime(), amount, truck);
 
             Event completion = 
-                   new OrderSatisfyEvent(trip.endTime(), order, amount);
+                   new CustomerSatisfyEvent(trip.endTime(), amount, truck, 
+                                                             order.sentBy());
 
 
             Calendar.addEvent(assign);

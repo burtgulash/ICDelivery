@@ -11,8 +11,7 @@ public class Order {
     private final Customer customer; // creator of Order
 
     private int orderedAmount;   // num of containers
-    private int satisfied;       // containers delivered so far
-    private int onWay;           // containers on road
+    private int processed;
 
     private final int receivedTime;
 
@@ -38,8 +37,7 @@ public class Order {
 
         this.receivedTime    = receivedTime;
         orderedAmount        = amount;
-        satisfied            = 0;
-        onWay                = 0;
+        processed            = 0;
         customer             = CustomerList.get(customerNum);
         trucks               = new LinkedList<Truck>();
     }
@@ -52,7 +50,6 @@ public class Order {
      */
     public void assignTruck(Truck truck, int assignedAmount) {
         trucks.add(truck);
-        onWay += assignedAmount;
     }
 
     /**
@@ -81,18 +78,21 @@ public class Order {
     /**
      * Return amount of containers delivered at the end of Simulation
      */
-    public int satisfied() {
-        return satisfied;
+    public int processed() {
+        return processed;
     }
+
+	public int remains() {
+		return orderedAmount - processed;
+	}
+
 
     /**
      * satisfies order by specified number of containers
      */
     public void satisfy(int containers) {
-        onWay     -= containers;
-        assert(onWay >= 0);
-        satisfied += containers;
-        assert(satisfied <= orderedAmount);
+        processed += containers;
+        assert(processed <= orderedAmount);
     }
 
     /**

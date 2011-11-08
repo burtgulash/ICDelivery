@@ -7,15 +7,25 @@ class DeliveryTrip extends Trip {
     private int dispatchTime;
     private int arrivalTime;
 
-    private int assignedAmount;
+	private int loadAmount;
+	private int unloadAmount;
+	private int cargo;
 
-    DeliveryTrip (int startTime, Path path, int assignedAmount) {
+    DeliveryTrip (int startTime, Path path, 
+                  int loadAmount, int unloadAmount, int cargo)
+    {
         super(startTime, path);
-        this.assignedAmount = assignedAmount;
+		this.loadAmount = loadAmount;
+		this.unloadAmount = unloadAmount;
+		this.cargo = cargo;
 
         computeTimes();
         computeCost();
     }
+
+	DeliveryTrip(int startTime, Path path, int assignedAmount) {
+		this(startTime, path, assignedAmount, assignedAmount, assignedAmount);
+	}
 
     int dispatchTime() {
         return dispatchTime;
@@ -27,17 +37,17 @@ class DeliveryTrip extends Trip {
 
     @Override
     protected void computeTimes() {
-        dispatchTime = startTime     + assignedAmount * LOAD.time();
+        dispatchTime = startTime     + loadAmount * LOAD.time();
         arrivalTime  = dispatchTime  + path.pathLength() * 
                                        MINUTES_IN_HOUR.time() / Truck.SPEED;
-        endTime      = arrivalTime   + assignedAmount * UNLOAD.time();
+        endTime      = arrivalTime   + unloadAmount * UNLOAD.time();
     }
 
     @Override
     protected void computeCost() {
         totalCost = path.pathLength() * 
-                    (BASE.cost() + assignedAmount * TRANSPORT.cost()); 
-        totalCost += assignedAmount * UNLOADING.cost();
+                    (BASE.cost() + cargo * TRANSPORT.cost()); 
+        totalCost += unloadAmount * UNLOADING.cost();
     }
 
     @Override

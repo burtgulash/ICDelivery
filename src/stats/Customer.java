@@ -8,6 +8,7 @@ import java.util.LinkedList;
 public class Customer {
     private final int vertex;
     private List<Order> orderHistory;
+	private int orderToSatisfy = 0;
 
     public Customer (int customerId) {
         // must match with graph vertex
@@ -18,6 +19,19 @@ public class Customer {
     public void addOrder(Order order) {
         orderHistory.add(order);
     }
+
+	public void satisfy(int containers) {
+		while (containers > 0) {
+			Order curOrder = orderHistory.get(orderToSatisfy);
+			int curSatisfy = Math.min(curOrder.remains(), containers);
+			curOrder.satisfy(curSatisfy);
+			// if current order done:
+			if (curOrder.remains() == 0)
+				orderToSatisfy++;
+
+			containers -= curSatisfy;
+		}
+	}
 
     public int totalOrders() {
         return orderHistory.size();
