@@ -3,7 +3,6 @@ import static constant.Times.*;
 import graph.Graph;
 import graph.Path;
 import graph.ShortestPaths;
-import graph.FloydWarshall;
 import graph.Dijkstra;
 
 
@@ -25,19 +24,25 @@ public class GreedyScheduler implements Scheduler {
      * @param depot depot vertex in graph
      * @param terminationTime time of end, trucks won't be sent if they would 
                               arrive after this time
-	 * @param sp ShortestPaths implementation to be used by this scheduler
+     * @param sp ShortestPaths implementation to be used by this scheduler
      */
     public 
-    GreedyScheduler (Graph graph, ShortestPaths sp) {
+    GreedyScheduler (ShortestPaths sp) {
         TERMINATION_TIME = Simulator.TERMINATION_TIME;
-		costMinimizer = sp;
+        costMinimizer = sp;
     }
 
-	public
-	GreedyScheduler(Graph graph) {
-		this(graph, new Dijkstra(graph, Simulator.HOME));
-	}
+    public
+    GreedyScheduler(Graph graph) {
+        this(new Dijkstra(graph, Simulator.HOME));
+    }
 
+
+    @Override
+    public void
+    releaseAll() {
+        // done
+    }
 
     @Override
     /**
@@ -70,10 +75,9 @@ public class GreedyScheduler implements Scheduler {
         if (plan.endTime() >= TERMINATION_TIME) {
             Event reject = new OrderRejectEvent(receivedTime, received);
             Calendar.addEvent(reject);
+            received.reject();
             return;
         }
-        // else accept the order
-        received.accept();
 
         // success, assign Trucks and dispatch them
         dispatchTrucks(plan, received);

@@ -14,4 +14,6 @@ public interface Scheduler {
      * @param order Order to be processed
      */
     public void receiveOrder(Order order);
+
+	public void releaseAll();
 }

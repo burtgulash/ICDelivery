@@ -19,7 +19,8 @@ public class Order {
     private static int orderCount = 0;
     private int orderId;
 
-    private boolean accepted = false;
+    // Every order is marked as accepted until we reject it
+    private boolean accepted = true;
 
 
     /**
@@ -82,9 +83,9 @@ public class Order {
         return processed;
     }
 
-	public int remains() {
-		return orderedAmount - processed;
-	}
+    public int remains() {
+        return orderedAmount - processed;
+    }
 
 
     /**
@@ -103,8 +104,8 @@ public class Order {
     }
 
 
-    public void accept() {
-        accepted = true;
+    public void reject() {
+        accepted = false;
     }
 
     public boolean accepted() {
