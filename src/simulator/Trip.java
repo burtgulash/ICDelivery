@@ -47,6 +47,9 @@ abstract class Trip {
      * @truck truck to dispatch
      */
     void sendTruck(int dispatchAt, int src, Truck truck) {
+		// update cost for this truck
+		truck.updateTravelCost(this);
+
         Path p       = path;
         int fromTime = dispatchAt;
         int toTime   = fromTime +  p.distanceToNext() * 

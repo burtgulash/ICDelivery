@@ -98,7 +98,6 @@ public class GreedyScheduler implements Scheduler {
         int orderAmount = received.amount();
         while (orderAmount > 0) {
             Truck truck = new Truck();
-            TruckStack.add(truck);
 
             // assign as many containers as the Truck can take
             int assignedAmount = Math.min(Truck.MAX_CAPACITY, orderAmount);
@@ -114,13 +113,6 @@ public class GreedyScheduler implements Scheduler {
             ReturnTrip sendBack = 
                   new ReturnTrip(deliveryTrip.endTime() + 1, 
                                Path.reversed(Simulator.HOME, success.path()));
-
-
-            // TODO TruckSendEvent should update cost in Truck
-            // Now we know travelCost for this truck, update in Truck 
-            truck.updateTravelCost(deliveryTrip);
-            truck.updateTravelCost(sendBack);
-
 
 
             prepareTruck(truck, deliveryTrip, received, assignedAmount);

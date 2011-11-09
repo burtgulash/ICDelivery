@@ -23,8 +23,10 @@ public class Initializer {
         // Initialize Simulator first!
         Simulator.init(homeVertex, simulationTime);
         Calendar.init();
-        // Scheduler s = new GreedyScheduler(graph);
-        Scheduler s = new ClarkeWrightScheduler(graph);
+		// TODO decide on scheduler
+		Scheduler s;
+        s = new GreedyScheduler(graph);
+        s = new ClarkeWrightScheduler(graph);
         Simulator.setScheduler(s);
 
         CustomerList.init(graph.vertices());

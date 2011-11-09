@@ -20,6 +20,7 @@ public class Truck {
 
     public Truck() {
         truckId = ++truckCount;
+		TruckStack.add(this);
 
         assignedOrders = new LinkedList<Order>();
         loadedCargo = 0;

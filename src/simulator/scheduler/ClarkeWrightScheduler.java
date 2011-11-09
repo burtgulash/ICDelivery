@@ -41,34 +41,17 @@ public class ClarkeWrightScheduler implements Scheduler {
         if (deadline >= Simulator.TERMINATION_TIME)
             deadline -= DAY.time();
 
-        // compute two longest paths
-        int max_1 = Integer.MIN_VALUE;
-        int max_2 = Integer.MIN_VALUE;
-        Path path_1 = null;
-        Path path_2 = null;
-        for (int i = 0; i < toSatisfy.length; i++) {
-            Path path = costMinimizer.shortestPath(HOME, i);
-            if (path.pathLength() > max_2) {
-                max_2 = path.pathLength();
-                path_2 = path;
-            }
-            else if (path.pathLength() > max_1) {
-                max_2 = max_1;
-                max_1 = path.pathLength();
-                path_2 = path_1;
-                path_1 = path;
-            }
-        }
+		// compute average trip time
+		int avgPathLength = 0;
+		for (int i = 0; i < toSatisfy.length; i++)
+			avgPathLength += costMinimizer.shortestPath(HOME, i).pathLength();
+		avgPathLength /= toSatisfy.length;
 
-        // should have more than 2 cities
-        assert(path_1 != null && path_2 != null);
+		int maxLoadTime = Truck.MAX_CAPACITY * LOAD.time();
+		int estimatedTripTime = 
+            avgPathLength * MINUTES_IN_HOUR.time() / Truck.SPEED + maxLoadTime;
 
-        Trip fst = new DeliveryTrip(0, path_1, Truck.MAX_CAPACITY);
-        Trip snd = new DeliveryTrip(0, path_2, Truck.MAX_CAPACITY);
-
-        // deadline such that trucks have time to deliver every trip, even
-        // the longest two in sequence
-        return deadline - fst.endTime - snd.endTime;
+        return deadline - estimatedTripTime;
     }
 
     @Override
@@ -124,6 +107,10 @@ public class ClarkeWrightScheduler implements Scheduler {
 
     @Override
     public void releaseAll() {
+		// we've done our job, let greedy scheduler do the rest
+		done = true;
+
+	
         Saving[] savings = computeSavings();
         sort(savings);
 
