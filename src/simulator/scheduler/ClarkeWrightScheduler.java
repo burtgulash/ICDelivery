@@ -18,16 +18,16 @@ public class ClarkeWrightScheduler implements Scheduler {
     private Scheduler alternative;
 
     private int[] toSatisfy;
-	private AbstractCustomer[] customers;
+    private AbstractCustomer[] customers;
 
 
 
     public ClarkeWrightScheduler(Graph graph) {
         HOME           = Simulator.HOME;
         toSatisfy      = new int[graph.vertices()];
-		customers      = new AbstractCustomer[graph.vertices()];
-		for (int i = 0; i < customers.length; i++) 
-			customers[i] = new AbstractCustomer();
+        customers      = new AbstractCustomer[graph.vertices()];
+        for (int i = 0; i < customers.length; i++) 
+            customers[i] = new AbstractCustomer();
 
         costMinimizer  = new Dijkstra(graph, Simulator.HOME);
         alternative    = new GreedyScheduler(costMinimizer);
@@ -69,12 +69,12 @@ public class ClarkeWrightScheduler implements Scheduler {
         if (done)
             alternative.receiveOrder(received);
         else {
-			int customer = received.sentBy().customerVertex();
+            int customer = received.sentBy().customerVertex();
             toSatisfy[customer] += received.amount() - received.processed();
 
-			customers[customer].addOrder(received);
+            customers[customer].addOrder(received);
             // order implicitly accepted, only greedy scheduler can reject it
-		}
+        }
     }
 
     private Saving[] computeSavings() {
@@ -196,11 +196,11 @@ public class ClarkeWrightScheduler implements Scheduler {
                 Calendar.addEvent(unload_1);
                 Calendar.addEvent(unload_2);
 
-				assert(!customers[s.fst].allSatisfied());
-				assert(!customers[s.snd].allSatisfied());
+                assert(!customers[s.fst].allSatisfied());
+                assert(!customers[s.snd].allSatisfied());
 
-				customers[s.fst].satisfy(toFst.endTime(), cargoToFst, truck);
-				customers[s.snd].satisfy(toSnd.endTime(), cargoToSnd, truck);
+                customers[s.fst].satisfy(toFst.endTime(), cargoToFst, truck);
+                customers[s.snd].satisfy(toSnd.endTime(), cargoToSnd, truck);
 
                 // dispatcher
                 toFst.sendTruck(truck);
@@ -214,14 +214,14 @@ public class ClarkeWrightScheduler implements Scheduler {
 
 
 
-		// handle every remaining unsatisfied order
-		for (int i = 0; i < customers.length; i++)
-			while (!customers[i].allSatisfied()) {
-				// handle by greedy Scheduler, simple 
-				alternative.receiveOrder(customers[i].getCurrentOrder());
+        // handle every remaining unsatisfied order
+        for (int i = 0; i < customers.length; i++)
+            while (!customers[i].allSatisfied()) {
+                // handle by greedy Scheduler, simple 
+                alternative.receiveOrder(customers[i].getCurrentOrder());
 
-				customers[i].satisfyCurrent();
-			}
+                customers[i].satisfyCurrent();
+            }
     }
 
 
@@ -283,55 +283,55 @@ public class ClarkeWrightScheduler implements Scheduler {
     }
 
 
-	private class AbstractCustomer {
-		private List<Order> orderHistory;
-		private List<Integer> orderRemainTons;
-		private int currentOrder = 0;
+    private class AbstractCustomer {
+        private List<Order> orderHistory;
+        private List<Integer> orderRemainTons;
+        private int currentOrder = 0;
 
-		AbstractCustomer() {
-			orderHistory = new LinkedList<Order>();
-			orderRemainTons = new LinkedList<Integer>();
-		}
-		
-		void addOrder(Order o) {
-			orderHistory.add(o);
-			orderRemainTons.add(o.amount() - o.processed());
-		}
+        AbstractCustomer() {
+            orderHistory = new LinkedList<Order>();
+            orderRemainTons = new LinkedList<Integer>();
+        }
 
-		Order getCurrentOrder() {
-			return orderHistory.get(currentOrder);
-		}
+        void addOrder(Order o) {
+            orderHistory.add(o);
+            orderRemainTons.add(o.amount() - o.processed());
+        }
 
-		boolean allSatisfied() {
-			assert(currentOrder <= orderHistory.size());
-			return currentOrder == orderHistory.size();
-		}
+        Order getCurrentOrder() {
+            return orderHistory.get(currentOrder);
+        }
 
-		void satisfyCurrent() {
-			currentOrder++;
-		}
+        boolean allSatisfied() {
+            assert(currentOrder <= orderHistory.size());
+            return currentOrder == orderHistory.size();
+        }
 
-		void satisfy(int satisfyTime, int amount, Truck truck) {
-			while (amount > 0) {
-				assert(currentOrder < orderHistory.size());
+        void satisfyCurrent() {
+            currentOrder++;
+        }
 
-				int curRemains   = orderRemainTons.get(currentOrder);
-				int curAmount    = Math.min(curRemains, amount);
-				
-				orderRemainTons.set(currentOrder, curRemains - curAmount);
-				amount -= curAmount;
+        void satisfy(int satisfyTime, int amount, Truck truck) {
+            while (amount > 0) {
+                assert(currentOrder < orderHistory.size());
 
-				// update stats outside
-				Order order = orderHistory.get(currentOrder);
-				order.process(curAmount);
-				Event completion = new OrderSatisfyEvent(
+                int curRemains   = orderRemainTons.get(currentOrder);
+                int curAmount    = Math.min(curRemains, amount);
+
+                orderRemainTons.set(currentOrder, curRemains - curAmount);
+                amount -= curAmount;
+
+                // update stats outside
+                Order order = orderHistory.get(currentOrder);
+                order.process(curAmount);
+                Event completion = new OrderSatisfyEvent(
                              satisfyTime, curAmount, truck, order);
-				Calendar.addEvent(completion);
+                Calendar.addEvent(completion);
 
-				// move to next order if this done
-				if (orderRemainTons.get(currentOrder) == 0)
-					currentOrder++;
-			}
-		}
-	}
+                // move to next order if this done
+                if (orderRemainTons.get(currentOrder) == 0)
+                    currentOrder++;
+            }
+        }
+    }
 }
