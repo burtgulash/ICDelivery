@@ -90,12 +90,12 @@ public class ClarkeWrightScheduler implements Scheduler {
                                costMinimizer.shortestPath(i, j).pathLength();
                         int saved = d_HOME[i] + d_HOME[j] - d_ij;
 
-						// only include those that save something, otherwise 
+                        // only include those that save something, otherwise 
                         // use greedy scheduler instead
-						if (saved > 0) {
-							Saving s_ij = new Saving(saved, i, j);
-							savings.add(s_ij);
-						}
+                        if (saved > 0) {
+                            Saving s_ij = new Saving(saved, i, j);
+                            savings.add(s_ij);
+                        }
                     }
             }
 
@@ -136,7 +136,7 @@ public class ClarkeWrightScheduler implements Scheduler {
         for (Saving s : savings) {
             // all following savings will be negative
             if (toSatisfy[s.fst] == 0 || toSatisfy[s.snd] == 0)
-				continue;
+                continue;
 
             int cargoToFst = computeLoad(s);
             int cargoToSnd = 
@@ -165,7 +165,7 @@ public class ClarkeWrightScheduler implements Scheduler {
             if (!shiftTrips(toFst, toSnd))
                 continue;
 
-			Path back = costMinimizer.shortestPath(s.snd, HOME);
+            Path back = costMinimizer.shortestPath(s.snd, HOME);
 
             // while both customers at the same time need to be satisfied, 
             // send trucks
@@ -173,23 +173,23 @@ public class ClarkeWrightScheduler implements Scheduler {
                 cargoToFst   = Math.min(cargoToFst, toSatisfy[s.fst]);
                 cargoToSnd   = Math.min(cargoToSnd, toSatisfy[s.snd]);
 
-				firstLoad    = cargoToFst + cargoToSnd;
-				firstUnload  = cargoToFst;
-				DeliveryTrip toFstReal = 
+                firstLoad    = cargoToFst + cargoToSnd;
+                firstUnload  = cargoToFst;
+                DeliveryTrip toFstReal = 
                    new DeliveryTrip(releaseTime, HomeToFst, 
                                         firstLoad, firstUnload, firstLoad);
-				secondLoad   = 0;
-				secondUnload = cargoToSnd;
-				DeliveryTrip toSndReal = 
+                secondLoad   = 0;
+                secondUnload = cargoToSnd;
+                DeliveryTrip toSndReal = 
                    new DeliveryTrip(toFstReal.endTime() + 1, FstToSnd, 
                                         secondLoad, secondUnload, cargoToSnd);
-				// if something messed up, every following double-trip in this
+                // if something messed up, every following double-trip in this
                 // loop will be almost the same
-				if (!shiftTrips(toFstReal, toSndReal))
-					break;
+                if (!shiftTrips(toFstReal, toSndReal))
+                    break;
 
-				// back to HOME trip
-				ReturnTrip backTrip = 
+                // back to HOME trip
+                ReturnTrip backTrip = 
                        new ReturnTrip(toSndReal.endTime() + 1, back);
 
                 Truck truck = new Truck();

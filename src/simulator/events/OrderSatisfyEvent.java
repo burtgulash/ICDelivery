@@ -14,8 +14,8 @@ class OrderSatisfyEvent extends Event {
 
     @Override
     protected int doWork() {
-		// require that orders will be delivered in 06-18 interval
-		assert(MIN_ACCEPT.time() <= time() % DAY.time() && 
+        // require that orders will be delivered in 06-18 interval
+        assert(MIN_ACCEPT.time() <= time() % DAY.time() && 
                time() % DAY.time() <= MAX_ACCEPT.time());
         order.satisfy(satisfyAmount);
         return Simulator.CONTINUE;

@@ -184,7 +184,7 @@ public class GreedyScheduler implements Scheduler {
 
         trip.delay(delayTime);
 
-		assert(trip.arrivalTime() % DAY.time() >= MIN_ACCEPT.time());
-		assert(trip.endTime() % DAY.time() <= MAX_ACCEPT.time());
+        assert(trip.arrivalTime() % DAY.time() >= MIN_ACCEPT.time());
+        assert(trip.endTime() % DAY.time() <= MAX_ACCEPT.time());
     }
 }
