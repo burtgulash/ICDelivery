@@ -143,7 +143,8 @@ public class GreedyScheduler implements Scheduler {
 
             int assignedTime = order.received() + 1;
             Event assign = 
-                   new AssignEvent(assignedTime, amount, truck, order);
+                   new CustomerAssignEvent(
+                          assignedTime, amount, truck, order.sentBy());
 
             Event load = 
                    new TruckLoad(trip.startTime(), amount, truck);
@@ -168,21 +169,22 @@ public class GreedyScheduler implements Scheduler {
      */
     private void 
     delayIfNeeded(DeliveryTrip trip) {
-        int delayTime = 0;
-        int arrivalTimeInDay     = trip.arrivalTime() % DAY.time();
-        int completionTimeInDay  = trip.endTime()     % DAY.time();
-        // arrives next day in morning, then completionTime <= arrivalTime
-        boolean arrivesNextDay   = completionTimeInDay <= arrivalTimeInDay;
+        int delayTime   = 0;
+        int arrival     = trip.arrivalTime() % DAY.time();
+        int completion  = trip.endTime()     % DAY.time();
 
         // delay if too early
-        if (arrivalTimeInDay < MIN_ACCEPT.time())
-            delayTime = MIN_ACCEPT.time() - trip.arrivalTime() % DAY.time();
+        if (arrival < MIN_ACCEPT.time())
+            delayTime = MIN_ACCEPT.time() - arrival;
 
         // delay to next day if too late
-        else if (completionTimeInDay > MAX_ACCEPT.time() || arrivesNextDay)
-           delayTime = 
-              DAY.time() - trip.arrivalTime() % DAY.time() + MIN_ACCEPT.time();
+        else if (completion < MIN_ACCEPT.time() ||
+                 completion > MAX_ACCEPT.time());
+           delayTime = DAY.time() + MIN_ACCEPT.time() - arrival;
 
         trip.delay(delayTime);
+
+		assert(trip.arrivalTime() % DAY.time() >= MIN_ACCEPT.time());
+		assert(trip.endTime() % DAY.time() <= MAX_ACCEPT.time());
     }
 }

@@ -203,12 +203,12 @@ public class ClarkeWrightScheduler implements Scheduler {
                       releaseTime, cargoToSnd, truck, sndCustomer);
 
                 Event load = new TruckLoad(
-                           toFstReal.startTime(), cargoToFst + cargoToSnd, truck);
+                        toFstReal.startTime(), cargoToFst + cargoToSnd, truck);
 
                 Event unload_1 = new TruckUnload(
-                           toFstReal.arrivalTime() + 1, cargoToFst, truck);
+                           toFstReal.arrivalTime(), cargoToFst, truck);
                 Event unload_2 = new TruckUnload(
-                           toSndReal.arrivalTime() + 1, cargoToSnd, truck);
+                           toSndReal.arrivalTime(), cargoToSnd, truck);
 
 
                 Calendar.addEvent(assignEvent_1);

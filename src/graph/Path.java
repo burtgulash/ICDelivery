@@ -140,9 +140,9 @@ public class Path {
     // remove
     @Override
     public  String toString() {
-        String res = "PATH: " + vertex + "";
+        String res = "PATH: " + vertex + ":" + weight;
         for (Path iter = rest; iter != null; iter = iter.rest)
-            res += ", " + iter.vertex;
+            res += ", " + iter.vertex + ":" + iter.weight;
         return res;
     }
 }

@@ -64,14 +64,12 @@ abstract class Trip {
             src = dst;
             dst = p.to();
             fromTime = toTime;
-            toTime = fromTime + path.distanceToNext() * 
+            toTime = fromTime + p.distanceToNext() * 
                                 MINUTES_IN_HOUR.time() / Truck.SPEED;
         }
 
         Event toLastTown = new TruckSend(fromTime, truck, src, dst);
-
-        Event arrived = 
-             new TruckArrivedEvent(fromTime + 1, truck, dst, tripCost());
+        Event arrived = new TruckArrivedEvent(toTime, truck, dst, tripCost());
 
         Calendar.addEvent(toLastTown);
         Calendar.addEvent(arrived);
