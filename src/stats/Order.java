@@ -11,6 +11,7 @@ public class Order {
     private final Customer customer; // creator of Order
 
     private int orderedAmount;   // num of containers
+	private int delivered;
     private int processed;
 
     private final int receivedTime;
@@ -38,6 +39,7 @@ public class Order {
 
         this.receivedTime    = receivedTime;
         orderedAmount        = amount;
+		delivered            = 0;
         processed            = 0;
         customer             = CustomerList.get(customerNum);
         trucks               = new LinkedList<Truck>();
@@ -83,17 +85,22 @@ public class Order {
         return processed;
     }
 
+
+	public void process(int containers) {
+		processed += containers;
+        assert(processed <= orderedAmount);
+	}
+
     public int remains() {
         return orderedAmount - processed;
     }
-
 
     /**
      * satisfies order by specified number of containers
      */
     public void satisfy(int containers) {
-        processed += containers;
-        assert(processed <= orderedAmount);
+		delivered += containers;
+        assert(delivered <= orderedAmount);
     }
 
     /**

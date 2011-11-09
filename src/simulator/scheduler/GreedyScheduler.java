@@ -138,6 +138,7 @@ public class GreedyScheduler implements Scheduler {
             // Greedy Scheduler will only assign one Order per Trucko
             truck.assignOrder(order);
             order.assignTruck(truck, amount); 
+			order.process(amount);
 
 
             int assignedTime = order.received() + 1;

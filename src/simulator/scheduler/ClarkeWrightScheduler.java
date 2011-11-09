@@ -321,11 +321,14 @@ public class ClarkeWrightScheduler implements Scheduler {
 				orderRemainTons.set(currentOrder, curRemains - curAmount);
 				amount -= curAmount;
 
+				// update stats outside
+				Order order = orderHistory.get(currentOrder);
+				order.process(curAmount);
 				Event completion = new OrderSatisfyEvent(
-                             satisfyTime, curAmount, truck, 
-                                       orderHistory.get(currentOrder));
+                             satisfyTime, curAmount, truck, order);
 				Calendar.addEvent(completion);
 
+				// move to next order if this done
 				if (orderRemainTons.get(currentOrder) == 0)
 					currentOrder++;
 			}
