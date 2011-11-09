@@ -24,6 +24,7 @@ public class Main {
         p.addStringOption("output", "o", "output file for log", "");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
+        p.addStringOption("strategy", "s", "greedy or clarkewright", "greedy");
         String[] leftOvers = loadArgs(p, args);
 
 
@@ -37,6 +38,7 @@ public class Main {
         int maxTonsPerOrder  = (Integer) p.getValue("max");
         String graphFile     = (String) p.getValue("graph");
         String outFile       = (String) p.getValue("output");
+        String strategy      = (String) p.getValue("strategy");
 
         if (leftOvers.length >= 1)
             graphFile = leftOvers[0];
@@ -52,9 +54,16 @@ public class Main {
         if (graph == null)
             System.exit(1);
 
+
+        if (!(strategy.equals("greedy") || strategy.equals("clarkewright"))) {
+            System.err.println("Unknown strategy: " + strategy);
+            System.exit(1);
+        }
+
+
         Initializer.initSimulation(graph, HOME, simTime, pauseTime, orderMean,
                                    startOrderCount, maxTonsPerOrder, quiet,
-                                   file);
+                                   file, strategy);
 
         // run the simulation
         Simulator.mainLoop();
@@ -64,6 +73,8 @@ public class Main {
         System.out.println();
         TruckStack.summary();
         CustomerList.summary();
+
+        System.exit(0);
     }
 
     private static OutputStream openOutFile(String outFile) {

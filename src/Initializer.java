@@ -17,7 +17,7 @@ public class Initializer {
                                        int simulationTime, int pauseTime, 
                                        int orderMean, int startOrders, 
                                        int maxOrderAmount, boolean quiet, 
-                                       OutputStream file)
+                                       OutputStream file, String strategy)
     {
         // Initialize components
         // Initialize Simulator first!
@@ -25,8 +25,11 @@ public class Initializer {
         Calendar.init();
         // TODO decide on scheduler
         Scheduler s;
-        s = new GreedyScheduler(graph);
-        s = new ClarkeWrightScheduler(graph);
+        if (strategy.equals("greedy"))
+            s = new GreedyScheduler(graph);
+        else
+            s = new ClarkeWrightScheduler(graph);
+
         Simulator.setScheduler(s);
 
         CustomerList.init(graph.vertices());
