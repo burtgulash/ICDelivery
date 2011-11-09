@@ -89,8 +89,13 @@ public class ClarkeWrightScheduler implements Scheduler {
                         int d_ij = 
                                costMinimizer.shortestPath(i, j).pathLength();
                         int saved = d_HOME[i] + d_HOME[j] - d_ij;
-                        Saving s_ij = new Saving(saved, i, j);
-                        savings.add(s_ij);
+
+						// only include those that save something, otherwise 
+                        // use greedy scheduler instead
+						if (saved > 0) {
+							Saving s_ij = new Saving(saved, i, j);
+							savings.add(s_ij);
+						}
                     }
             }
 
@@ -130,8 +135,8 @@ public class ClarkeWrightScheduler implements Scheduler {
 
         for (Saving s : savings) {
             // all following savings will be negative
-            if (s.savedCost <= 0)
-                break;
+            if (toSatisfy[s.fst] == 0 || toSatisfy[s.snd] == 0)
+				continue;
 
             int cargoToFst = computeLoad(s);
             int cargoToSnd = 
@@ -160,17 +165,33 @@ public class ClarkeWrightScheduler implements Scheduler {
             if (!shiftTrips(toFst, toSnd))
                 continue;
 
-            // back to HOME trip
-            ReturnTrip back = new ReturnTrip(toSnd.endTime() + 1, 
-                                costMinimizer.shortestPath(s.snd, HOME));
+			Path back = costMinimizer.shortestPath(s.snd, HOME);
 
             // while both customers at the same time need to be satisfied, 
             // send trucks
             while (toSatisfy[s.fst] > 0 && toSatisfy[s.snd] > 0) {
-                cargoToFst = Math.min(cargoToFst, toSatisfy[s.fst]);
-                cargoToSnd = Math.min(cargoToSnd, toSatisfy[s.snd]);
+                cargoToFst   = Math.min(cargoToFst, toSatisfy[s.fst]);
+                cargoToSnd   = Math.min(cargoToSnd, toSatisfy[s.snd]);
 
-                // TODO create new trips for each truck (cargos may differ)
+				firstLoad    = cargoToFst + cargoToSnd;
+				firstUnload  = cargoToFst;
+				DeliveryTrip toFstReal = 
+                   new DeliveryTrip(releaseTime, HomeToFst, 
+                                        firstLoad, firstUnload, firstLoad);
+				secondLoad   = 0;
+				secondUnload = cargoToSnd;
+				DeliveryTrip toSndReal = 
+                   new DeliveryTrip(toFstReal.endTime() + 1, FstToSnd, 
+                                        secondLoad, secondUnload, cargoToSnd);
+				// if something messed up, every following double-trip in this
+                // loop will be almost the same
+				if (!shiftTrips(toFstReal, toSndReal))
+					break;
+
+				// back to HOME trip
+				ReturnTrip backTrip = 
+                       new ReturnTrip(toSndReal.endTime() + 1, back);
+
                 Truck truck = new Truck();
 
                 Customer fstCustomer = CustomerList.get(s.fst);
@@ -182,12 +203,12 @@ public class ClarkeWrightScheduler implements Scheduler {
                       releaseTime, cargoToSnd, truck, sndCustomer);
 
                 Event load = new TruckLoad(
-                           toFst.startTime(), cargoToFst + cargoToSnd, truck);
+                           toFstReal.startTime(), cargoToFst + cargoToSnd, truck);
 
                 Event unload_1 = new TruckUnload(
-                           toFst.arrivalTime(), cargoToFst, truck);
+                           toFstReal.arrivalTime() + 1, cargoToFst, truck);
                 Event unload_2 = new TruckUnload(
-                           toSnd.arrivalTime(), cargoToSnd, truck);
+                           toSndReal.arrivalTime() + 1, cargoToSnd, truck);
 
 
                 Calendar.addEvent(assignEvent_1);
@@ -199,13 +220,13 @@ public class ClarkeWrightScheduler implements Scheduler {
                 assert(!customers[s.fst].allSatisfied());
                 assert(!customers[s.snd].allSatisfied());
 
-                customers[s.fst].satisfy(toFst.endTime(), cargoToFst, truck);
-                customers[s.snd].satisfy(toSnd.endTime(), cargoToSnd, truck);
+                customers[s.fst].satisfy(toFstReal.endTime(),cargoToFst,truck);
+                customers[s.snd].satisfy(toSndReal.endTime(),cargoToSnd,truck);
 
                 // dispatcher
-                toFst.sendTruck(truck);
-                toSnd.sendTruck(toSnd.dispatchTime(), s.fst, truck);
-                back.sendTruck(s.snd, truck);
+                toFstReal.sendTruck(truck);
+                toSndReal.sendTruck(toSndReal.dispatchTime(), s.fst, truck);
+                backTrip.sendTruck(s.snd, truck);
 
                 toSatisfy[s.fst] -= cargoToFst;
                 toSatisfy[s.snd] -= cargoToSnd;
@@ -325,7 +346,7 @@ public class ClarkeWrightScheduler implements Scheduler {
                 Order order = orderHistory.get(currentOrder);
                 order.process(curAmount);
                 Event completion = new OrderSatisfyEvent(
-                             satisfyTime, curAmount, truck, order);
+                             satisfyTime + 1, curAmount, truck, order);
                 Calendar.addEvent(completion);
 
                 // move to next order if this done

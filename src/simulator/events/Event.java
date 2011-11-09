@@ -20,7 +20,7 @@ abstract class Event implements Queable {
     /**
      * Selector for event time
      */
-    int time() {
+    protected int time() {
         return time;
     }
 

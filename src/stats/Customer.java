@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.LinkedList;
 
 
+
 /**
  * Customer object is needed to keep track of statistics
  */
@@ -18,19 +19,6 @@ public class Customer {
 
     public void addOrder(Order order) {
         orderHistory.add(order);
-    }
-
-    public void satisfy(int containers) {
-        while (containers > 0) {
-            Order curOrder = orderHistory.get(orderToSatisfy);
-            int curSatisfy = Math.min(curOrder.remains(), containers);
-            curOrder.satisfy(curSatisfy);
-            // if current order done:
-            if (curOrder.remains() == 0)
-                orderToSatisfy++;
-
-            containers -= curSatisfy;
-        }
     }
 
     public int totalOrders() {
