@@ -1,6 +1,7 @@
 import graph.Graph;
 import graph.ShortestPaths;
 import graph.Dijkstra;
+import graph.Path;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -8,13 +9,16 @@ import java.util.LinkedList;
 import static constant.Times.*;
 
 public class ClarkeWrightScheduler implements Scheduler {
+    private final int HOME;
 
     private boolean done = false;
+    private int releaseTime;
     private int[] toSatisfy;
     private ShortestPaths costMinimizer;
     private Scheduler alternative;
 
     public ClarkeWrightScheduler(Graph graph) {
+        HOME           = Simulator.HOME;
         toSatisfy      = new int[graph.vertices()];
         costMinimizer  = new Dijkstra(graph, Simulator.HOME);
         alternative    = new GreedyScheduler(costMinimizer);
@@ -25,6 +29,7 @@ public class ClarkeWrightScheduler implements Scheduler {
         if (deadline <= 0)
             done = true;
 
+        releaseTime = deadline;
         Calendar.addEvent(new DeadlineEvent(deadline));
     }
 
@@ -35,7 +40,35 @@ public class ClarkeWrightScheduler implements Scheduler {
         deadline    += MIN_ACCEPT.time();
         if (deadline >= Simulator.TERMINATION_TIME)
             deadline -= DAY.time();
-        return deadline;
+
+        // compute two longest paths
+        int max_1 = Integer.MIN_VALUE;
+        int max_2 = Integer.MIN_VALUE;
+        Path path_1 = null;
+        Path path_2 = null;
+        for (int i = 0; i < toSatisfy.length; i++) {
+            Path path = costMinimizer.shortestPath(HOME, i);
+            if (path.pathLength() > max_2) {
+                max_2 = path.pathLength();
+                path_2 = path;
+            }
+            else if (path.pathLength() > max_1) {
+                max_2 = max_1;
+                max_1 = path.pathLength();
+                path_2 = path_1;
+                path_1 = path;
+            }
+        }
+
+        // should have more than 2 cities
+        assert(path_1 != null && path_2 != null);
+
+        Trip fst = new DeliveryTrip(0, path_1, Truck.MAX_CAPACITY);
+        Trip snd = new DeliveryTrip(0, path_2, Truck.MAX_CAPACITY);
+
+        // deadline such that trucks have time to deliver every trip, even
+        // the longest two in sequence
+        return deadline - fst.endTime - snd.endTime;
     }
 
     @Override
@@ -48,7 +81,6 @@ public class ClarkeWrightScheduler implements Scheduler {
     }
 
     private Saving[] computeSavings() {
-        int HOME             = Simulator.HOME;
         int[] d_HOME         = new int[toSatisfy.length];
         List<Saving> savings = new LinkedList<Saving>();
 
@@ -68,16 +100,11 @@ public class ClarkeWrightScheduler implements Scheduler {
         return (Saving[]) savings.toArray(new Saving[savings.size()]);
     }
 
-    @Override
-    public void releaseAll() {
-        Saving[] savings = computeSavings();
-        java.util.Arrays.sort(savings, new java.util.Comparator() {
+    private void sort(Saving[] savings) {
+        java.util.Arrays.sort(savings, new java.util.Comparator<Saving>() {
                     // reverse Comparator
                    @SuppressWarnings("unchecked")
-                   public int compare(Object o1, Object o2) {
-                       Saving s1 = (Saving) o1;
-                       Saving s2 = (Saving) o2;
-
+                   public int compare(Saving s1, Saving s2) {
                        if (s1.savedCost == s2.savedCost)
                            return 0;
                        if (s1.savedCost < s2.savedCost)
@@ -86,6 +113,144 @@ public class ClarkeWrightScheduler implements Scheduler {
                            return -1;
                    }
                });
+    }
+
+    private int computeLoad(Saving s) {
+		if (toSatisfy[s.fst] < toSatisfy[s.snd])
+			return Math.min(Truck.MAX_CAPACITY / 2, toSatisfy[s.fst]);
+		int secondLoad = Math.min(Truck.MAX_CAPACITY / 2, toSatisfy[s.snd]);
+		return Math.min(Truck.MAX_CAPACITY - secondLoad, toSatisfy[s.fst]);
+    }
+
+    @Override
+    public void releaseAll() {
+        Saving[] savings = computeSavings();
+        sort(savings);
+
+        for (Saving s : savings) {
+            // all following savings will be negative
+            if (s.savedCost <= 0)
+                break;
+
+            int cargoToFst = computeLoad(s);
+            int cargoToSnd = 
+                   Math.min(Truck.MAX_CAPACITY - cargoToFst, toSatisfy[s.snd]);
+			assert(cargoToFst >= 0);
+			assert(cargoToSnd >= 0);
+            assert(cargoToSnd + cargoToFst <= Truck.MAX_CAPACITY);
+
+            Path HomeToFst = costMinimizer.shortestPath(HOME, s.fst);
+            Path FstToSnd = costMinimizer.shortestPath(s.fst, s.snd);
+
+
+            int firstLoad = cargoToFst + cargoToSnd;
+            int firstUnload = cargoToFst;
+            DeliveryTrip toFst = 
+                   new DeliveryTrip(releaseTime, HomeToFst, 
+                                        firstLoad, firstUnload, firstLoad);
+            int secondLoad = 0;
+            int secondUnload = cargoToSnd;
+            DeliveryTrip toSnd = 
+                   new DeliveryTrip(toFst.endTime() + 1, FstToSnd, 
+                                        secondLoad, secondUnload, cargoToSnd);
+
+            // if this double-trip can't fit between MIN_TIME and MAX_TIME,
+            // skip it
+            if (!shiftTrips(toFst, toSnd))
+                continue;
+
+			// back to HOME trip
+            ReturnTrip back = new ReturnTrip(toSnd.endTime() + 1, 
+								costMinimizer.shortestPath(s.snd, HOME));
+
+            // while both customers at the same time need to be satisfied, 
+            // send trucks
+            while (toSatisfy[s.fst] > 0 && toSatisfy[s.snd] > 0) {
+				cargoToFst = Math.min(cargoToFst, toSatisfy[s.fst]);
+				cargoToSnd = Math.min(cargoToSnd, toSatisfy[s.snd]);
+
+				// TODO create new trips for each truck (cargos may differ)
+                Truck truck = new Truck();
+
+				Customer fstCustomer = CustomerList.get(s.fst);
+				Customer sndCustomer = CustomerList.get(s.snd);
+				
+				Event assignEvent_1 = new CustomerAssignEvent(
+                      releaseTime, cargoToFst, truck, fstCustomer);
+				Event assignEvent_2 = new CustomerAssignEvent(
+                      releaseTime, cargoToSnd, truck, sndCustomer);
+
+				Event load = new TruckLoad(
+                           toFst.startTime(), cargoToFst + cargoToSnd, truck);
+
+				Event unload_1 = new TruckUnload(
+                           toFst.arrivalTime(), cargoToFst, truck);
+				Event unload_2 = new TruckUnload(
+                           toSnd.arrivalTime(), cargoToSnd, truck);
+
+				Event completion_1 = new CustomerSatisfyEvent(
+                           toFst.endTime(), cargoToFst, truck, fstCustomer);
+				Event completion_2 = new CustomerSatisfyEvent(
+                           toSnd.endTime(), cargoToSnd, truck, sndCustomer);
+
+				Calendar.addEvent(assignEvent_1);
+				Calendar.addEvent(assignEvent_2);
+				Calendar.addEvent(load);
+				Calendar.addEvent(unload_1);
+				Calendar.addEvent(unload_2);
+				Calendar.addEvent(completion_1);
+				Calendar.addEvent(completion_2);
+
+				// dispatcher
+				toFst.sendTruck(truck);
+				toSnd.sendTruck(toSnd.dispatchTime(), s.fst, truck);
+				back.sendTruck(s.snd, truck);
+
+				toSatisfy[s.fst] -= cargoToFst;
+				toSatisfy[s.snd] -= cargoToSnd;
+            }
+        }
+    }
+
+
+
+
+    private boolean shiftTrips(DeliveryTrip fst, DeliveryTrip snd) {
+        int arrivalFst  = fst.arrivalTime() % DAY.time();
+
+        // delay if too early
+        if (arrivalFst < MIN_ACCEPT.time()) {
+            int delayTime = MIN_ACCEPT.time() - arrivalFst; 
+            fst.delay(delayTime);
+            snd.delay(delayTime);
+        }
+
+        int completion  = snd.endTime()     % DAY.time();
+        if (completion > MAX_ACCEPT.time() || 
+            completion < MIN_ACCEPT.time())
+        {
+           int delayTime = 
+              DAY.time() - fst.arrivalTime() % DAY.time() + MIN_ACCEPT.time();
+            fst.delay(delayTime);
+            snd.delay(delayTime);
+        }
+
+        // sequence of conditions rejecting this saving
+        assert(fst.arrivalTime() % DAY.time() >= MIN_ACCEPT.time());
+        // if second trip too long, reject immediately
+        if (snd.endTime() - snd.startTime() > 
+                                    MAX_ACCEPT.time() - MIN_ACCEPT.time())
+            return false;
+        // if after all effort second could have not been planned to arrive
+        // within the interval, reject
+        if (snd.endTime() % DAY.time() > MAX_ACCEPT.time())
+            return false;
+        // if too late, reject
+        if (snd.endTime >= Simulator.TERMINATION_TIME)
+            return false;
+
+        // accept, possibly TODO more reject conditions
+        return true;
     }
 
 

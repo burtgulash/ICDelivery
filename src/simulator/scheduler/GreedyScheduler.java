@@ -112,7 +112,7 @@ public class GreedyScheduler implements Scheduler {
             delayIfNeeded(deliveryTrip);
 
             ReturnTrip sendBack = 
-                  new ReturnTrip(success.endTime() + 1, 
+                  new ReturnTrip(deliveryTrip.endTime() + 1, 
                                Path.reversed(Simulator.HOME, success.path()));
 
 
