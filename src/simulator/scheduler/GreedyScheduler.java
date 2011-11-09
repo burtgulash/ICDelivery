@@ -159,8 +159,7 @@ public class GreedyScheduler implements Scheduler {
                    new TruckUnload(trip.arrivalTime(), amount, truck);
 
             Event completion = 
-                   new CustomerSatisfyEvent(trip.endTime(), amount, truck, 
-                                                             order.sentBy());
+                   new OrderSatisfyEvent(trip.endTime(), amount, truck, order);
 
 
             Calendar.addEvent(assign);
