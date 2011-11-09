@@ -1,7 +1,7 @@
 class CustomerSatisfyEvent extends Event {
     private Customer customer;
     private int satisfyAmount;
-	private Truck truck;
+    private Truck truck;
 
     CustomerSatisfyEvent(int time, int amount, Truck truck, Customer customer) {
         super(time);

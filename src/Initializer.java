@@ -23,8 +23,8 @@ public class Initializer {
         // Initialize Simulator first!
         Simulator.init(homeVertex, simulationTime);
         Calendar.init();
-		// TODO decide on scheduler
-		Scheduler s;
+        // TODO decide on scheduler
+        Scheduler s;
         s = new GreedyScheduler(graph);
         s = new ClarkeWrightScheduler(graph);
         Simulator.setScheduler(s);
@@ -32,19 +32,19 @@ public class Initializer {
         CustomerList.init(graph.vertices());
         TruckStack.init();
 
-		// initialize logger and outfile
+        // initialize logger and outfile
         Logger.init();
         if (!quiet)
             Logger.addOutput(System.out);
         if (file != null)
             Logger.addOutput(file);
 
-		// add pause
-		Event pause = new PauseEvent(pauseTime);
-		Calendar.addEvent(pause);
+        // add pause
+        Event pause = new PauseEvent(pauseTime);
+        Calendar.addEvent(pause);
 
 
-		// add all initially known orders
+        // add all initially known orders
         OrderGenerator gen = new ExponentialGenerator(orderMean, 
                                                   maxOrderAmount, homeVertex);
         generateOrders(gen, simulationTime, startOrders, orderMean);

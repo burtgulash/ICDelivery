@@ -15,5 +15,5 @@ public interface Scheduler {
      */
     public void receiveOrder(Order order);
 
-	public void releaseAll();
+    public void releaseAll();
 }

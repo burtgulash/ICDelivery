@@ -69,7 +69,7 @@
 
 
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="debug-compile">
         <mkdir dir="${jar.dir}" />
         <jar destfile="${jar.dir}/${ant.project.name}.jar" 
              basedir="${classes.dir}">

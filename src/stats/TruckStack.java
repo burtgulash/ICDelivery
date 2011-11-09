@@ -45,6 +45,6 @@ public class TruckStack {
         String totalCost  = formatter.format(totalCost());
         String dispatched = formatter.format(allTrucks.size());
         System.out.printf("TOTAL COST           : %s CZK%n", totalCost);
-		System.out.printf("Trucks dispatched    : %s%n", dispatched);
+        System.out.printf("Trucks dispatched    : %s%n", dispatched);
     }
 }

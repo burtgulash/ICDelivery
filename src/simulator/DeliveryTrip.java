@@ -7,25 +7,25 @@ class DeliveryTrip extends Trip {
     private int dispatchTime;
     private int arrivalTime;
 
-	private int loadAmount;
-	private int unloadAmount;
-	private int cargo;
+    private int loadAmount;
+    private int unloadAmount;
+    private int cargo;
 
     DeliveryTrip (int startTime, Path path, 
                   int loadAmount, int unloadAmount, int cargo)
     {
         super(startTime, path);
-		this.loadAmount = loadAmount;
-		this.unloadAmount = unloadAmount;
-		this.cargo = cargo;
+        this.loadAmount = loadAmount;
+        this.unloadAmount = unloadAmount;
+        this.cargo = cargo;
 
         computeTimes();
         computeCost();
     }
 
-	DeliveryTrip(int startTime, Path path, int assignedAmount) {
-		this(startTime, path, assignedAmount, assignedAmount, assignedAmount);
-	}
+    DeliveryTrip(int startTime, Path path, int assignedAmount) {
+        this(startTime, path, assignedAmount, assignedAmount, assignedAmount);
+    }
 
     int dispatchTime() {
         return dispatchTime;
