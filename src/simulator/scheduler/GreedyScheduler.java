@@ -58,7 +58,7 @@ public class GreedyScheduler implements Scheduler {
         // +1 to prevent status events happening before receiving
         int receivedTime   = received.received() + 1;
         int customer       = received.sentBy().customerVertex();
-        int amount         = received.amount();
+        int amount         = received.amount() - received.processed();
         Path shortestPath  = 
                      costMinimizer.shortestPath(Simulator.HOME, customer);
 
@@ -95,7 +95,7 @@ public class GreedyScheduler implements Scheduler {
         int customer = received.sentBy().customerVertex();
 
         // assign new truck while there are containers to be delivered
-        int orderAmount = received.amount();
+        int orderAmount = received.amount() - received.processed();
         while (orderAmount > 0) {
             Truck truck = new Truck();
 
