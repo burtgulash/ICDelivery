@@ -10,6 +10,9 @@ class OrderEvent extends Event {
 
     @Override
     protected int doWork() {
+        // update stats
+        order.sentBy().addOrder(order);
+        OrderStack.add(order);
         Simulator.scheduler.receiveOrder(order);
         return Simulator.CONTINUE;
     }    

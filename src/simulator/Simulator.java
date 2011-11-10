@@ -38,19 +38,6 @@ public class Simulator {
     }
 
 
-    /**
-     * Only place where Order Events should be created.
-     *
-     * @param order Order that will be sent to Calendar
-     */
-    public static void sendOrder(Order order) {
-        Event orderEvent = new OrderEvent(order.received(), order);
-        // update order in customer
-        order.sentBy().addOrder(order);
-        Calendar.addEvent(orderEvent);
-    }
-
-
 
     /**
      * Core of the simulation, events are handled here.

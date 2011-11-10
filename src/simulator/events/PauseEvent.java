@@ -1,70 +1,117 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+import java.util.StringTokenizer;
+
+
 
 class PauseEvent extends Event {
-
-    Scanner sc;
+    private static BufferedReader keybr;
+    private static String HELP = String.format("%s%n%s%n",
+"[T]ruck ID", 
+"[O]rder ID");
 
     PauseEvent(int time){
-
         super(time);
-
+        if (keybr == null)
+            keybr = new BufferedReader(new InputStreamReader(System.in));
     }
 
     @Override
     protected int doWork() {
-        sc = new Scanner(System.in);
-        System.out.println("Simulation paused. \n Select action from list below:\n");
-        showOptions();
+        printSummary();
+
+        while (true) {
+            printHelp();
+            System.out.print(">>> ");
+            String query = "";
+            try {
+                query = keybr.readLine();
+            } catch (IOException ex) {
+                System.err.println("Error reading query");
+            }
+
+            if (query == null || query.trim().equals(""))
+                break;
+
+            StringTokenizer tk = new StringTokenizer(query);
+            if (!tk.hasMoreTokens()) {
+                System.err.println("Missing option");
+                continue;
+            }
+            String option = tk.nextToken();
+            if (!tk.hasMoreTokens()) {
+                System.err.println("Missing value");
+                continue;
+            }
+
+
+            if (option.matches("(?:T|t)(?:ruck)?")) {
+                int id = 0;
+                try {
+                    id = Integer.parseInt(tk.nextToken());
+                } catch (NumberFormatException ex) {
+                    System.err.println("ID must be number");
+                    continue;
+                }
+                // TODO id must exist
+                Truck truck = TruckStack.get(id);
+
+                System.out.printf("Truck %5d:%n", id);
+                System.out.printf("Is near town %d%n", truck.currentTown());
+                System.out.printf("Carries %d containers%n", truck.loaded());
+                System.out.println("for orders:");
+
+                for (Order o : truck.assignedOrders())
+                    System.out.printf("\tOrder %5d from customer %5d%n", 
+                                      o.getId(), o.sentBy().customerId());
+            }
+            else if (option.matches("(?:O|o)(?:rder)?")) {
+                int id = 0;
+                try {
+                    id = Integer.parseInt(tk.nextToken());
+                } catch (NumberFormatException ex) {
+                    System.err.println("ID must be number");
+                    continue;
+                }
+
+                Order order = OrderStack.get(id);
+
+                System.out.printf("Order %5d:%n", id);
+                System.out.printf("received at %s%n", 
+                                  Calendar.ascTime(order.received()));
+
+                if (order.accepted()) {
+                    System.out.println("Accepted");
+                    System.out.printf("Delivered containers: %d%n", 
+                                      order.delivered());
+                    System.out.println("Served by:");
+
+                    for (Truck t : order.assignedTrucks())
+                        System.out.printf("Truck %5d%n", t.getId());
+                } else 
+                    System.out.println("Rejected");
+            }
+        }
+
         return Simulator.CONTINUE;
     }
-
-    private void truckStats(){
-        System.out.println("Enter truck ID:");
-        int id  = sc.nextInt();
-        Truck t = TruckStack.get(id);
-        System.out.println("Truck "+ id + " is loaded with " + t.loaded() + " tons of cargo is near town " + t.currentTown() + ".\n");
-        }
-
-    private void customerStats(){
-        System.out.println("Enter customer ID:");
-        int id  = sc.nextInt();
-        Customer c = CustomerList.get(id);
-        System.out.println("Customer "+ id + " has placed " + c.totalOrders()+" orders for "+ c.totalContainers() +" tons of IC, " +  c.acceptedOrders() + " orders has been accepted. " + c.deliveredContainers() + " tons of IC has been delivered.\n");
-        }
-
-    private void addOrder(){
-        System.out.println("Enter customer ID:");
-        int cust = sc.nextInt();
-        System.out.println("Enter Ice Cream amount:");
-        int ic = sc.nextInt();
-        Calendar.addEvent(new OrderEvent(time(), new Order(time(), cust, ic)));
-        }
-
-    private void showOptions(){
-        System.out.println("[1]\t Display stats for truck.");
-        System.out.println("[2]\t Display stats for customer.");
-        System.out.println("[3]\t Add new event.");
-        System.out.println("[4]\t Continue simulation.");
-        System.out.println("[5]\t Set next pause.");
-        int opt = sc.nextInt();
-        switch(opt){
-            case 1:truckStats();showOptions();break;
-            case 2:customerStats();showOptions();break;
-            case 3:addOrder();showOptions();break;
-            case 4:break;
-            case 5:setPauseTime();showOptions();break;
-            default:System.out.println("Unrecognized option, please select option from the list:");showOptions();break;
-            }
-        }
-
-        private void setPauseTime(){
-            System.out.println("Enter time in minutes for next pause:");
-            int pt = sc.nextInt();
-            Calendar.addEvent(new PauseEvent(pt));
-            }
 
     @Override
     protected String log () {
         return "Simulation paused";
+    }
+
+    private void printSummary() {
+        System.out.printf("%nPaused at %s%n", Calendar.ascTime(time()));
+        TruckStack.summary();
+        CustomerList.summary();
+        System.out.println();
+    }
+
+    private void printHelp() {
+        System.out.println("usage:");
+        System.out.print(HELP);
     }
 }

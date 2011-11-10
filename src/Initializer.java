@@ -34,6 +34,7 @@ public class Initializer {
 
         CustomerList.init(graph.vertices());
         TruckStack.init();
+        OrderStack.init();
 
         // initialize logger and outfile
         Logger.init();
@@ -63,14 +64,20 @@ public class Initializer {
         Order generated;
         for (int i = 0; i < startOrders; i++) {
             generated = gen.generateAt(START_TIME);
-            Simulator.sendOrder(generated);
+            sendOrder(generated);
         }
 
         while (true) {
             generated = gen.generateNext();
             if (generated.received() >= simulationTime - HALF_DAY)
                 break;
-            Simulator.sendOrder(generated);
+            sendOrder(generated);
         }
+    }
+
+
+    public static void sendOrder(Order order) {
+        Event orderEvent = new OrderEvent(order.received(), order);
+        Calendar.addEvent(orderEvent);
     }
 }

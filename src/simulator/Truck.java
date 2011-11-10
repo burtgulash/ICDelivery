@@ -31,6 +31,10 @@ public class Truck {
         assignedOrders.add(order);
     }
 
+    public List<Order> assignedOrders() {
+        return assignedOrders;
+    }
+
     public int loaded() {
         return loadedCargo;
     }

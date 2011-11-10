@@ -55,6 +55,11 @@ public class Order {
         trucks.add(truck);
     }
 
+
+    public List<Truck> assignedTrucks() {
+        return trucks;
+    }
+
     /**
      * Return time the Order was first seen
      */
