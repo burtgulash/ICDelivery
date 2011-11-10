@@ -53,4 +53,7 @@ public class Simulator {
             Logger.log(current.time(), current.log());
         } while (purpose != TERMINATE);
     }
+
+    public void addPause() {
+    }
 }

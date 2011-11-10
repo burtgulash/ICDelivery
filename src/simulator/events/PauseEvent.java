@@ -44,13 +44,27 @@ class PauseEvent extends Event {
                 continue;
             }
 
-
+            // Options with value follow
             if (!tk.hasMoreTokens()) {
                 System.err.println("Missing value");
                 continue;
             }
 
 
+            if (option.matches("(?:P|p)(?:ause)?")) {
+                int time = TimeConverter.toMinutes(time(), tk.nextToken());
+                if (time <= this.time()) {
+                    System.err.println("Invalid time");
+                } else {
+                    Event nextPause = new PauseEvent(time);
+                    Calendar.addEvent(nextPause);
+                }
+                continue;
+            }
+
+
+
+            // ID options follow
             int id = 0;
             try {
                 id = Integer.parseInt(tk.nextToken());
@@ -82,7 +96,7 @@ class PauseEvent extends Event {
                 System.out.println();
                 System.out.printf("Order %5d:%n", id);
                 System.out.printf("received at %s%n", 
-                                  Calendar.ascTime(order.received()));
+                                  TimeConverter.ascTime(order.received()));
 
                 if (order.accepted()) {
                     System.out.println("Accepted");
@@ -124,7 +138,7 @@ class PauseEvent extends Event {
     }
 
     private void printSummary() {
-        System.out.printf("%nPaused at %s%n", Calendar.ascTime(time()));
+        System.out.printf("%nPaused at %s%n", TimeConverter.ascTime(time()));
         TruckStack.summary();
         CustomerList.summary();
     }
@@ -136,6 +150,7 @@ class PauseEvent extends Event {
         System.out.printf("\t[o]rder    <%d-%d>%n", 1, OrderStack.size());
         System.out.printf("\t[c]ustomer <%d-%d>%n", 0,  
                                              CustomerList.numCustomers());
+        System.out.printf("\t[p]ause    <TIME>%n");
         System.out.println("\t[h]elp");
     }
 }

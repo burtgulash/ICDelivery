@@ -39,14 +39,8 @@ public class Customer {
 
     public int deliveredContainers() {
         int tot = 0;
-        for (Order o : orderHistory) {
+        for (Order o : orderHistory)
             tot += o.delivered();
-            if (o.accepted()) {
-                assert(o.delivered() == o.amount());
-            } else {
-                assert(o.delivered() == 0);
-            }
-        }
         return tot;
     }
 

@@ -21,6 +21,6 @@ public class Logger {
     public static void log(int time, String message) {
         for (PrintWriter writer : writers) 
             writer.println(String.format("%s | %s", 
-                                       Calendar.ascTime(time), message));
+                                       TimeConverter.ascTime(time), message));
     }
 }
