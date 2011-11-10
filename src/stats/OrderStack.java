@@ -21,4 +21,8 @@ public class OrderStack {
         assert(ret != null);
         return ret;
     }
+
+    public static int size() {
+        return allOrders.size();
+    }
 }

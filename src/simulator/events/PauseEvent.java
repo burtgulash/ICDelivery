@@ -8,9 +8,6 @@ import java.util.StringTokenizer;
 
 class PauseEvent extends Event {
     private static BufferedReader keybr;
-    private static String HELP = String.format("%s%n%s%n",
-"[T]ruck ID", 
-"[O]rder ID");
 
     PauseEvent(int time){
         super(time);
@@ -21,9 +18,9 @@ class PauseEvent extends Event {
     @Override
     protected int doWork() {
         printSummary();
+        printHelp();
 
         while (true) {
-            printHelp();
             System.out.print(">>> ");
             String query = "";
             try {
@@ -40,24 +37,34 @@ class PauseEvent extends Event {
                 System.err.println("Missing option");
                 continue;
             }
+
             String option = tk.nextToken();
+            if (option.matches("(?:H|h)(?:elp)?")) {
+                printHelp();
+                continue;
+            }
+
+
             if (!tk.hasMoreTokens()) {
                 System.err.println("Missing value");
                 continue;
             }
 
 
+            int id = 0;
+            try {
+                id = Integer.parseInt(tk.nextToken());
+            } catch (NumberFormatException ex) {
+                System.err.println("ID must be number");
+                continue;
+            }
+
             if (option.matches("(?:T|t)(?:ruck)?")) {
-                int id = 0;
-                try {
-                    id = Integer.parseInt(tk.nextToken());
-                } catch (NumberFormatException ex) {
-                    System.err.println("ID must be number");
-                    continue;
-                }
                 // TODO id must exist
                 Truck truck = TruckStack.get(id);
+                assert(truck != null);
 
+                System.out.println();
                 System.out.printf("Truck %5d:%n", id);
                 System.out.printf("Is near town %d%n", truck.currentTown());
                 System.out.printf("Carries %d containers%n", truck.loaded());
@@ -68,16 +75,11 @@ class PauseEvent extends Event {
                                       o.getId(), o.sentBy().customerId());
             }
             else if (option.matches("(?:O|o)(?:rder)?")) {
-                int id = 0;
-                try {
-                    id = Integer.parseInt(tk.nextToken());
-                } catch (NumberFormatException ex) {
-                    System.err.println("ID must be number");
-                    continue;
-                }
-
+                // TODO id must exist
                 Order order = OrderStack.get(id);
+                assert(order != null);
 
+                System.out.println();
                 System.out.printf("Order %5d:%n", id);
                 System.out.printf("received at %s%n", 
                                   Calendar.ascTime(order.received()));
@@ -86,12 +88,30 @@ class PauseEvent extends Event {
                     System.out.println("Accepted");
                     System.out.printf("Delivered containers: %d%n", 
                                       order.delivered());
-                    System.out.println("Served by:");
+                    System.out.println("\tServed by:");
 
                     for (Truck t : order.assignedTrucks())
                         System.out.printf("Truck %5d%n", t.getId());
                 } else 
                     System.out.println("Rejected");
+            }
+            else if (option.matches("(?:U|c)(?:ustomer)?")) {
+                // TODO id must exist
+                Customer customer = CustomerList.get(id);
+
+                System.out.println();
+                System.out.printf("Customer %5d:%n", id);
+                System.out.printf("Ordered containers   : %d%n", 
+                                            customer.totalContainers());
+                System.out.printf("Delivered containers : %d%n", 
+                                            customer.deliveredContainers());
+                System.out.println("Orders from this customer:");
+                for (Order o : customer.sentOrders()) {
+                    String status = o.accepted() ? "Accepted" : "Rejected";
+                    System.out.printf("\tOrder %5d for %2d tons: %s%n", 
+                                   o.getId(), o.amount(), status);
+                }
+
             }
         }
 
@@ -107,11 +127,15 @@ class PauseEvent extends Event {
         System.out.printf("%nPaused at %s%n", Calendar.ascTime(time()));
         TruckStack.summary();
         CustomerList.summary();
-        System.out.println();
     }
 
     private void printHelp() {
+        System.out.println();
         System.out.println("usage:");
-        System.out.print(HELP);
+        System.out.printf("\t[t]ruck    <%d-%d>%n", 1, TruckStack.size());
+        System.out.printf("\t[o]rder    <%d-%d>%n", 1, OrderStack.size());
+        System.out.printf("\t[c]ustomer <%d-%d>%n", 0,  
+                                             CustomerList.numCustomers());
+        System.out.println("\t[h]elp");
     }
 }

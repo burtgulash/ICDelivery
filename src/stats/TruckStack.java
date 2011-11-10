@@ -28,6 +28,10 @@ public class TruckStack {
         return ret;
     }
 
+    public static int size() {
+        return allTrucks.size();
+    }
+
     public static int totalCost() {
         int tot = 0;
         for (Map.Entry KVpair : allTrucks.entrySet()) {

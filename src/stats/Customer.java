@@ -17,6 +17,10 @@ public class Customer {
         orderHistory = new LinkedList<Order>();
     }
 
+    public List<Order> sentOrders() {
+        return orderHistory;
+    }
+
     public void addOrder(Order order) {
         orderHistory.add(order);
     }
