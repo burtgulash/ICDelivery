@@ -103,6 +103,10 @@ public class Order {
         assert(delivered <= orderedAmount);
     }
 
+    public int delivered() {
+        return delivered;
+    }
+
     /**
      * Returns id of this Order
      */
