@@ -25,12 +25,14 @@ public class TimeConverter {
             result = currentTime;
 
         try {
-            if (m.group(1) != null && m.group(2) != null)
+            // days, hours, minutes
+            if (m.group(1) != null && m.group(2) != null) {
                 result += DAY.time() * Integer.parseInt(m.group(1));
+                result += MINUTES_IN_HOUR.time() * Integer.parseInt(m.group(2));
+            }
+            // hours, minutes
             else if (m.group(1) != null)
                 result += MINUTES_IN_HOUR.time() * Integer.parseInt(m.group(1));
-            else if (m.group(2) != null)
-                result += MINUTES_IN_HOUR.time() * Integer.parseInt(m.group(2));
 
             // minutes must be always present
             result += Integer.parseInt(m.group(3));

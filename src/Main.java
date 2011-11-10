@@ -25,7 +25,7 @@ public class Main {
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
         p.addStringOption("strategy", "s", "greedy or clarkewright", "greedy");
-        String[] leftOvers = loadArgs(p, args);
+        String[] orders = loadArgs(p, args);
 
 
         int HOME = 0;
@@ -39,9 +39,6 @@ public class Main {
         String graphFile     = (String) p.getValue("graph");
         String outFile       = (String) p.getValue("output");
         String strategy      = (String) p.getValue("strategy");
-
-        if (leftOvers.length >= 1)
-            graphFile = leftOvers[0];
 
         // set pause after termination time if it is not specified
         if (pauseTime < 0)
@@ -62,8 +59,8 @@ public class Main {
 
 
         Initializer.initSimulation(graph, HOME, simTime, pauseTime, orderMean,
-                                   startOrderCount, maxTonsPerOrder, quiet,
-                                   file, strategy);
+                                   startOrderCount, orders, maxTonsPerOrder, 
+                                   quiet, file, strategy);
 
         // run the simulation
         Simulator.mainLoop();

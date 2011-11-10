@@ -61,6 +61,33 @@ class PauseEvent extends Event {
                 }
                 continue;
             }
+            else if (option.matches("(?:I|i)(?:nsert)?")) {
+                int customer, amount, time;
+                try {
+                    customer  = Integer.parseInt(tk.nextToken());
+                    amount    = Integer.parseInt(tk.nextToken());
+                    time      = TimeConverter.toMinutes(time(), tk.nextToken());
+
+                    if (time < 0)
+                        throw new NumberFormatException();
+                } catch (NumberFormatException nfe) {
+                    System.err.println("Error parsing order");
+                    continue;
+                } catch (java.util.NoSuchElementException nse) {
+                    System.err.println("Error parsing order");
+                    continue;
+                }
+                if (customer < 0 || customer >= CustomerList.numCustomers()) {
+                    System.err.printf("Customer %5d does not exist%n", 
+                                                                     customer);
+                    continue;
+                }
+
+                Order o = new Order(time, customer, amount);        
+                Event orderEvent = new OrderEvent(time, o);
+                Calendar.addEvent(orderEvent);
+                continue;
+            }
 
 
 
@@ -145,12 +172,14 @@ class PauseEvent extends Event {
 
     private void printHelp() {
         System.out.println();
-        System.out.println("usage:");
-        System.out.printf("\t[t]ruck    <%d-%d>%n", 1, TruckStack.size());
-        System.out.printf("\t[o]rder    <%d-%d>%n", 1, OrderStack.size());
-        System.out.printf("\t[c]ustomer <%d-%d>%n", 0,  
-                                             CustomerList.numCustomers());
-        System.out.printf("\t[p]ause    <TIME>%n");
+        System.out.println("usage: [topich]");
+        System.out.printf("\t[t]ruck          [%d-%d]%n", 1, TruckStack.size());
+        System.out.printf("\t[o]rder          [%d-%d]%n", 1, OrderStack.size());
+        System.out.printf("\t[p]ause          TIME%n");
+        System.out.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 1, 
+                                             CustomerList.numCustomers() - 1);
+        System.out.printf("\t[c]ustomer       [%d-%d]%n", 1,  
+                                             CustomerList.numCustomers() - 1);
         System.out.println("\t[h]elp");
     }
 }
