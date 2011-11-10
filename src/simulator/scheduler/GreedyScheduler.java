@@ -179,7 +179,7 @@ public class GreedyScheduler implements Scheduler {
 
         // delay to next day if too late
         else if (completion < MIN_ACCEPT.time() ||
-                 completion > MAX_ACCEPT.time());
+                 completion > MAX_ACCEPT.time())
            delayTime = DAY.time() + MIN_ACCEPT.time() - arrival;
 
         trip.delay(delayTime);
