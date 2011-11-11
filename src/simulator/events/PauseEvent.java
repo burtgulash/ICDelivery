@@ -131,54 +131,11 @@ class PauseEvent extends Event {
                                      TimeConverter.ascTime(o.received()));
             }
             else if (option.matches("(?:O|o)(?:rder)?")) {
-                Order order = OrderStack.get(id);
-                if (order == null) {
-                    System.err.printf("Order %5d does not exist%n", id);
-                    continue;
-                }
-
                 System.err.println();
-                System.err.printf("Order %5d:%n", id);
-                System.err.printf("received at %s%n", 
-                                  TimeConverter.ascTime(order.received()));
-
-                if (order.accepted()) {
-                    System.err.println("Accepted");
-                    System.err.printf("Delivered containers: %d%n", 
-                                      order.delivered());
-                    System.err.println("Served by:");
-
-                    for (Truck t : order.assignedTrucks())
-                        System.err.printf("\tTruck %5d%n", t.getId());
-                } else 
-                    System.err.println("Rejected");
-            }
-            else if (option.matches("(?:U|c)(?:ustomer)?")) {
-                Customer customer = CustomerList.get(id);
-                if (customer == null) {
-                    System.err.printf("Customer %5d does not exist%n", id);
-                    continue;
-                }
-                if (id == Simulator.HOME) {
-                    System.err.printf("Town %5d is HOME vertex%n", id);
-                    continue;
-                }
-
+                System.err.println(Reporter.orderReport(id));
+            } else if (option.matches("(?:U|c)(?:ustomer)?")) {
                 System.err.println();
-                System.err.printf("Customer %5d:%n", id);
-                System.err.printf("Ordered containers   : %d%n", 
-                                            customer.totalContainers());
-                System.err.printf("Delivered containers : %d%n", 
-                                            customer.deliveredContainers());
-                System.err.println("Orders from this customer:");
-                for (Order o : customer.sentOrders()) {
-                    String status = o.accepted() ? "Accepted" : "Rejected";
-                    System.err.printf(
-                           "\tOrder %5d for %2d tons, received at %s: %s%n", 
-                           o.getId(), o.amount(), 
-                           TimeConverter.ascTime(o.received()), status);
-                }
-
+                System.err.println(Reporter.customerReport(id));
             } else {
                 System.err.println("Unknown option");
             }
