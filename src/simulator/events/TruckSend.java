@@ -10,6 +10,7 @@ class TruckSend extends TruckEvent {
     @Override 
     protected int doWork() {
         truck.setTown(dst);
+        updateTruck();
         return Simulator.CONTINUE;
     }
 

@@ -9,6 +9,7 @@ class TruckUnload extends TruckEvent {
     @Override
     protected int doWork() {
         truck.unload(amount);
+        updateTruck();
         return Simulator.CONTINUE;
     }
 

@@ -9,6 +9,7 @@ class TruckLoad extends TruckEvent {
     @Override
     protected int doWork() {
         truck.load(amount);
+        updateTruck();
         return Simulator.CONTINUE;
     }
 

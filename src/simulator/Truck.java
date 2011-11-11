@@ -16,6 +16,7 @@ public class Truck {
     // total cost of actions of this truck after it returns to DEPOT
     private int travelCost;
     private int currentTown;
+    private List<TruckEvent> actions;
 
 
     public Truck() {
@@ -23,6 +24,7 @@ public class Truck {
         TruckStack.add(this);
 
         assignedOrders = new LinkedList<Order>();
+        actions        = new LinkedList<TruckEvent>();
         loadedCargo = 0;
         travelCost  = 0;
     }
@@ -49,6 +51,10 @@ public class Truck {
 
     public void setTown(int town) {
         currentTown = town;
+    }
+
+    public void addActionReport(TruckEvent action) {
+        actions.add(action);
     }
 
     public int currentTown() {

@@ -11,4 +11,8 @@ abstract class TruckEvent extends Event {
 
     @Override
     protected abstract String log();
+
+    protected void updateTruck() {
+        truck.addActionReport(this);
+    }
 }
