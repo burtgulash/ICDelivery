@@ -15,9 +15,10 @@ public class Initializer {
      * Initializes simulation from given parameters
      */
     public static void initSimulation (Graph graph, int homeVertex, 
-                          int simulationTime, int pauseTime, int orderMean, 
+                          int simulationTime, String pause, int orderMean, 
                           int startOrders, String[] orders, int maxOrderAmount, 
-                          boolean quiet, OutputStream file, String strategy)
+                          boolean quiet, OutputStream logFile, 
+                          OutputStream[] reportFiles, String strategy)
     {
         // Initialize components
         // Initialize Simulator first!
@@ -36,16 +37,16 @@ public class Initializer {
         TruckStack.init();
         OrderStack.init();
 
-        // initialize logger and outfile
+        // initialize logger and logFile
         Logger.init();
         if (!quiet)
             Logger.addOutput(System.out);
-        if (file != null)
-            Logger.addOutput(file);
+        if (logFile != null)
+            Logger.addOutput(logFile);
 
-        // add pause
-        Event pause = new PauseEvent(pauseTime);
-        Calendar.addEvent(pause);
+
+        // first pause
+        addFirstPause(pause);
 
 
         // add all initially known orders
@@ -57,16 +58,27 @@ public class Initializer {
         generateOrders(gen, simulationTime, startOrders, orderMean);
     }
 
+    private static void addFirstPause(String pause) {
+        if (pause != null) {
+            int pauseTime = 
+                  TimeConverter.toMinutes(Simulator.START_TIME, pause);
+
+            if (pauseTime == TimeConverter.NIL)
+                System.err.println("Invalid pause time");
+            else
+                Calendar.addEvent(new PauseEvent(pauseTime));
+        }
+    }
+
 
     private static void generateOrders(OrderGenerator gen, int simulationTime, 
                                        int startOrders, int mean) 
     {
-        int START_TIME = 0;
         int HALF_DAY   = DAY.time() / 2;
 
         Order generated;
         for (int i = 0; i < startOrders; i++) {
-            generated = gen.generateAt(START_TIME);
+            generated = gen.generateAt(Simulator.START_TIME);
             sendOrder(generated);
         }
 

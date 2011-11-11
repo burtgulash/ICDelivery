@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.File;
 
 import graph.Graph;
 import graph.GraphLoader;
@@ -21,8 +22,8 @@ public class Main {
 
         p.addStringOption("time", "t", "total <TIME> of simulation",
                                                                    "05:00:00");
-        p.addStringOption("pause", "p", "<TIME> of first pause", null);
-        p.addStringOption("log", "l", "output file for log", "");
+        p.addStringOption("pause", "p", "<TIME> of first pause");
+        p.addStringOption("log", "l", "output file for log");
         p.addStringOption("report", "r", "output file for final report");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
@@ -43,31 +44,32 @@ public class Main {
         String termination   = (String) p.getValue("time");
         String pause         = (String) p.getValue("pause"); 
         String graphFile     = (String) p.getValue("graph");
-        String outFile       = (String) p.getValue("output");
+        String logFileName   = (String) p.getValue("log");
         String strategy      = (String) p.getValue("strategy");
+        String reportDir     = (String) p.getValue("report");
 
-        // set pause after termination time if it is not specified
-
-        int terminationTime, pauseTime;
+        int terminationTime;
         terminationTime = TimeConverter.toMinutes(0, termination);
         if (terminationTime == TimeConverter.NIL) {
             System.err.println("Invalid simulation time");
             System.exit(1);
         }    
 
-
-        if (pause == null)
-            pauseTime = terminationTime + 1;
-        else {
-            pauseTime = TimeConverter.toMinutes(0, pause);
-            if (pauseTime == TimeConverter.NIL) {
-                System.err.println("Invalid pause time");
-                pauseTime = terminationTime + 1;
-            }
+        // open output file
+        OutputStream logFile = null;
+        if (logFileName != null) {
+            logFile = openLogFile(logFileName);
+            if (logFile == null)
+                System.exit(1);
         }
 
-        // open output file
-        OutputStream file = openOutFile(outFile);
+        // open report files
+        OutputStream[] reportFiles = null;
+        if (reportDir != null) {
+            reportFiles = openReportFiles(reportDir);
+            if (reportFiles == null)
+                System.exit(1);
+        }
 
         Graph graph = GraphLoader.getGraph(graphFile);
         if (graph == null)
@@ -84,9 +86,10 @@ public class Main {
         }
 
 
-        Initializer.initSimulation(graph, HOME, terminationTime, pauseTime, 
+        Initializer.initSimulation(graph, HOME, terminationTime, pause, 
                                    orderMean, startOrderCount, orders, 
-                                   maxTonsPerOrder, quiet, file, strategy);
+                                   maxTonsPerOrder, quiet, logFile, reportFiles,
+                                   strategy);
 
         // run the simulation
         Simulator.mainLoop();
@@ -101,16 +104,58 @@ public class Main {
         System.exit(0);
     }
 
-    private static OutputStream openOutFile(String outFile) {
+    // TODO close all files
+
+    private static OutputStream[] openReportFiles(String reportDir) {
+        File reportDirectory = new File(reportDir);
+        try {
+            if (!reportDirectory.exists())
+                reportDirectory.mkdirs();
+            if (!reportDirectory.isDirectory()) {
+                System.err.println(
+                     "Report directory already exists and is not directory");
+                return null;
+            }
+        } catch (SecurityException sex) {
+            System.err.println("Don't have permissions to write to directory "
+                               + reportDir);
+            return null;
+        }
+
+
+        File customerReport  = new File(reportDirectory, "customers.txt");
+        File orderReport     = new File(reportDirectory, "orders.txt");
+        File truckReport     = new File(reportDirectory, "trucks.txt");
+
+        OutputStream[] statFiles = new OutputStream[3];
+        try {
+            statFiles[0] = new FileOutputStream(customerReport);
+            statFiles[1] = new FileOutputStream(orderReport);
+            statFiles[2] = new FileOutputStream(truckReport);
+        } catch (FileNotFoundException fnf) {
+            System.err.println("Can not open report file for writing");
+            return null;
+        } catch (SecurityException sex) {
+            System.err.println(
+                     "Don't have permissions to write to report file");
+            return null;
+        }
+
+        return statFiles;
+    }
+
+    private static OutputStream openLogFile(String logFileName) {
         OutputStream file = null;
         try {
-            if (outFile != null && !outFile.equals(""))
-                file = new FileOutputStream(outFile);
+            if (logFileName != null && !logFileName.equals(""))
+                file = new FileOutputStream(logFileName);
         } catch (FileNotFoundException fnf) {
-            System.err.printf("File %s can't be opened for writing%n", outFile);
+            System.err.printf(
+                   "File %s can't be opened for writing%n", logFileName);
             System.exit(1);
         } catch (SecurityException sex) {
-            System.err.printf("Don't have permission to write to %s%n",outFile);
+            System.err.printf(
+                   "Don't have permission to write to %s%n",logFileName);
             System.exit(1);
         }
 

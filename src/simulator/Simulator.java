@@ -11,6 +11,7 @@ import graph.Path;
 public class Simulator {
     static Scheduler scheduler;
     static int HOME;
+    static int START_TIME = 0;
     static int TERMINATION_TIME;
     final static int TERMINATE = 0;
     final static int CONTINUE  = 1;
