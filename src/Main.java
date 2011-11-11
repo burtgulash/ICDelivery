@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.File;
 
@@ -101,10 +102,29 @@ public class Main {
         TruckStack.summary();
         CustomerList.summary();
 
-        System.exit(0);
+        if (closeFiles(reportFiles) && closeFiles(logFile))
+            System.exit(0);
+        else
+            System.exit(1);
     }
 
-    // TODO close all files
+    private static boolean closeFiles(OutputStream... files) {
+        boolean success = true;
+        if (files == null)
+            return success;
+        for (OutputStream file : files) {
+            try {
+                if (file != null) {
+                    file.flush();
+                    file.close();
+                }
+            } catch (IOException ex) {
+                System.err.println("Error closing file");
+                success = false;
+            }
+        }
+        return success;
+    }
 
     private static OutputStream[] openReportFiles(String reportDir) {
         File reportDirectory = new File(reportDir);
