@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import static constant.Times.*;
 
 public class TimeConverter {
+    public static String TIME_HELP = "Time format: [+][DAYS]:[HOURS]:MINUTES";
+
     public static String ascTime(int time) {
         int days   = time / DAY.time() + 1;
         int hours  = (time % DAY.time()) / MINUTES_IN_HOUR.time();

@@ -21,7 +21,7 @@ class PauseEvent extends Event {
         printHelp();
 
         while (true) {
-            System.out.print(">>> ");
+            System.err.print(">>> ");
             String query = "";
             try {
                 query = keybr.readLine();
@@ -29,7 +29,9 @@ class PauseEvent extends Event {
                 System.err.println("Error reading query");
             }
 
-            if (query == null || query.trim().equals(""))
+            // continue simulation
+            if (query == null || query.matches("(?:Q|q)(?:uit)?") || 
+                query.trim().equals(""))
                 break;
 
             StringTokenizer tk = new StringTokenizer(query);
@@ -67,19 +69,23 @@ class PauseEvent extends Event {
                     customer  = Integer.parseInt(tk.nextToken());
                     amount    = Integer.parseInt(tk.nextToken());
                     time      = TimeConverter.toMinutes(time(), tk.nextToken());
-
-                    if (time < 0)
-                        throw new NumberFormatException();
                 } catch (NumberFormatException nfe) {
-                    System.err.println("Error parsing order");
+                    System.err.println("Customer and amount must be integers");
                     continue;
                 } catch (java.util.NoSuchElementException nse) {
-                    System.err.println("Error parsing order");
+                    System.err.println("Missing value");
                     continue;
                 }
                 if (customer < 0 || customer >= CustomerList.numCustomers()) {
                     System.err.printf("Customer %5d does not exist%n", 
                                                                      customer);
+                    continue;
+                }
+                if (time <= 0) {
+                    System.err.println(TimeConverter.TIME_HELP);
+                    continue;
+                } if (amount <= 0) {
+                    System.err.println("Ordered amount must be positive");
                     continue;
                 }
 
@@ -101,58 +107,71 @@ class PauseEvent extends Event {
             }
 
             if (option.matches("(?:T|t)(?:ruck)?")) {
-                // TODO id must exist
                 Truck truck = TruckStack.get(id);
-                assert(truck != null);
+                if (truck == null) {
+                    System.err.printf("Truck %5d does not exist%n", id);
+                    continue;
+                }
 
-                System.out.println();
-                System.out.printf("Truck %5d:%n", id);
-                System.out.printf("Is near town %d%n", truck.currentTown());
-                System.out.printf("Carries %d containers%n", truck.loaded());
-                System.out.println("for orders:");
+                System.err.println();
+                System.err.printf("Truck %5d:%n", id);
+                System.err.printf("Is near town %d%n", truck.currentTown());
+                System.err.printf("Carries %d containers%n", truck.loaded());
+                System.err.println("for orders:");
 
                 for (Order o : truck.assignedOrders())
-                    System.out.printf("\tOrder %5d from customer %5d%n", 
-                                      o.getId(), o.sentBy().customerId());
+                    System.err.printf(
+                             "\tOrder %5d from customer %5d, received at %s%n", 
+                                     o.getId(), o.sentBy().customerId(), 
+                                     TimeConverter.ascTime(o.received()));
             }
             else if (option.matches("(?:O|o)(?:rder)?")) {
-                // TODO id must exist
                 Order order = OrderStack.get(id);
-                assert(order != null);
+                if (order == null) {
+                    System.err.printf("Order %5d does not exist%n", id);
+                    continue;
+                }
 
-                System.out.println();
-                System.out.printf("Order %5d:%n", id);
-                System.out.printf("received at %s%n", 
+                System.err.println();
+                System.err.printf("Order %5d:%n", id);
+                System.err.printf("received at %s%n", 
                                   TimeConverter.ascTime(order.received()));
 
                 if (order.accepted()) {
-                    System.out.println("Accepted");
-                    System.out.printf("Delivered containers: %d%n", 
+                    System.err.println("Accepted");
+                    System.err.printf("Delivered containers: %d%n", 
                                       order.delivered());
-                    System.out.println("\tServed by:");
+                    System.err.println("\tServed by:");
 
                     for (Truck t : order.assignedTrucks())
-                        System.out.printf("Truck %5d%n", t.getId());
+                        System.err.printf("Truck %5d%n", t.getId());
                 } else 
-                    System.out.println("Rejected");
+                    System.err.println("Rejected");
             }
             else if (option.matches("(?:U|c)(?:ustomer)?")) {
-                // TODO id must exist
                 Customer customer = CustomerList.get(id);
-
-                System.out.println();
-                System.out.printf("Customer %5d:%n", id);
-                System.out.printf("Ordered containers   : %d%n", 
-                                            customer.totalContainers());
-                System.out.printf("Delivered containers : %d%n", 
-                                            customer.deliveredContainers());
-                System.out.println("Orders from this customer:");
-                for (Order o : customer.sentOrders()) {
-                    String status = o.accepted() ? "Accepted" : "Rejected";
-                    System.out.printf("\tOrder %5d for %2d tons: %s%n", 
-                                   o.getId(), o.amount(), status);
+                if (customer == null) {
+                    System.err.printf("Customer %5d does not exist%n", id);
+                    continue;
                 }
 
+                System.err.println();
+                System.err.printf("Customer %5d:%n", id);
+                System.err.printf("Ordered containers   : %d%n", 
+                                            customer.totalContainers());
+                System.err.printf("Delivered containers : %d%n", 
+                                            customer.deliveredContainers());
+                System.err.println("Orders from this customer:");
+                for (Order o : customer.sentOrders()) {
+                    String status = o.accepted() ? "Accepted" : "Rejected";
+                    System.err.printf(
+                           "\tOrder %5d for %2d tons, received at %s: %s%n", 
+                           o.getId(), o.amount(), 
+                           TimeConverter.ascTime(o.received()), status);
+                }
+
+            } else {
+                System.err.println("Unknown option");
             }
         }
 
@@ -165,21 +184,21 @@ class PauseEvent extends Event {
     }
 
     private void printSummary() {
-        System.out.printf("%nPaused at %s%n", TimeConverter.ascTime(time()));
+        System.err.printf("%nPaused at %s%n", TimeConverter.ascTime(time()));
         TruckStack.summary();
         CustomerList.summary();
     }
 
     private void printHelp() {
-        System.out.println();
-        System.out.println("usage: [topich]");
-        System.out.printf("\t[t]ruck          [%d-%d]%n", 1, TruckStack.size());
-        System.out.printf("\t[o]rder          [%d-%d]%n", 1, OrderStack.size());
-        System.out.printf("\t[p]ause          TIME%n");
-        System.out.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 1, 
+        System.err.println();
+        System.err.println("usage:");
+        System.err.printf("\t[t]ruck          [%d-%d]%n", 1, TruckStack.size());
+        System.err.printf("\t[o]rder          [%d-%d]%n", 1, OrderStack.size());
+        System.err.printf("\t[p]ause          TIME%n");
+        System.err.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 1, 
                                              CustomerList.numCustomers() - 1);
-        System.out.printf("\t[c]ustomer       [%d-%d]%n", 1,  
+        System.err.printf("\t[c]ustomer       [%d-%d]%n", 1,  
                                              CustomerList.numCustomers() - 1);
-        System.out.println("\t[h]elp");
+        System.err.println("\t[h]elp");
     }
 }
