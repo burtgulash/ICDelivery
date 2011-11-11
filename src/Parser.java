@@ -23,6 +23,7 @@ public class Parser {
 
     private String chapeau;
     private String usage;
+    private List<String> helpText;
 
 
 
@@ -37,6 +38,7 @@ public class Parser {
         options     = new LinkedList<Option>();
         chapeau     = title;
         this.usage  = usage;
+        helpText    = new LinkedList<String>();
 
         options.add(new HelpOption());
     }
@@ -46,6 +48,16 @@ public class Parser {
      */
     public Parser() {
         this(null, "usage:");
+    }
+
+
+    /**
+     * Adds paragraph to help.
+     *
+     * @param paragraph  text to be added to help text
+     */
+    public void addParagraph(String paragraph) {
+        helpText.add(paragraph);
     }
 
 
@@ -62,6 +74,18 @@ public class Parser {
         for (Option option : options)
             System.err.println(String.format("    -%s, --%s   \t\t%s",
                                   option.abbr, option.name, option.help));
+
+        if (helpText.size() > 0) {
+            System.err.println();
+            System.err.println();
+
+            for (int i = 0; i < helpText.size(); i++) {
+                if (i != 0)
+                    System.out.print("\t");
+                System.err.println(helpText.get(i));
+                System.out.println();
+            }
+        }
     }
 
 

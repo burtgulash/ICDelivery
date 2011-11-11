@@ -11,38 +11,60 @@ public class Main {
     public static void main(String[] args) {
         Parser p = new Parser(
            "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny", 
-           "usage: java -jar sim.jar [OPTIONS...] GRAPHFILE");
+           "usage: java -jar sim.jar [OPTION]... [ORDER]...");
 
         p.addBooleanOption("quiet", "q", "don't print to screen");
-        p.addIntegerOption("time", "t", "total time of simulation", 7200);
         p.addIntegerOption("initial", "i", "number of initial orders", 300);
-        p.addIntegerOption("pause", "p", "time of first pause", -1);
         p.addIntegerOption("mean", "m", "mean of interval between orders", 10);
         p.addIntegerOption("max", "M", 
                      "amount that can be ordered by one customer", 5);
 
-        p.addStringOption("output", "o", "output file for log", "");
+        p.addStringOption("time", "t", "total <TIME> of simulation",
+                                                                   "05:00:00");
+        p.addStringOption("pause", "p", "<TIME> of first pause", null);
+        p.addStringOption("log", "l", "output file for log", "");
+        p.addStringOption("report", "r", "output file for final report");
         p.addStringOption("graph", "g", "input file containing graph", 
                                                        "test.graph");
         p.addStringOption("strategy", "s", "greedy or clarkewright", "greedy");
+
+        p.addParagraph(TimeConverter.TIME_HELP);
+
+
         String[] orders = loadArgs(p, args);
 
 
         int HOME = 0;
 
         boolean quiet        = (Boolean) p.getValue("quiet");
-        int simTime          = (Integer) p.getValue("time");
-        int pauseTime        = (Integer) p.getValue("pause"); 
         int startOrderCount  = (Integer) p.getValue("initial"); 
         int orderMean        = (Integer) p.getValue("mean");
         int maxTonsPerOrder  = (Integer) p.getValue("max");
+        String termination   = (String) p.getValue("time");
+        String pause         = (String) p.getValue("pause"); 
         String graphFile     = (String) p.getValue("graph");
         String outFile       = (String) p.getValue("output");
         String strategy      = (String) p.getValue("strategy");
 
         // set pause after termination time if it is not specified
-        if (pauseTime < 0)
-            pauseTime = simTime + 1;
+
+        int terminationTime, pauseTime;
+        terminationTime = TimeConverter.toMinutes(0, termination);
+        if (terminationTime == TimeConverter.NIL) {
+            System.err.println("Invalid simulation time");
+            System.exit(1);
+        }    
+
+
+        if (pause == null)
+            pauseTime = terminationTime + 1;
+        else {
+            pauseTime = TimeConverter.toMinutes(0, pause);
+            if (pauseTime == TimeConverter.NIL) {
+                System.err.println("Invalid pause time");
+                pauseTime = terminationTime + 1;
+            }
+        }
 
         // open output file
         OutputStream file = openOutFile(outFile);
@@ -52,18 +74,23 @@ public class Main {
             System.exit(1);
 
 
-        if (!(strategy.equals("greedy") || strategy.equals("clarkewright"))) {
+        if (strategy.matches("[Gg](?:reedy)?"))
+            strategy = "greedy";
+        else if (strategy.matches("[Cc](?:larke)?[Ww](?:right)?"))
+            strategy = "clarkewright";
+        else {
             System.err.println("Unknown strategy: " + strategy);
             System.exit(1);
         }
 
 
-        Initializer.initSimulation(graph, HOME, simTime, pauseTime, orderMean,
-                                   startOrderCount, orders, maxTonsPerOrder, 
-                                   quiet, file, strategy);
+        Initializer.initSimulation(graph, HOME, terminationTime, pauseTime, 
+                                   orderMean, startOrderCount, orders, 
+                                   maxTonsPerOrder, quiet, file, strategy);
 
         // run the simulation
         Simulator.mainLoop();
+        // end the simulation
 
 
         // print end summary

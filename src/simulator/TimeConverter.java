@@ -4,17 +4,20 @@ import java.util.regex.Matcher;
 import static constant.Times.*;
 
 public class TimeConverter {
-    public static String TIME_HELP = "Time format: [+][DAYS]:[HOURS]:MINUTES";
+    public static String TIME_HELP = "<TIME> format: [+][DAYS]:[HOURS]:MINUTES";
+    public final static int NIL = -1;
 
     public static String ascTime(int time) {
-        int days   = time / DAY.time() + 1;
+        int days   = time / DAY.time();
         int hours  = (time % DAY.time()) / MINUTES_IN_HOUR.time();
         int mins   = (time % DAY.time()) % MINUTES_IN_HOUR.time();;
         return String.format("Day %1d  %02d:%02d", days, hours, mins);
     }
 
     public static int toMinutes(int currentTime, String time) {
-        int NIL = -1;
+        if (time == null)
+            return NIL;
+
         Pattern timePattern = Pattern.compile(
                                       "\\+?(?:(\\d+):)?(?:(\\d+):)?(\\d+)");
         Matcher m = timePattern.matcher(time);

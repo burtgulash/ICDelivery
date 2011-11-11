@@ -89,6 +89,11 @@ class PauseEvent extends Event {
                     continue;
                 }
 
+                if (customer == Simulator.HOME) {
+                    System.err.printf("Town %5d is HOME vertex%n", customer);
+                    continue;
+                }
+
                 Order o = new Order(time, customer, amount);        
                 Event orderEvent = new OrderEvent(time, o);
                 Calendar.addEvent(orderEvent);
@@ -141,10 +146,10 @@ class PauseEvent extends Event {
                     System.err.println("Accepted");
                     System.err.printf("Delivered containers: %d%n", 
                                       order.delivered());
-                    System.err.println("\tServed by:");
+                    System.err.println("Served by:");
 
                     for (Truck t : order.assignedTrucks())
-                        System.err.printf("Truck %5d%n", t.getId());
+                        System.err.printf("\tTruck %5d%n", t.getId());
                 } else 
                     System.err.println("Rejected");
             }
@@ -152,6 +157,10 @@ class PauseEvent extends Event {
                 Customer customer = CustomerList.get(id);
                 if (customer == null) {
                     System.err.printf("Customer %5d does not exist%n", id);
+                    continue;
+                }
+                if (id == Simulator.HOME) {
+                    System.err.printf("Town %5d is HOME vertex%n", id);
                     continue;
                 }
 
