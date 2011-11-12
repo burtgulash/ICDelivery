@@ -9,14 +9,30 @@ public class Reporter {
     private static DecimalFormat d = new DecimalFormat(",###");
 
 
-    public void printOrderReport(OutputStream out) {
+    public static void printOrderReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out);
+        p.println(orderSummary());
 
         int numOrders = OrderStack.size();
         for (int id = 0; id < numOrders; id++) {
             p.println(orderReport(id));
             p.println();
         }
+    }
+
+
+    public static String orderSummary() {
+        StringBuilder s       = new StringBuilder();
+
+        String totalOrders    = d.format(CustomerList.totalOrders());
+        String acceptedOrders = d.format(CustomerList.acceptedOrders());
+
+        s.append(String.format("Total    orders: %s", totalOrders));
+        s.append(NL);
+        s.append(String.format("Accepted orders: %s", acceptedOrders));
+        s.append(NL);
+
+        return s.toString();
     }
 
 
@@ -47,7 +63,7 @@ public class Reporter {
     }
 
 
-    public void printCustomerReport(OutputStream out) {
+    public static void printCustomerReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out);
 
         // TODO rename numCustomers to size
@@ -59,7 +75,7 @@ public class Reporter {
     }
 
 
-    public void printTruckReport(OutputStream out) {
+    public static void printTruckReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out);
 
         int numTrucks = TruckStack.size();

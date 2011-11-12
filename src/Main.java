@@ -65,11 +65,19 @@ public class Main {
         }
 
         // open report files
-        OutputStream[] reportFiles = null;
+        OutputStream[] reportFiles   = null;
+        OutputStream customerReport  = null;
+        OutputStream orderReport     = null;
+        OutputStream truckReport     = null;
+
         if (reportDir != null) {
             reportFiles = openReportFiles(reportDir);
             if (reportFiles == null)
                 System.exit(1);
+
+            customerReport  = reportFiles[0];
+            orderReport     = reportFiles[1];
+            truckReport     = reportFiles[2];
         }
 
         Graph graph = GraphLoader.getGraph(graphFile);
@@ -95,6 +103,15 @@ public class Main {
         // run the simulation
         Simulator.mainLoop();
         // end the simulation
+
+
+        // print report
+        if (customerReport != null)
+            Reporter.printCustomerReport(customerReport);
+        if (orderReport != null)
+            Reporter.printOrderReport(orderReport);
+        if (truckReport != null)
+            Reporter.printTruckReport(truckReport);
 
 
         // print end summary
