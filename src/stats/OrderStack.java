@@ -2,27 +2,64 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class OrderStack {
+/**
+ * Keeps track of all orders that were received.
+ */
+class OrderStack {
     private static Map<Integer, Order> allOrders;
+    private static boolean initialized = false;
 
+
+    // disable ordinary constructor
     private OrderStack() {/*,*/}
 
-    public static void init() {
+
+    /**
+     * Initializes this static object. Must be called before
+     * using this class.
+     */
+    private static void init() {
+        initialized = true;
         allOrders = new TreeMap<Integer, Order>();
     }
 
 
-    public static void add(Order order) {
+    /**
+     * Push received order to the stack.
+     *
+     * @param order received order.
+     */
+    static void add(Order order) {
+        if (!initialized)
+            init();
+
         allOrders.put(order.getId(), order);
     }
 
-    public static Order get(int orderId) {
+
+    /**
+     * Get order by its id.
+     *
+     * @param orderId id of order to get
+     * @return Order with specified id or null if it does not exist.
+     */
+    static Order get(int orderId) {
+        assert allOrders != null;
+
         Order ret =  allOrders.get(orderId);
-        assert(ret != null);
+        assert ret != null;
         return ret;
     }
 
-    public static int size() {
+
+    /**
+     * Get number of all orders.
+     *
+     * @return Number of all orders.
+     */
+    static int size() {
+        assert allOrders != null;
+
         return allOrders.size();
     }
 }

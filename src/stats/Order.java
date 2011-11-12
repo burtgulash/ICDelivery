@@ -2,17 +2,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class Order
- *
- * Used by scheduler and statistics keeper
+ * Order object abstraction.
+ * 
+ * Keeps track of trucks that serve this order, 
+ * customer who sent this order, 
+ * Amount of ordered tons, delivered tons, ...
  */
 public class Order {
     private List<Truck> trucks;      // trucks that serve this order
     private final Customer customer; // creator of Order
 
     private int orderedAmount;   // num of containers
-    private int delivered;
-    private int processed;
+    private int delivered = 0;
+    private int processed = 0;
 
     private final int receivedTime;
 
@@ -24,11 +26,12 @@ public class Order {
     private boolean accepted = true;
 
 
+
     /**
      * Constructs Order object 
      *
      * time of construction != receivedTime, receivedTime means when it 
-     * first appears in time
+     * first appears in simulation time
      *
      * @param receivedTime time, when Simulator first sees the Order
      * @param customerNum  id of Customer that generated this Order
@@ -39,15 +42,14 @@ public class Order {
 
         this.receivedTime    = receivedTime;
         orderedAmount        = amount;
-        delivered            = 0;
-        processed            = 0;
         customer             = CustomerList.get(customerNum);
         trucks               = new LinkedList<Truck>();
     }
 
 
     /**
-     * Assign truck to this order
+     * Assign truck to this order.
+     *
      * @param truck Truck that got assigned to this order
      * @param assignedAmount containers, that will be delivered by the truck
      */
@@ -56,19 +58,30 @@ public class Order {
     }
 
 
+    /**
+     * Get list of all trucks that serve this order.
+     *
+     * @return List of trucks serving this order.
+     */
     public List<Truck> assignedTrucks() {
         return trucks;
     }
 
+
     /**
-     * Return time the Order was first seen
+     * Return time the order was received.
+      *
+     * @return received time.
      */
     public int received() {
         return receivedTime;
     }
 
+
     /**
-     * Return customer that sent this Order
+     * Return customer that sent this Order.
+     *
+     * @return customer responsible for this order.
      */
     public Customer sentBy() {
         return customer;
@@ -76,7 +89,9 @@ public class Order {
 
 
     /**
-     * Return ordered amount of containers
+     * Return amount of ordered containers in this order.
+     *
+     * @return Amount of ordered containers.
      */
     public int amount() {
         return orderedAmount;
@@ -84,46 +99,84 @@ public class Order {
 
 
     /**
-     * Return amount of containers delivered at the end of Simulation
+     * Return amount of containers delivered by the end of simulation.
+     * Amount of containers processed by schedulers and planned
+     * to be successfully delivered by the end of simulation.
+     *
      */
     public int processed() {
         return processed;
     }
 
 
+    /**
+     * Scheduler notifies this order that it will successfully deliver
+     * specified amount of containers.
+     *
+     * @param containers Containers that will be delivered.
+     */
     public void process(int containers) {
         processed += containers;
         assert(processed <= orderedAmount);
     }
 
+
+    /**
+     * Get number of containers yet to be assigned to a truck
+     * by a scheduler.
+     *
+     * @return Amount that remains to be processed by a scheduler.
+     */
     public int remains() {
         return orderedAmount - processed;
     }
 
+
     /**
-     * satisfies order by specified number of containers
+     * Successfully deliver specified amount of containers.
+     *
+     * @param containers Deliver this many containers.
      */
     public void satisfy(int containers) {
         delivered += containers;
         assert(delivered <= orderedAmount);
     }
 
+
+    /**
+     * Get number of containers delivered so far.
+     *
+     * @return Number of delivered containers.
+     */
     public int delivered() {
         return delivered;
     }
 
+
     /**
      * Returns id of this Order
+     *
+     * @return Order id.
      */
     public int getId(){
         return orderId;
     }
 
 
+    /**
+     * Mark this order as rejected.
+     * Can only happen if it was received too late.
+     */
     public void reject() {
         accepted = false;
     }
 
+
+    /**
+     * Get status of this order.
+     *
+     * @return true if it was accepted or false if rejected.
+     */
     public boolean accepted() {
         return accepted;
     }

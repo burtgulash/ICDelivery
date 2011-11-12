@@ -4,10 +4,12 @@
 public class CustomerList {
     private static Customer[] list;
 
+    private boolean initialized = false;
+
 
     /**
      * Static constructor, must be called before using this class.
-      *
+     *
      * @param numCustomers creates list of this size
      */ 
     public static void init (int numCustomers) {

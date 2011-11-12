@@ -35,7 +35,6 @@ public class Initializer {
 
         CustomerList.init(graph.vertices());
         TruckStack.init();
-        OrderStack.init();
 
         // initialize logger and logFile
         if (!quiet)
