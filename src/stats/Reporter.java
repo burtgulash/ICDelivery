@@ -113,7 +113,7 @@ public class Reporter {
 
 
     /**
-     * Get summary of all trucks participating in simulation.
+     * Get summary of statistics of all truck actions.
      * Total cost, total real cost and number of trucks dispatched.
      *
      * @return Summary of statistics of all trucks.
@@ -136,6 +136,12 @@ public class Reporter {
 
 
 
+    /**
+     * Get report about customer.
+     *
+     * @param id id of customer whose report is desired.
+     * @return Short report about customer.
+     */
     public static String customerReport(int id) {
         Customer customer = CustomerList.get(id);
         StringBuilder s = new StringBuilder();
@@ -165,6 +171,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Get report about order given its id.
+     *
+     * @param id id of order whose report is desired.
+     * @return Short report about order.
+     */
     public static String orderReport (int id) {
         Order order = OrderStack.get(id);
         StringBuilder s = new StringBuilder();
@@ -196,6 +208,12 @@ public class Reporter {
 
 
 
+    /**
+     * Get short report about truck given its id.
+     *
+     * @param id id of truck whose report is desired.
+     * @return Short report about truck.
+     */
     public static String truckReport (int id) {
         Truck truck = TruckStack.get(id);
         StringBuilder s = new StringBuilder();
@@ -224,6 +242,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Get long report about truck given its id.
+     *
+     * @param id id of truck whose report is desired.
+     * @return Full report about truck containing every action it did.
+     */
     public static String truckFullReport (int id) {
         Truck truck = TruckStack.get(id);
         StringBuilder s = new StringBuilder(truckReport(id));
