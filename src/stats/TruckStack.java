@@ -8,7 +8,7 @@ import java.util.TreeMap;
 class TruckStack {
     private static Map<Integer, Truck> allTrucks;
 
-    private boolean initialized = false;
+    private static boolean initialized = false;
 
 
     // disable default constructor

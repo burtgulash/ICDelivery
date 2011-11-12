@@ -4,11 +4,22 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 
+/**
+ * Responsible for giving reports about customers, orders and trucks
+ *
+ */
 public class Reporter {
     private static final String NL = String.format("%n");
+    // decimal format for big numbers, eg. 1000000 -> 1,000,000
     private static DecimalFormat d = new DecimalFormat(",###");
 
 
+    /**
+     * Prints report about all customers to file.
+     * Report consists of customer summary and info about each customer.
+     *
+     * @param out Stream to print to.
+     */
     public static void printCustomerReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out, true);
         p.println(customerSummary());
@@ -22,6 +33,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Prints report about all orders to file.
+     * Report consists of order summary and info about each order.
+     *
+     * @param out Stream to print to.
+     */
     public static void printOrderReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out, true);
         p.println(orderSummary());
@@ -35,6 +52,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Prints report about all trucks to file.
+     * Report consists of truck summary and complete info about each truck.
+     *
+     * @param out Stream to print to.
+     */
     public static void printTruckReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out, true);
         p.println(truckSummary());
@@ -49,6 +72,12 @@ public class Reporter {
 
 
 
+    /**
+     * Get summary of all customer statistics.
+     * Number of accepted orders and number of delivered containers. 
+     *
+     * @return Summary about each participating customre.
+     */
     public static String customerSummary() {
         StringBuilder s = new StringBuilder();
 
@@ -62,6 +91,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Get summary of all orders that took place in simulation.
+     * Number of all and of accepted orders.
+     *
+     * @return Summary of statistics of all orders.
+     */
     public static String orderSummary() {
         StringBuilder s       = new StringBuilder();
 
@@ -77,6 +112,12 @@ public class Reporter {
     }
 
 
+    /**
+     * Get summary of all trucks participating in simulation.
+     * Total cost, total real cost and number of trucks dispatched.
+     *
+     * @return Summary of statistics of all trucks.
+     */
     public static String truckSummary() {
         StringBuilder s = new StringBuilder();
 
