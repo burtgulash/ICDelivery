@@ -31,6 +31,6 @@ class TruckSend extends TruckEvent {
 
     @Override
     protected String report() {
-        return String.format("Move to %4d", dst);
+        return String.format("Move to town %4d", dst);
     }
 }

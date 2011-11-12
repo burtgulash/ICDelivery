@@ -21,6 +21,7 @@ abstract class TruckEvent extends Event {
 
     protected void updateTruck() {
         truck.addActionReport(this);
+        truck.updateRealCost(eventCost);
     }
 
 

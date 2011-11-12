@@ -194,6 +194,8 @@ public class ClarkeWrightScheduler implements Scheduler {
                 ReturnTrip backTrip = 
                        new ReturnTrip(toSndReal.endTime() + 1, back);
 
+
+                // create truck for this double-trip
                 Truck truck = new Truck();
 
                 Customer fstCustomer = CustomerList.get(s.fst);
@@ -352,7 +354,11 @@ public class ClarkeWrightScheduler implements Scheduler {
 
                 // update stats outside
                 Order order = orderHistory.get(currentOrder);
+                truck.assignOrder(order);
+                order.assignTruck(truck, amount); 
                 order.process(curAmount);
+
+
                 Event completion = new OrderSatisfyEvent(
                              satisfyTime + 1, curAmount, truck, order);
                 Calendar.addEvent(completion);

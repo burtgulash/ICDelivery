@@ -144,6 +144,7 @@ public class Main {
         return success;
     }
 
+
     private static OutputStream[] openReportFiles(String reportDir) {
         File reportDirectory = new File(reportDir);
         try {
@@ -181,6 +182,7 @@ public class Main {
 
         return statFiles;
     }
+
 
     private static OutputStream openLogFile(String logFileName) {
         OutputStream file = null;

@@ -39,4 +39,14 @@ public class TruckStack {
 
         return tot;
     }
+
+    public static int totalRealCost() {
+        int tot = 0;
+        for (Map.Entry KVpair : allTrucks.entrySet()) {
+            int truckId = (Integer) KVpair.getKey();
+            tot += allTrucks.get(truckId).totalRealCost();
+        }
+
+        return tot;
+    }
 }
