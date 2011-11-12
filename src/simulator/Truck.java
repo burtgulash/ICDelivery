@@ -11,10 +11,11 @@ public class Truck {
     // assigned Order list
     private List<Order> assignedOrders;
     // private List<Trip>  completedTrips;
-    private int loadedCargo;
+    private int loadedCargo = 0;
 
     // total cost of actions of this truck after it returns to DEPOT
-    private int travelCost;
+    private int travelCost = 0;
+    private int realCost = 0;
     private int currentTown;
     List<TruckEvent> actions;
 
@@ -25,8 +26,6 @@ public class Truck {
 
         assignedOrders = new LinkedList<Order>();
         actions        = new LinkedList<TruckEvent>();
-        loadedCargo = 0;
-        travelCost  = 0;
     }
 
     public void assignOrder(Order order) {
@@ -65,8 +64,16 @@ public class Truck {
         return travelCost;
     }
 
+    public int totalRealCost() {
+        return realCost;
+    }
+
     public void updateTravelCost(Trip trip) {
         travelCost += trip.tripCost();
+    }
+
+    public void updateRealCost(int cost) {
+        realCost += cost;
     }
 
     public int getId(){

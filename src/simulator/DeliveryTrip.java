@@ -9,15 +9,13 @@ class DeliveryTrip extends Trip {
 
     private int loadAmount;
     private int unloadAmount;
-    private int cargo;
 
     DeliveryTrip (int startTime, Path path, 
                   int loadAmount, int unloadAmount, int cargo)
     {
-        super(startTime, path);
+        super(startTime, cargo, path);
         this.loadAmount = loadAmount;
         this.unloadAmount = unloadAmount;
-        this.cargo = cargo;
 
         computeTimes();
         computeCost();

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.LinkedList;
 
 import static constant.Times.*;
+import static constant.Costs.*;
+
 
 public class ClarkeWrightScheduler implements Scheduler {
     private final int HOME;
@@ -202,13 +204,19 @@ public class ClarkeWrightScheduler implements Scheduler {
                 Event assignEvent_2 = new CustomerAssignEvent(
                       releaseTime, cargoToSnd, truck, sndCustomer);
 
+                int totalLoad = cargoToFst + cargoToSnd;
+                int loadCost = totalLoad * LOADING.cost();
                 Event load = new TruckLoad(
-                        toFstReal.startTime(), cargoToFst + cargoToSnd, truck);
+                    toFstReal.startTime(), loadCost, totalLoad, truck);
+
+
+                int unloadCost_1 = cargoToFst * UNLOADING.cost();
+                int unloadCost_2 = cargoToSnd * UNLOADING.cost();
 
                 Event unload_1 = new TruckUnload(
-                           toFstReal.arrivalTime(), cargoToFst, truck);
+                     toFstReal.arrivalTime(), unloadCost_1, cargoToFst, truck);
                 Event unload_2 = new TruckUnload(
-                           toSndReal.arrivalTime(), cargoToSnd, truck);
+                     toSndReal.arrivalTime(), unloadCost_2, cargoToSnd, truck);
 
 
                 Calendar.addEvent(assignEvent_1);

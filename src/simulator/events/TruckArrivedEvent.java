@@ -1,12 +1,10 @@
 class TruckArrivedEvent extends TruckEvent {
     private int dst;
-    private int pathCost;
 
 
-    TruckArrivedEvent(int time, Truck truck, int arrivedTo, int cost) {
-        super(time, truck);
+    TruckArrivedEvent(int time, int cost, Truck truck, int arrivedTo) {
+        super(time, cost, truck);
         dst = arrivedTo;
-        pathCost = cost;
     }
 
 
@@ -20,8 +18,8 @@ class TruckArrivedEvent extends TruckEvent {
 
     @Override
     protected String log() {
-        return String.format("Truck %5d arrived to %4d, cost: %d CZK",
-                             truck.getId(), dst, pathCost);
+        return String.format("Truck %5d arrived to %4d",
+                             truck.getId(), dst);
     }
 
     @Override

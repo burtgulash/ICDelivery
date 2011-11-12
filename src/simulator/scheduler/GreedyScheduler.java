@@ -1,4 +1,5 @@
 import static constant.Times.*;
+import static constant.Costs.*;
 
 import graph.Graph;
 import graph.Path;
@@ -143,17 +144,19 @@ public class GreedyScheduler implements Scheduler {
 
             int assignedTime = order.received() + 1;
             Event assign = 
-                   new CustomerAssignEvent(
+                new CustomerAssignEvent(
                           assignedTime, amount, truck, order.sentBy());
 
+            int loadCost = amount * LOADING.cost();
             Event load = 
-                   new TruckLoad(trip.startTime(), amount, truck);
+                new TruckLoad(trip.startTime(), loadCost, amount, truck);
 
+            int unloadCost = amount * UNLOADING.cost();
             Event unload = 
-                   new TruckUnload(trip.arrivalTime(), amount, truck);
+                new TruckUnload(trip.arrivalTime(), unloadCost, amount, truck);
 
             Event completion = 
-                   new OrderSatisfyEvent(trip.endTime(), amount, truck, order);
+                new OrderSatisfyEvent(trip.endTime(), amount, truck, order);
 
 
             Calendar.addEvent(assign);

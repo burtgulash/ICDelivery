@@ -1,8 +1,8 @@
 class TruckLoad extends TruckEvent {
     int amount;
 
-    TruckLoad(int time, int amount, Truck truck) {
-        super(time, truck);
+    TruckLoad(int time, int cost, int amount, Truck truck) {
+        super(time, cost, truck);
         this.amount = amount;
     }
 

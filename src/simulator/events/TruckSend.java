@@ -2,8 +2,8 @@ class TruckSend extends TruckEvent {
     private int src, dst;
 
 
-    TruckSend(int time, Truck truck, int src, int dst) {
-        super(time, truck);
+    TruckSend(int time, int cost, Truck truck, int src, int dst) {
+        super(time, cost, truck);
         this.src = src;
         this.dst = dst;
     }

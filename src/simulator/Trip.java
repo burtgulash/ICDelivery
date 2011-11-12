@@ -11,11 +11,14 @@ abstract class Trip {
     protected int endTime;
     protected int totalCost;
 
+    protected int cargo;
     protected Path path;
 
-    Trip (int startTime, Path path) {
-        this.startTime      = startTime;
-        this.path           = path;
+
+    Trip (int startTime, int cargo, Path path) {
+        this.startTime  = startTime;
+        this.path       = path;
+        this.cargo      = cargo;
     }
 
     int startTime() {
@@ -52,24 +55,28 @@ abstract class Trip {
 
         Path p       = path;
         int fromTime = dispatchAt;
-        int toTime   = fromTime +  p.distanceToNext() * 
-                                   MINUTES_IN_HOUR.time() / Truck.SPEED;
+        int distance = p.distanceToNext();
+        int toTime   = fromTime + distance * 
+                                  MINUTES_IN_HOUR.time() / Truck.SPEED;
         int dst      = p.to();
+        int cost     = distance * (BASE.cost() + cargo * TRANSPORT.cost());
 
         while (p.rest() != null) {
-            Event advanceByTown = new TruckSend(fromTime, truck, src, dst);
-            Calendar.addEvent(advanceByTown);
+            Event advance = new TruckSend(fromTime, cost, truck, src, dst);
+            Calendar.addEvent(advance);
 
             p = p.rest();
             src = dst;
             dst = p.to();
             fromTime = toTime;
-            toTime = fromTime + p.distanceToNext() * 
+            distance = p.distanceToNext();
+            toTime = fromTime + distance * 
                                 MINUTES_IN_HOUR.time() / Truck.SPEED;
+            cost     = distance * (BASE.cost() + cargo * TRANSPORT.cost());
         }
 
-        Event toLastTown = new TruckSend(fromTime, truck, src, dst);
-        Event arrived = new TruckArrivedEvent(toTime, truck, dst, tripCost());
+        Event toLastTown = new TruckSend(fromTime, cost, truck, src, dst);
+        Event arrived = new TruckArrivedEvent(toTime, 0, truck, dst);
 
         Calendar.addEvent(toLastTown);
         Calendar.addEvent(arrived);

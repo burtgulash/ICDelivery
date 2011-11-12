@@ -1,10 +1,13 @@
 abstract class TruckEvent extends Event {
-    Truck truck;
+    protected Truck truck;
+    private int eventCost;
 
 
-    TruckEvent (int time, Truck truck) {
+
+    TruckEvent (int time, int cost, Truck truck) {
         super(time);
         this.truck = truck;
+        this.eventCost = cost;
     }
 
 
@@ -22,4 +25,9 @@ abstract class TruckEvent extends Event {
 
 
     protected abstract String report();
+
+
+    int actionCost() {
+        return eventCost;
+    }
 }

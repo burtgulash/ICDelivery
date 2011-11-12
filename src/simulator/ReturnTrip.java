@@ -5,7 +5,7 @@ import static constant.Costs.*;
 
 class ReturnTrip extends Trip {
     ReturnTrip (int startTime, Path toHOME) {
-        super(startTime, toHOME);
+        super(startTime, 0, toHOME);
 
         computeTimes();
         computeCost();

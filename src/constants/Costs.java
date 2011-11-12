@@ -4,6 +4,7 @@ public enum Costs {
 
     BASE       (5),
     TRANSPORT  (1),
+    LOADING    (0),
     UNLOADING  (100),
     WAITING    (150);
 
