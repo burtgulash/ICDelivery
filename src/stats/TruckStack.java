@@ -1,8 +1,6 @@
 import java.util.Map;
 import java.util.TreeMap;
 
-import java.text.DecimalFormat;
-
 
 /**
  * Class TruckStack
@@ -40,15 +38,5 @@ public class TruckStack {
         }
 
         return tot;
-    }
-
-
-    public static void summary() {
-        DecimalFormat formatter = new DecimalFormat(",###");
-
-        String totalCost  = formatter.format(totalCost());
-        String dispatched = formatter.format(allTrucks.size());
-        System.out.printf("TOTAL COST           : %s CZK%n", totalCost);
-        System.out.printf("Trucks dispatched    : %s%n", dispatched);
     }
 }

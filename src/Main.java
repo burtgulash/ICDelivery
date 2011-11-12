@@ -99,14 +99,15 @@ public class Main {
 
         // print end summary
         System.out.println();
-        TruckStack.summary();
-        CustomerList.summary();
+        System.out.println(Reporter.truckSummary());
+        System.out.println(Reporter.customerSummary());
 
         if (closeFiles(reportFiles) && closeFiles(logFile))
             System.exit(0);
         else
             System.exit(1);
     }
+
 
     private static boolean closeFiles(OutputStream... files) {
         boolean success = true;

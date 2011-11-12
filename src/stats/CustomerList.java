@@ -17,6 +17,7 @@ public class CustomerList {
             list[i] = new Customer(i);
     }
 
+
     /**
      * Finds customer by id/customerVertex
      */
@@ -27,6 +28,7 @@ public class CustomerList {
         return list[customerId];
     }
 
+
     /**
      * Returns number of customers
      * @return number of customers
@@ -36,7 +38,8 @@ public class CustomerList {
         return list.length;
     }
 
-    private static int acceptedOrders() {
+
+    public static int acceptedOrders() {
         int tot = 0;
         for (Customer c : list)
             tot += c.acceptedOrders();
@@ -44,31 +47,26 @@ public class CustomerList {
     }
 
 
-    private static int totalOrders() {
+    public static int totalOrders() {
         int tot = 0;
         for (Customer c : list)
             tot += c.totalOrders();
         return tot;
     }
 
-    private static int deliveredContainers() {
+
+    public static int deliveredContainers() {
         int tot = 0;
         for (Customer c : list)
             tot += c.deliveredContainers();
         return tot;
     }
 
-    private static int totalContainers() {
+
+    public static int totalContainers() {
         int tot = 0;
         for (Customer c : list)
             tot += c.totalContainers();
         return tot;
-    }
-
-    public static void summary() {
-        System.out.printf("Orders accepted      : %4d/%4d%n", 
-                                    acceptedOrders(), totalOrders());
-        System.out.printf("Containers delivered : %4d/%4d%n", 
-                            deliveredContainers(), totalContainers());
     }
 }

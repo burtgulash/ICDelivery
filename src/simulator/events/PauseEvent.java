@@ -29,10 +29,15 @@ class PauseEvent extends Event {
                 System.err.println("Error reading query");
             }
 
+            if (query == null || query.trim().equals(""))
+                continue;
+
+            query = query.toLowerCase();
+
             // continue simulation
-            if (query == null || query.matches("(?:Q|q)(?:uit)?") || 
-                query.trim().equals(""))
+            if (query.matches("q(?:uit)?|go?"))
                 break;
+
 
             StringTokenizer tk = new StringTokenizer(query);
             if (!tk.hasMoreTokens()) {
@@ -41,7 +46,7 @@ class PauseEvent extends Event {
             }
 
             String option = tk.nextToken();
-            if (option.matches("(?:H|h)(?:elp)?")) {
+            if (option.matches("h(?:elp)?")) {
                 printHelp();
                 continue;
             }
@@ -53,7 +58,7 @@ class PauseEvent extends Event {
             }
 
 
-            if (option.matches("(?:P|p)(?:ause)?")) {
+            if (option.matches("p(?:ause)?")) {
                 int time = TimeConverter.toMinutes(time(), tk.nextToken());
                 if (time <= this.time()) {
                     System.err.println("Invalid time");
@@ -63,7 +68,7 @@ class PauseEvent extends Event {
                 }
                 continue;
             }
-            else if (option.matches("(?:I|i)(?:nsert)?")) {
+            else if (option.matches("i(?:nsert)?")) {
                 int customer, amount, time;
                 try {
                     customer  = Integer.parseInt(tk.nextToken());
@@ -111,29 +116,13 @@ class PauseEvent extends Event {
                 continue;
             }
 
-            if (option.matches("(?:T|t)(?:ruck)?")) {
-                Truck truck = TruckStack.get(id);
-                if (truck == null) {
-                    System.err.printf("Truck %5d does not exist%n", id);
-                    continue;
-                }
-
+            if (option.matches("t(?:ruck)?")) {
                 System.err.println();
-                System.err.printf("Truck %5d:%n", id);
-                System.err.printf("Is near town %d%n", truck.currentTown());
-                System.err.printf("Carries %d containers%n", truck.loaded());
-                System.err.println("for orders:");
-
-                for (Order o : truck.assignedOrders())
-                    System.err.printf(
-                             "\tOrder %5d from customer %5d, received at %s%n", 
-                                     o.getId(), o.sentBy().customerId(), 
-                                     TimeConverter.ascTime(o.received()));
-            }
-            else if (option.matches("(?:O|o)(?:rder)?")) {
+                System.err.println(Reporter.truckReport(id));
+            } else if (option.matches("o(?:rder)?")) {
                 System.err.println();
                 System.err.println(Reporter.orderReport(id));
-            } else if (option.matches("(?:U|c)(?:ustomer)?")) {
+            } else if (option.matches("c(?:ustomer)?")) {
                 System.err.println();
                 System.err.println(Reporter.customerReport(id));
             } else {
@@ -151,20 +140,23 @@ class PauseEvent extends Event {
 
     private void printSummary() {
         System.err.printf("%nPaused at %s%n", TimeConverter.ascTime(time()));
-        TruckStack.summary();
-        CustomerList.summary();
+        System.err.println(Reporter.truckSummary());
+        System.err.println(Reporter.customerSummary());
     }
 
     private void printHelp() {
         System.err.println();
         System.err.println("usage:");
-        System.err.printf("\t[t]ruck          [%d-%d]%n", 1, TruckStack.size());
-        System.err.printf("\t[o]rder          [%d-%d]%n", 1, OrderStack.size());
+        System.err.printf("\t[t]ruck          [%d-%d]%n", 0, 
+                                             TruckStack.size() - 1);
+        System.err.printf("\t[o]rder          [%d-%d]%n", 0, 
+                                             OrderStack.size() - 1);
         System.err.printf("\t[p]ause          TIME%n");
-        System.err.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 1, 
+        System.err.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 0, 
                                              CustomerList.numCustomers() - 1);
-        System.err.printf("\t[c]ustomer       [%d-%d]%n", 1,  
+        System.err.printf("\t[c]ustomer       [%d-%d]%n", 0,  
                                              CustomerList.numCustomers() - 1);
+        System.err.printf("\t[g]o, [q]uit%n");
         System.err.println("\t[h]elp");
     }
 }

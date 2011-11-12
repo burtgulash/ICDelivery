@@ -18,4 +18,10 @@ class TruckUnload extends TruckEvent {
         return String.format("Truck %5d unloading %2d containers", 
                              truck.getId(), amount);
     }
+
+
+    @Override
+    protected String report() {
+        return String.format("Unload %2d containers", amount);
+    }
 }

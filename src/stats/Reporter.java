@@ -1,18 +1,115 @@
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import java.text.DecimalFormat;
+
 
 public class Reporter {
+    private static final String NL = String.format("%n");
+    private static DecimalFormat d = new DecimalFormat(",###");
+
+
     public void printOrderReport(OutputStream out) {
         PrintWriter p = new PrintWriter(out);
 
         int numOrders = OrderStack.size();
-        for (int i = 0; i < numOrders; i++) {
-            Order order = OrderStack.get(i);
-            assert order != null;
-
-            // TODO
+        for (int id = 0; id < numOrders; id++) {
+            p.println(orderReport(id));
+            p.println();
         }
+    }
+
+
+    public static String truckSummary() {
+        StringBuilder s = new StringBuilder();
+
+        String totalCost = d.format(TruckStack.totalCost());
+        s.append(String.format("TOTAL COST           : %s CZK", totalCost));
+        s.append(NL);
+        s.append(String.format("Trucks dispatched    : %4d", 
+                                                          TruckStack.size()));
+        s.append(NL);
+
+        return s.toString();
+    }
+
+
+    public static String customerSummary() {
+        StringBuilder s = new StringBuilder();
+
+        s.append(String.format("Orders accepted      : %4d/%4d%n", 
+                CustomerList.acceptedOrders(), CustomerList.totalOrders()));
+        s.append(String.format("Containers delivered : %4d/%4d%n", 
+                         CustomerList.deliveredContainers(), 
+                                  CustomerList.totalContainers()));
+
+        return s.toString();
+    }
+
+
+    public void printCustomerReport(OutputStream out) {
+        PrintWriter p = new PrintWriter(out);
+
+        // TODO rename numCustomers to size
+        int numCustomers = CustomerList.numCustomers();
+        for (int id = 0; id < numCustomers; id++) {
+            p.println(customerReport(id));
+            p.println();
+        }
+    }
+
+
+    public void printTruckReport(OutputStream out) {
+        PrintWriter p = new PrintWriter(out);
+
+        int numTrucks = TruckStack.size();
+        for (int id = 0; id < numTrucks; id++) {
+            p.println(truckFullReport(id));
+            p.println();
+        }
+    }
+
+
+    public static String truckReport (int id) {
+        Truck truck = TruckStack.get(id);
+        StringBuilder s = new StringBuilder();
+
+        if (truck == null)
+            s.append(String.format("Truck %5d does not exist%n", id));
+        else {
+            s.append(String.format("Truck %5d:%n", id));
+            s.append(String.format("is near town %d%n", truck.currentTown()));
+            s.append(String.format("Carries %d containers%n", truck.loaded()));
+            s.append("for orders:");
+            s.append(NL);
+
+            for (Order o : truck.assignedOrders())
+                s.append(String.format(
+                             "\tOrder %5d from customer %5d, received at %s%n", 
+                                     o.getId(), o.sentBy().customerId(), 
+                                     TimeConverter.ascTime(o.received())));
+        }
+
+        return s.toString();
+    }
+
+
+    public static String truckFullReport (int id) {
+        Truck truck = TruckStack.get(id);
+        StringBuilder s = new StringBuilder(truckReport(id));
+
+        if (truck == null)
+            return s.toString();
+
+        s.append(NL);
+        for (TruckEvent e : truck.actions) {
+            s.append(TimeConverter.ascTime(e.time()));
+            s.append(" | ");
+            s.append(e.report());
+            s.append(NL);
+        }
+
+        return s.toString();
     }
 
 
@@ -28,14 +125,17 @@ public class Reporter {
                               TimeConverter.ascTime(order.received())));
 
             if (order.accepted()) {
-                s.append(String.format("Accepted%n"));
+                s.append("Accepted");
+                s.append(NL);
                 s.append(String.format("Delivered containers: %d%n", 
                                           order.delivered()));
                 s.append(String.format("Served by:%n"));
                 for (Truck t : order.assignedTrucks())
                     s.append(String.format("\tTruck %5d%n", t.getId()));
-            } else 
-                s.append(String.format("Rejected%n"));
+            } else  {
+                s.append("Rejected");
+                s.append(NL);
+            }
         }
 
         return s.toString();
@@ -55,7 +155,8 @@ public class Reporter {
             s.append(String.format("Customer %5d:%n", id));
             s.append(String.format("Ordered containers  : %d%n", 
                                             customer.totalContainers()));
-            s.append(String.format("Orders from this customer:%n"));
+            s.append("Orders from this customer:");
+            s.append(NL);
             for (Order o : customer.sentOrders()) {
                 String status = o.accepted() ? "Accepted" : "Rejected";
                 s.append(String.format(

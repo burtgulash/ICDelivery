@@ -35,7 +35,7 @@ public class Order {
      * @param amount       number of containers to deliver
      */
     public Order(int receivedTime, int customerNum, int amount) {
-        orderId = ++orderCount;
+        orderId = orderCount++;
 
         this.receivedTime    = receivedTime;
         orderedAmount        = amount;
