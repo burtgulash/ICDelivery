@@ -34,7 +34,6 @@ public class Initializer {
         Simulator.setScheduler(s);
 
         CustomerList.init(graph.vertices());
-        TruckStack.init();
 
         // initialize logger and logFile
         if (!quiet)

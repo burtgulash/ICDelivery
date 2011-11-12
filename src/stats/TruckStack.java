@@ -3,34 +3,78 @@ import java.util.TreeMap;
 
 
 /**
- * Class TruckStack
- *
- * Holds every created truck to be accessed by id
+ * Holds every truck object
  */
-public class TruckStack {
+class TruckStack {
     private static Map<Integer, Truck> allTrucks;
 
+    private boolean initialized = false;
+
+
+    // disable default constructor
     private TruckStack() {/*,*/}
 
-    public static void init() {
+
+
+    /**
+     * Initialize this object, must be called before 
+     * using this class.
+     */
+    private static void init() {
+        initialized = true;
         allTrucks = new TreeMap<Integer, Truck>();
     }
 
-    public static void add(Truck truck) {
+
+    /**
+     * Add created truck to stack.
+     *
+     * @param truck created Truck object
+      */
+    static void add(Truck truck) {
+        if (!initialized)
+            init();
         allTrucks.put(truck.getId(), truck);
     }
 
-    public static Truck get(int truckId) {
+
+    /**
+     * Get truck by its id.
+     *
+     * @param truckId truck id
+     * @return Truck object with given id or null if it doesn't exist.
+     */
+    static Truck get(int truckId) {
+        assert allTrucks != null;
+
         Truck ret =  allTrucks.get(truckId);
-        assert(ret != null);
+        assert ret != null;
         return ret;
     }
 
-    public static int size() {
+
+    /**
+     * Get number of all created trucks.
+     *
+     * @return Number of all trucks.
+     */
+    static int size() {
+        assert allTrucks != null;
+
         return allTrucks.size();
     }
 
-    public static int totalCost() {
+
+    /**
+     * Get total cost that has been planned and would be spent
+     * given sufficiently long simulation time.
+     * (Some trucks might not arrive at HOME before end of simulation)
+     *
+     * @return Total planned cost of all actions of all trucks.
+     */
+    static int totalCost() {
+        assert allTrucks != null;
+
         int tot = 0;
         for (Map.Entry KVpair : allTrucks.entrySet()) {
             int truckId = (Integer) KVpair.getKey();
@@ -40,7 +84,16 @@ public class TruckStack {
         return tot;
     }
 
-    public static int totalRealCost() {
+
+    /**
+     * Get total cost that has been spent so far.
+     * Will always be less than or equal to totalCost()
+     *
+     * @return Total spendings by all trucks so far.
+     */
+    static int totalRealCost() {
+        assert allTrucks != null;
+
         int tot = 0;
         for (Map.Entry KVpair : allTrucks.entrySet()) {
             int truckId = (Integer) KVpair.getKey();
