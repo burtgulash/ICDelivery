@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 
-
+// TODO rename to ExponentialIntervalGenerator
 /**
  * Generates orders with exponential distribution.
  */
@@ -34,7 +34,7 @@ public class ExponentialGenerator implements OrderGenerator {
         amountRand      = new Random(101);
         used.add(home);
 
-        customers       = CustomerList.numCustomers();
+        customers       = CustomerList.size();
         this.maxAmount  = maxAmount;
         this.home       = home;
         lambda          = 1.0 / (double) mean;

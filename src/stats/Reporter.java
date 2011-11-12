@@ -14,8 +14,7 @@ public class Reporter {
         p.println(customerSummary());
         p.println(NL);
 
-        // TODO rename numCustomers to size
-        int numCustomers = CustomerList.numCustomers();
+        int numCustomers = CustomerList.size();
         for (int id = 0; id < numCustomers; id++) {
             p.println(customerReport(id));
             p.println(NL);
@@ -176,7 +175,7 @@ public class Reporter {
             for (Order o : truck.assignedOrders())
                 s.append(String.format(
                              "\tOrder %5d from customer %5d, received at %s%n", 
-                                     o.getId(), o.sentBy().customerId(), 
+                                     o.getId(), o.sentBy().getId(), 
                                      TimeConverter.ascTime(o.received())));
         }
 

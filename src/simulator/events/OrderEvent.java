@@ -20,8 +20,7 @@ class OrderEvent extends Event {
     @Override
     protected String log() {
         return String.format("Order %5d received from %4d for %2d containers", 
-                              order.getId(), 
-                              order.sentBy().customerId(), 
+                              order.getId(), order.sentBy().getId(), 
                               order.amount());
     }
 }

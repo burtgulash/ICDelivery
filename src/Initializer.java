@@ -24,7 +24,7 @@ public class Initializer {
         // Initialize Simulator first!
         Simulator.init(homeVertex, simulationTime);
         Calendar.init();
-        // TODO decide on scheduler
+
         Scheduler s;
         if (strategy.equals("greedy"))
             s = new GreedyScheduler(graph);
@@ -38,7 +38,6 @@ public class Initializer {
         OrderStack.init();
 
         // initialize logger and logFile
-        Logger.init();
         if (!quiet)
             Logger.addOutput(System.out);
         if (logFile != null)
@@ -108,7 +107,7 @@ public class Initializer {
                 System.err.println("Error parsing order");
                 continue;
             }
-            if (customer < 0 || customer >= CustomerList.numCustomers()) {
+            if (customer < 0 || customer >= CustomerList.size()) {
                 System.err.printf("Customer %5d does not exist%n", customer);
                 continue;
             }

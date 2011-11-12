@@ -6,19 +6,51 @@ import java.util.List;
 import java.util.LinkedList;
 
 
-public class Logger {
+/**
+ * Logger is responsible for logging all events that occured 
+ * in simulation to all provided output files.
+ */
+class Logger {
     private static List<PrintWriter> writers;
+    // disable constructor, keep class static
     private Logger() {/*,*/}
 
-    public static void init () {
+    private static boolean initialized = false;
+
+
+    /**
+     * Static class constructor. Must be called before
+     * any call to Logger.
+     */
+    private static void init () {
+        initialized = true;
         writers = new LinkedList<PrintWriter>();
     }
 
-    public static void addOutput(OutputStream out) {
+
+    /**
+     * Add output file to be logged to.
+     *
+     * @param out Output file.
+     */
+    static void addOutput(OutputStream out) {
+        if (!initialized)
+            init();
+
         writers.add(new PrintWriter(out, true));
     }
 
-    public static void log(int time, String message) {
+
+    /**
+     * Logs current event to all output files.
+     * Gets called by Calendar after each new discovered event.
+     * 
+     * @param time Time of occurence of event
+     * @param message Message containing log information
+     */
+    static void log(int time, String message) {
+        assert writers != null;
+
         for (PrintWriter writer : writers) 
             writer.println(String.format("%s | %s", 
                                        TimeConverter.ascTime(time), message));

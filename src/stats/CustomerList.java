@@ -6,8 +6,8 @@ public class CustomerList {
 
 
     /**
-     * Static constructor
-     *
+     * Static constructor, must be called before using this class.
+      *
      * @param numCustomers creates list of this size
      */ 
     public static void init (int numCustomers) {
@@ -19,26 +19,34 @@ public class CustomerList {
 
 
     /**
-     * Finds customer by id/customerVertex
+     * Retrieves customer by id/customerVertex.
+     *
+     * @param id Id of customer to get.
      */
-    public static Customer get(int customerId) {
-        if (customerId < 0 || customerId >= numCustomers())
+    public static Customer get(int id) {
+        if (id < 0 || id >= size())
             return null;
-        assert(list[customerId] != null);
-        return list[customerId];
+        assert(list[id] != null);
+        return list[id];
     }
 
 
     /**
-     * Returns number of customers
-     * @return number of customers
+     * Returns number of customers.
+     *
+     * @return Number of customers.
      */
-    public static int numCustomers() {
+    public static int size() {
         assert(list != null);
         return list.length;
     }
 
 
+    /**
+     * Get number of all accepted orders.
+     *
+     * @return Number of all accepted orders.
+     */
     public static int acceptedOrders() {
         int tot = 0;
         for (Customer c : list)
@@ -47,6 +55,11 @@ public class CustomerList {
     }
 
 
+    /**    
+       * Get number of all orders that appeared in simulation.
+     *
+     * @return Number of all orders.
+     */
     public static int totalOrders() {
         int tot = 0;
         for (Customer c : list)
@@ -55,6 +68,11 @@ public class CustomerList {
     }
 
 
+    /**
+     * Get number of all containers that were delivered.
+     *
+     * @return Number of all delivered containers.
+     */
     public static int deliveredContainers() {
         int tot = 0;
         for (Customer c : list)
@@ -63,6 +81,11 @@ public class CustomerList {
     }
 
 
+    /**
+     * Get number of all containers that appeared in simulation.
+     *
+     * @return Number of all containers.
+     */
     public static int totalContainers() {
         int tot = 0;
         for (Customer c : list)

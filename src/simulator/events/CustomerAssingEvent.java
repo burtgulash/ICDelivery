@@ -18,9 +18,7 @@ class CustomerAssignEvent extends Event {
     @Override
     protected String log() {
         return String.format("Truck %5d will deliver %2d containers to %5d" ,
-                             truck.getId(), 
-                             satisfyAmount,
-                             customer.customerId(),
+                             truck.getId(), satisfyAmount, customer.getId(),
                              satisfyAmount);
     }
 }

@@ -25,6 +25,6 @@ class OrderSatisfyEvent extends Event {
     protected String log() {
         return 
      String.format("Truck %5d delivered %2d tons to customer %5d, Order %5d", 
-     truck.getId(), satisfyAmount, order.sentBy().customerId(), order.getId());
+        truck.getId(), satisfyAmount, order.sentBy().getId(), order.getId());
     }
 }

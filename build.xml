@@ -81,19 +81,6 @@
 
 
 
-    <target name="run" depends="jar">
-        <java jar="${jar.dir}/${ant.project.name}.jar"
-              fork="true"
-              failonerror="yes">
-
-            <assertions>
-                <enable />
-            </assertions>
-        </java>
-    </target>
-
-
-
     <target name="clean">
         <delete dir="build" />
     </target>

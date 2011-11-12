@@ -81,7 +81,7 @@ class PauseEvent extends Event {
                     System.err.println("Missing value");
                     continue;
                 }
-                if (customer < 0 || customer >= CustomerList.numCustomers()) {
+                if (customer < 0 || customer >= CustomerList.size()) {
                     System.err.printf("Customer %5d does not exist%n", 
                                                                      customer);
                     continue;
@@ -153,9 +153,9 @@ class PauseEvent extends Event {
                                              OrderStack.size() - 1);
         System.err.printf("\t[p]ause          TIME%n");
         System.err.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 0, 
-                                             CustomerList.numCustomers() - 1);
+                                             CustomerList.size() - 1);
         System.err.printf("\t[c]ustomer       [%d-%d]%n", 0,  
-                                             CustomerList.numCustomers() - 1);
+                                             CustomerList.size() - 1);
         System.err.printf("\t[g]o, [q]uit%n");
         System.err.println("\t[h]elp");
     }
