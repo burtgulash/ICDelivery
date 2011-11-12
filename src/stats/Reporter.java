@@ -99,7 +99,7 @@ public class Reporter {
     public static String customerReport(int id) {
         Customer customer = CustomerList.get(id);
         StringBuilder s = new StringBuilder();
-        s.append(String.format("Customer %5d%n", id));
+        s.append(String.format("CUSTOMER %5d%n", id));
 
         if (customer == null)
             s.append(String.format("Customer %5d does not exist%n", id));
@@ -132,7 +132,7 @@ public class Reporter {
         if (order == null)
             s.append(String.format("Order %5d does not exist%n", id));
         else {
-            s.append(String.format("Order %5d%n", id));
+            s.append(String.format("ORDER %5d%n", id));
             s.append(String.format("received at %s%n", 
                               TimeConverter.ascTime(order.received())));
 
@@ -163,7 +163,7 @@ public class Reporter {
         if (truck == null)
             s.append(String.format("Truck %5d does not exist%n", id));
         else {
-            s.append(String.format("Truck %5d%n", id));
+            s.append(String.format("TRUCK %5d%n", id));
             s.append(String.format("is near town %d%n", truck.currentTown()));
 
             String realCost = d.format(truck.totalRealCost());

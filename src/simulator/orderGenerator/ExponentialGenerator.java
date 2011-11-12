@@ -43,7 +43,7 @@ public class ExponentialGenerator implements OrderGenerator {
 
     @Override
     public Order generateAt(int time) {
-        int currentDay = time % DAY.time();
+        int currentDay = time / DAY.time();
 
         // refresh set
         if (lastDay != currentDay || used.size() == customers) {

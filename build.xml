@@ -5,7 +5,6 @@
     <property name="jar.dir" value="build/jar" />
     <property name="generator" value="src/python/simpleGen.py" />
     <property name="test.file" value="test.graph" />
-    <property name="log.file" value="log.txt" />
 
     <path id="project_classpath">
         <pathelement location="lib/junit-4.10.jar" />
@@ -97,6 +96,5 @@
 
     <target name="clean">
         <delete dir="build" />
-        <delete file="${log.file}" />
     </target>
 </project>
