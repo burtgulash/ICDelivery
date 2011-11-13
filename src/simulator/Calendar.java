@@ -44,7 +44,14 @@ class Calendar {
      * @return next Event
      */
     static Event nextEvent() {
-        Event next = queue.extractMin();
+        Event next;
+        try {
+            next = queue.extractMin();
+        } catch (PriorityQueue.EmptyQueueException ex) {
+            // should never happen
+            System.err.println("Queue is empty");
+            return null;
+        }
         assert(next.time() >= lastEventTime);
         lastEventTime = next.time();
         return next;

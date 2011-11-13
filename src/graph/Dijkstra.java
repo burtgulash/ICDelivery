@@ -8,11 +8,20 @@ import priorityQueue.PriorityQueue;
 
 
 /**
- * Class Dijkstra
+ * 
+ * <p>Implementation of Dijkstra's shortest paths algorithm.</p>
+ * <p>
+ * Retrieves one shortest path in O(|E|log(|V|) + |V|) or O(|V|) if
+ * the shortest path tree for selected source vertex was already precomputed
+ * </p>
  *
- * Implementation of Dijkstra's shortest paths algorithm.
+ * <p>
  * Stores previously computed shortest-paths trees as there are lots of
  * repeating requests for shortest paths in the simulation.
+ * </p>
+ *
+ *
+ * @author Tomas Marsalek
  */
 public class Dijkstra implements ShortestPaths {
     // number of remembered trees
@@ -137,6 +146,7 @@ public class Dijkstra implements ShortestPaths {
 
         // Compute whole tree and store to memo
         NotSeenPath current;
+        try {
         while (!queue.empty()) {
             current        = queue.extractMin();
             int curVertex  = current.dstVertex;
@@ -155,8 +165,12 @@ public class Dijkstra implements ShortestPaths {
                 }
             }
         }
+         } catch (PriorityQueue.EmptyQueueException ex) {
+            System.err.println("Priority queue was empty");
+            // should never happen
+        }
 
-         return previous;
+        return previous;
     }
 
 

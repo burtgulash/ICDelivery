@@ -83,8 +83,7 @@
 
     <target name="javadoc">
         <mkdir dir="${javadoc.dir}" />
-        <javadoc destdir="${javadoc.dir}" author="true" version="true"
-                 access="package">
+        <javadoc destdir="${javadoc.dir}" author="true" access="package">
             <fileset dir="src" includes="**/*.java" />
         </javadoc>
     </target>

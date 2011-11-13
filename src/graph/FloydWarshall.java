@@ -1,8 +1,16 @@
 package graph;
 
 /**
+ * <p>
  * Loop optimized Floyd-Warshall implementation of ShortestPaths interface
+ * </p>
+ *
+ * <p>
  * Runs in Theta(|V|^3), path retrieval takes O(|V|).
+ * </p>
+ *
+ *
+ * @author Tomas Marsalek
  */
 public class FloydWarshall implements ShortestPaths {
     private final int NO_INTERMEDIATE = -1;

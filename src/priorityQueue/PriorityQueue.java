@@ -5,8 +5,19 @@ import java.util.TreeMap;
 
 
 /**
- * Priority Queue implemented by binary min-heap
- * Used as Calendar in simulation and as helper structure for Dijkstra's alg.
+ * <p>Priority Queue implemented by binary min-heap</p>
+ * <p>
+ * Objects that can be put into this queue must implement Queable interface.
+ * </p>
+ *
+ * <p>
+ * Used as Calendar in simulation 
+ * and as helper structure for Dijkstra's algorithm
+ * </p>
+ *
+ * @see priorityQueue.Queable
+ *
+ * @author Tomas Marsalek
  */
 public class PriorityQueue<T extends Queable> {
     private int used, alloc;
@@ -144,8 +155,9 @@ public class PriorityQueue<T extends Queable> {
      * Peeks for element that would be taken next by extractMin.
      *
      * @return Next element in queue.
+     * @throws EmptyQueueException if the queue was empty.
      */
-    public T min() {
+    public T min() throws EmptyQueueException {
         if (used < 1)
             throw new EmptyQueueException();
         return ar[1];
@@ -154,10 +166,11 @@ public class PriorityQueue<T extends Queable> {
 
     /**
      * Removes element with least weight from queue.
-      *
+     *
      * @return Next element in queue.
+     * @throws EmptyQueueException if the queue was empty.
      */
-    public T extractMin() {
+    public T extractMin() throws EmptyQueueException {
         if (used < 1)
             throw new EmptyQueueException();
         if (used < alloc / 2)
@@ -206,8 +219,9 @@ public class PriorityQueue<T extends Queable> {
      *
      * @param elemId id of element, returned by implemented Queable.id()
      * @return Element with elemId or null if no element with elemId.
+     * @throws EmptyQueueException if the queue was empty.
      */
-    public T remove(int elemId) {
+    public T remove(int elemId) throws EmptyQueueException {
         if(changePriority(elemId, Integer.MIN_VALUE))
             return extractMin();
         return null;
@@ -246,17 +260,20 @@ public class PriorityQueue<T extends Queable> {
             }
         return true;
     }
-}
 
 
-/**
- * Thrown when trying to get element from an empty queue.
- */
-class EmptyQueueException extends RuntimeException {
     /**
-     * Constructs an EmptyQueueException with null as its error message string.
+     * Thrown when trying to get element from an empty queue.
      */
-    public EmptyQueueException() {
-        super();
+    public static class EmptyQueueException extends Exception {
+        /**
+         * Constructs an EmptyQueueException with null as its 
+         * error message string.
+         */
+        public EmptyQueueException() {
+            super();
+        }
     }
 }
+
+

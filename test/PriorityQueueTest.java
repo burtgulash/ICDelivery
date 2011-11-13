@@ -23,9 +23,19 @@ public class PriorityQueueTest {
         assertTrue(pq.checkMinHeapProperty());
 
 
-        int lastPriority = pq.extractMin().priority();
+        int lastPriority = 0;
+        try {
+            lastPriority = pq.extractMin().priority();
+        } catch (PriorityQueue.EmptyQueueException ex) {
+            fail("Empty queue");
+        }
         for (int i = 1; i < numExtracts; i++) {
-            int curPriority = pq.extractMin().priority();
+            int curPriority = 0;
+            try {
+                curPriority = pq.extractMin().priority();
+            } catch (PriorityQueue.EmptyQueueException ex) {
+                fail("Empty queue");
+            }
 
             assertTrue(curPriority >= lastPriority);
             lastPriority = curPriority;
@@ -56,23 +66,26 @@ public class PriorityQueueTest {
             if (pq.empty())
                 break;
 
-            Testing current = pq.min();
-            int currentId = current.id();
-            pq.changePriority(currentId, current.priority() * 3 + 11);    
+            try {
+                Testing current = pq.min();
+                int currentId = current.id();
+                pq.changePriority(currentId, current.priority() * 3 + 11);    
 
-            while (pq.extractMin().id() != currentId)
-                ;
+                while (pq.extractMin().id() != currentId)
+                    ;
 
             if (pq.empty())
                 break;
 
 
 
-
-            current = pq.min();
-            currentId = current.id();
-            pq.changePriority(currentId, current.priority() * 2 + 3);
-            assertNotNull(pq.remove(currentId));
+                current = pq.min();
+                currentId = current.id();
+                pq.changePriority(currentId, current.priority() * 2 + 3);
+                assertNotNull(pq.remove(currentId));
+            } catch (PriorityQueue.EmptyQueueException ex) {
+                fail("Empty queue");
+            }
 
             assertTrue(pq.checkMinHeapProperty());
         }
@@ -102,7 +115,11 @@ public class PriorityQueueTest {
 
         int numDeletions = toBeDeleted.size();
         for (int i = 0; i < numDeletions; i++) {
-            pq.remove(toBeDeleted.get(i));
+            try {
+                pq.remove(toBeDeleted.get(i));
+            } catch (PriorityQueue.EmptyQueueException ex) {
+                fail("Empty queue");
+            }
             assertTrue(pq.checkMinHeapProperty());
         }
 
@@ -110,10 +127,19 @@ public class PriorityQueueTest {
         assertEquals(numInsertions - numDeletions, pq.size());
 
         while (!pq.empty()) {
-            int curId = pq.min().id();
+            int curId = 0;
+            try {
+                curId = pq.min().id();
+            } catch (PriorityQueue.EmptyQueueException ex) {
+                fail("Empty queue");
+            }
             // IDs divisible by testModulus already removed
             assertTrue(curId % testModulus != 0);
-            pq.remove(curId);
+            try {
+                pq.remove(curId);
+            } catch (PriorityQueue.EmptyQueueException ex) {
+                fail("Empty queue");
+            }
 
             // already deleted item must not be present in priority queue
             assertFalse(toBeDeleted.contains(curId));

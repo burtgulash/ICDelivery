@@ -2,28 +2,48 @@ package graph;
 
 
 /**
+ * <p>
  * Path data structure intended to be used as output of ShortestPaths interface
+ * </p>
  * 
+ * <p>
  * Last Path element is destination vertex. Weight is always Path weight from
  * previous vertex (not seen by instance of Path) to destination vertex.
  * First vertex is never seen, must be remembered by user of this 
  * data structure.
+ * </p>
  *
+ * <p>
  * Internal implementation is lisp-like list, with rest field being cdr of Path.
+ * </p>
+ *
+ *
+ * @author Tomas Marsalek
  */
 public class Path {
+
     // alow attributes to be visible for shortest paths algorithms
     // vertex is NEXT vertex in Path
+    /**
+     * Next vertex in path.
+     */
     int vertex;
+
     // Path weight to NEXT vertex, that is to this.vertex
-    // first vertex of Path is stored implicitly
+    // first vertex of Path must be stored by user.
+    /**
+     * Total weight of this path.
+     */
     int weight;
-    // rest of the path
+
+    /**
+     * Rest of the path.
+     */
     Path rest;
 
 
     /**
-     * Path constructor, only used in graph algorithms
+     * Path constructor, should only be used in graph algorithms.
      *
      * @param v vertex of this Path element
      * @param w weight from vertex before to this Path element
@@ -83,7 +103,7 @@ public class Path {
      *
      * @param src source vertex must be provided since Path data structure 
      *            does not store first (src) vertex
-      * @param p path to reverse
+     * @param p path to reverse
      * @return Reversed path.
      */
     public static Path reversed(int src, Path p) {

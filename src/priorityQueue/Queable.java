@@ -1,10 +1,18 @@
 package priorityQueue;
 
 /**
+ * <p>
  * Interface for classes that can be used as elements of priority queue.
+ * </p>
  *
+ * <p>
  * Priority of element must not change outside priority queue or the behavior
  * will be unspecified.
+ * </p>
+ * 
+ * @see priorityQueue.PriorityQueue
+ *
+ * @author Tomas Marsalek
  */
 public interface Queable {
 

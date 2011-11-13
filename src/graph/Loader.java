@@ -122,7 +122,8 @@ public class Loader {
         int vertexCount = lines.size();
 
         Graph graph;
-        if (vertexCount > 0)
+        // don't allow smaller graphs
+        if (vertexCount > 1)
             graph = new Graph(vertexCount);
         else
             return null;
