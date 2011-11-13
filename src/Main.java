@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.File;
 
 import graph.Graph;
-import graph.GraphLoader;
+import graph.Loader;
 
 
 public class Main {
@@ -80,7 +80,7 @@ public class Main {
             truckReport     = reportFiles[2];
         }
 
-        Graph graph = GraphLoader.getGraph(graphFile);
+        Graph graph = Loader.getGraph(graphFile);
         if (graph == null)
             System.exit(1);
 

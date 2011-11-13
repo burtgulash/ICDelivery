@@ -35,7 +35,7 @@ public class ShortestPathsTest {
             return;
         }
 
-        g = GraphLoader.getGraph(tmp.getAbsolutePath());
+        g = Loader.getGraph(tmp.getAbsolutePath());
     }
 
 

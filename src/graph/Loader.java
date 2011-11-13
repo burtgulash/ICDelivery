@@ -108,9 +108,9 @@ public class Loader {
                     throw new GraphFormatException(lineCounter,
                                 "No edges found");
 
-				// if no edges for this vertex
-				if (edgeStrings.length == 1 && edgeStrings[0].equals(""))
-					continue;
+                // if no edges for this vertex
+                if (edgeStrings.length == 1 && edgeStrings[0].equals(""))
+                    continue;
 
                 for (String edgeString : edgeStrings) {
                     String[] dst_weightString = edgeString.split(":");

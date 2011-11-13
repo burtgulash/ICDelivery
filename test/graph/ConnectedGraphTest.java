@@ -10,7 +10,7 @@ public class ConnectedGraphTest {
 
     @Before
     public void init() {
-        graph = GraphLoader.getGraph(GRAPH_FILE);
+        graph = Loader.getGraph(GRAPH_FILE);
     }
 
     @Test

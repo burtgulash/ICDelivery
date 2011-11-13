@@ -25,7 +25,7 @@ public class GraphLoaderTest {
         assertTrue(readFile.length() > 0);
         assertTrue(readFile.canRead());
 
-        g = GraphLoader.getGraph(testFile);
+        g = Loader.getGraph(testFile);
         assertNotNull(g);
 
         assertTrue(g.vertices() != 0);
