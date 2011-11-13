@@ -45,7 +45,8 @@ class TruckStack {
      * @return Truck object with given id or null if it doesn't exist.
      */
     static Truck get(int truckId) {
-        assert allTrucks != null;
+        if (!initialized)
+            init();
 
         Truck ret =  allTrucks.get(truckId);
         assert ret != null;
@@ -59,7 +60,8 @@ class TruckStack {
      * @return Number of all trucks.
      */
     static int size() {
-        assert allTrucks != null;
+        if (allTrucks == null)
+            return 0;
 
         return allTrucks.size();
     }
@@ -73,7 +75,8 @@ class TruckStack {
      * @return Total planned cost of all actions of all trucks.
      */
     static int totalCost() {
-        assert allTrucks != null;
+        if (!initialized)
+            init();
 
         int tot = 0;
         for (Map.Entry KVpair : allTrucks.entrySet()) {
@@ -92,7 +95,8 @@ class TruckStack {
      * @return Total spendings by all trucks so far.
      */
     static int totalRealCost() {
-        assert allTrucks != null;
+        if (!initialized)
+            init();
 
         int tot = 0;
         for (Map.Entry KVpair : allTrucks.entrySet()) {

@@ -44,7 +44,8 @@ class OrderStack {
      * @return Order with specified id or null if it does not exist.
      */
     static Order get(int orderId) {
-        assert allOrders != null;
+        if (!initialized)
+            init();
 
         Order ret =  allOrders.get(orderId);
         assert ret != null;
@@ -58,7 +59,8 @@ class OrderStack {
      * @return Number of all orders.
      */
     static int size() {
-        assert allOrders != null;
+        if (allOrders == null)
+            return 0;
 
         return allOrders.size();
     }
