@@ -3,8 +3,8 @@
 <project name="ICDelivery" basedir="." default="jar">
     <property name="classes.dir" value="build/classes" />
     <property name="jar.dir" value="build/jar" />
-    <property name="generator" value="src/python/simpleGen.py" />
-    <property name="test.file" value="test.graph" />
+    <property name="javadoc.dir" value="doc/javadoc" />
+
 
     <path id="project_classpath">
         <pathelement location="lib/junit-4.10.jar" />
@@ -81,7 +81,18 @@
 
 
 
+    <target name="javadoc">
+        <mkdir dir="${javadoc.dir}" />
+        <javadoc destdir="${javadoc.dir}" author="true" version="true"
+                 access="package">
+            <fileset dir="src" includes="**/*.java" />
+        </javadoc>
+    </target>
+
+
+
     <target name="clean">
         <delete dir="build" />
+        <delete dir="${javadoc.dir}" />
     </target>
 </project>

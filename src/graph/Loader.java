@@ -12,9 +12,46 @@ import java.io.FileReader;
 
 
 
+/**
+ * <p>
+ * Loads graph from file and returns result as Graph 
+ * data structure.
+ * </p>
+ *
+ * <p>
+ * Exceptional cases are checked, only need to check if returned 
+ * Graph is null.
+ * </p>
+ *
+ *
+ * <pre>
+ * {@code
+ * Graph format:
+ *      <line>                 ::= <number> "{" <edge-list> "}" "\n"
+ *      <edge-list>            ::= <edge> <remaining-edge-list> | ""
+ *      <remaining-edge-list>  ::= ";" <edge-list> | ""
+ *      <edge>                 ::= <number> ":" <number>
+ *      <number>               ::= "[0-9]+"
+ * }
+ * </pre>
+ *
+ * @see graph.Graph
+ *
+ * @author Tomas Marsalek
+ *
+ */
 public class Loader {
+    // disable default constructor
     private Loader() {/*,*/}
 
+
+
+    /**
+     * Loads graph from file.
+     *
+     * @param fileName name of file containing serialized graph
+     * @return Parsed Graph object or null if something failed.
+     */
     public static Graph getGraph(String fileName) {
         Graph graph;
         try {
@@ -28,6 +65,12 @@ public class Loader {
     }
 
 
+    /**
+     * Loads lines of graph to List.
+     *
+     * @param fileName name of file to get lines from
+     * @return List of all lines of file.
+     */
     private static List<String> getLines(String fileName) {
         List<String> lines = new LinkedList<String>();
 
@@ -59,6 +102,14 @@ public class Loader {
     }
 
 
+    /**
+     * Constructs new Graph object as read from file.
+     *
+     * @param fileName name of file to read from
+     * @return Graph object or null if somehow failed to parse the input.
+     * @throws GraphFormatException if the file can not be parsed for some
+     *                              reason.
+     */
     private static Graph makeGraph(String fileName) 
                                throws GraphFormatException 
     {

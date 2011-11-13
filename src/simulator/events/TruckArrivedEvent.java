@@ -18,7 +18,7 @@ class TruckArrivedEvent extends TruckEvent {
 
     @Override
     protected String log() {
-		String dstString = dst == Simulator.HOME ? 
+        String dstString = dst == Simulator.HOME ? 
                               "HOME" : String.format("%4d", dst);
 
         return String.format("Truck %5d arrived to %s",
