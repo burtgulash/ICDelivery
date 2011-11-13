@@ -49,10 +49,9 @@ class Logger {
      * @param message Message containing log information
      */
     static void log(int time, String message) {
-        assert writers != null;
-
-        for (PrintWriter writer : writers) 
-            writer.println(String.format("%s | %s", 
+        if (writers != null)
+            for (PrintWriter writer : writers) 
+                writer.println(String.format("%s | %s", 
                                        TimeConverter.ascTime(time), message));
     }
 }

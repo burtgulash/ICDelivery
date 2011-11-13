@@ -1,9 +1,11 @@
 package graph;
 
 /**
- * Interface for shortest paths of graph.
+ * Interface for shortest paths in graph.
+ * Graph is provided in constuctor in different implementations.
  */
 public interface ShortestPaths {
+
     /**
      * Computes shortest path from source to destination vertex.
      *

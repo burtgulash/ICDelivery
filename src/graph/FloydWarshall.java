@@ -2,6 +2,7 @@ package graph;
 
 /**
  * Loop optimized Floyd-Warshall implementation of ShortestPaths interface
+ * Runs in Theta(|V|^3), path retrieval takes O(|V|).
  */
 public class FloydWarshall implements ShortestPaths {
     private final int NO_INTERMEDIATE = -1;
@@ -11,8 +12,10 @@ public class FloydWarshall implements ShortestPaths {
     // weight half-matrix
     private int[][] wMat;
 
+
     /**
      * Create a new Floyd Warshall data structure from given graph.
+     *
      * @param graph Input graph
      */
     public FloydWarshall(Graph graph) {
@@ -20,8 +23,10 @@ public class FloydWarshall implements ShortestPaths {
         loop();
     }
 
+
     /**
-     * Initialize weight half-matrix and k-half-matrix for algorithm loop
+     * Initialize weight half-matrix and k-half-matrix for algorithm loop.
+     *
      * @param graph Input graph
      */
     private void initialize(Graph graph) {
@@ -47,7 +52,7 @@ public class FloydWarshall implements ShortestPaths {
 
 
     /**
-     * Floyd-Warshall O(n^3) algorithm 
+     * Floyd-Warshall O(n^3) algorithm.
      */
     // Performs about 2.5x faster than without loop optimizations
     private void loop() {

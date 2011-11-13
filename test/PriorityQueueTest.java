@@ -32,7 +32,7 @@ public class PriorityQueueTest {
         }
 
         assertTrue(pq.checkMinHeapProperty());
-        assertEquals(numInsertions - numExtracts, pq.length());
+        assertEquals(numInsertions - numExtracts, pq.size());
     }
 
 
@@ -107,7 +107,7 @@ public class PriorityQueueTest {
         }
 
         // Check counts
-        assertEquals(numInsertions - numDeletions, pq.length());
+        assertEquals(numInsertions - numDeletions, pq.size());
 
         while (!pq.empty()) {
             int curId = pq.min().id();
