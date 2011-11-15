@@ -8,13 +8,41 @@ import graph.Path;
  * and logs what happened. Last event should be StopEvent, it guarantees 
  * successful termination of the application.
  */
-public class Simulator {
+class Simulator {
+    /**
+     * Strategy used by the Simulator.
+     */
     static Scheduler scheduler;
+
+    /**
+     * Vertex in graph that was chosen to be DEPOT/HOME vertex.
+     */
     static int HOME;
+
+    /**
+     * Start time of simulation.
+     */
     static int START_TIME = 0;
+
+    /**
+     * End time of simulation.
+     */
     static int TERMINATION_TIME;
-    final static int TERMINATE = 0;
-    final static int CONTINUE  = 1;
+
+
+
+    // Constants used solely by events' doWork method. 
+    /**
+     * Purpose of event returning this is to terminate the simulation.
+     */
+    final static protected int TERMINATE = 0;
+
+    /**
+     * Purpose of event returning this is to continue the simulation.
+     */
+    final static protected int CONTINUE  = 1;
+
+
 
 
     /**
@@ -23,7 +51,7 @@ public class Simulator {
      * @param depotVertex vertex in city-map chosen as truck depot/warehouse...
      * @param simulationTime time of termination
      */
-    public static void init(int depotVertex, int simulationTime) {
+    static void init(int depotVertex, int simulationTime) {
         HOME             = depotVertex;
         TERMINATION_TIME  = simulationTime;
     }
@@ -34,7 +62,7 @@ public class Simulator {
      *
      * @param s new Scheduler
      */
-    public static void setScheduler(Scheduler s) {
+    static void setScheduler(Scheduler s) {
         scheduler = s;
     }
 
@@ -43,7 +71,7 @@ public class Simulator {
     /**
      * Core of the simulation, events are handled here.
      */
-    public static void mainLoop() {
+    static void mainLoop() {
         Event current;
         int purpose;
 
@@ -53,8 +81,5 @@ public class Simulator {
 
             Logger.log(current.time(), current.log());
         } while (purpose != TERMINATE);
-    }
-
-    public void addPause() {
     }
 }

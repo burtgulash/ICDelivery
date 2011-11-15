@@ -6,6 +6,11 @@ import static constant.Costs.*;
 import graph.Path;
 
 
+
+/**
+ * Keeps information about trip a truck is going to take.
+ *
+ */
 abstract class Trip {
     protected int startTime;
     protected int endTime;
@@ -15,35 +20,70 @@ abstract class Trip {
     protected Path path;
 
 
-    Trip (int startTime, int cargo, Path path) {
+    /**
+     * Construct new Trip, should be used by extended classes.
+     *
+     * @param startTime estimated start time of this trip (can be delayed)
+     * @param cange number of containers a truck will carry taking this trip
+     * @param path path a truck will take on this trip
+     */
+    protected Trip (int startTime, int cargo, Path path) {
         this.startTime  = startTime;
         this.path       = path;
         this.cargo      = cargo;
     }
 
+
+    /**
+     * Gets start time of this trip.
+     *
+     * @return Start time of this trip.
+     */
     int startTime() {
         return startTime;
     }
 
+
+    /**
+     * Gets end time of this trip.
+     *
+     * @return End time of this trip.
+     */
     int endTime() {
         return endTime;
     }
 
+
+    /**
+     * Gets path of this trip.
+      *
+     * @return Path of this trip.
+     */
     Path path() {
         return path;
     }
 
     protected abstract void computeTimes();
     protected abstract void computeCost();
+
+    /**
+     * Delays this trip by specified time.
+     *
+     * @param delayTime time in minutes to delay this trip by.
+     */
     abstract void delay(int delayTime);
 
+
+    /**
+     * Gets total cost spent by one truck that would take this trip.
+     */
     final int tripCost() {
         return totalCost;
     }
 
 
     /**
-     * Adds send-events to Calendar.
+     * Adds TruckSend and TruckArrival events to Calendar.
      * 
      * @param dispatchAt dispatch the truck at this time
      * @src   path doesn't remember source vertex, provide it

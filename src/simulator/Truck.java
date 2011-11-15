@@ -2,6 +2,10 @@ import java.util.List;
 import java.util.LinkedList;
 
 
+/**
+ * Truck object abstraction.
+ *
+ */
 public class Truck {
     public static int MAX_CAPACITY = 10;
     public final static int SPEED = 70;

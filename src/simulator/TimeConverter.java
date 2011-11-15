@@ -3,10 +3,35 @@ import java.util.regex.Matcher;
 
 import static constant.Times.*;
 
+
+/**
+ * Helper class containing methods for time conversion.
+ *
+ * @author Tomas Marsalek
+ */
 public class TimeConverter {
+    /**
+     * Description of time format, use this in help doc.
+     */
     public static String TIME_HELP = "<TIME> format: [+][DAYS]:[HOURS]:MINUTES";
+
+    /**
+     * Return value of erroneous parsing.
+     */
     public final static int NIL = -1;
 
+
+    // disable default constructor
+    private TimeConverter() {/*,*/}
+
+
+
+    /**
+     * Converts time to ascii representation for pretty printing.
+      * 
+     * @param time time in minutes
+     * @return ascii time: Day  hours:mins
+     */
     public static String ascTime(int time) {
         int days   = time / DAY.time();
         int hours  = (time % DAY.time()) / MINUTES_IN_HOUR.time();
@@ -14,6 +39,15 @@ public class TimeConverter {
         return String.format("Day %1d  %02d:%02d", days, hours, mins);
     }
 
+
+    /**
+     * Tries to convert time represented by string format to minutes.
+     *
+     * @param currentTime needed if time format contains '+'
+     * @param time time String to convert.
+     * @return Successfuly parsed time in minutes (non negative) or 
+     *         TimeConverter.NIL if error happened during parsing.
+     */
     public static int toMinutes(int currentTime, String time) {
         if (time == null)
             return NIL;

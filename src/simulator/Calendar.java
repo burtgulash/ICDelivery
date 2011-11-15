@@ -38,6 +38,7 @@ class Calendar {
 
 
     private static int lastEventTime = 0;
+
     /**
      * Returns next event in timeline.
      *
