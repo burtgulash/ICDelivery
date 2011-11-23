@@ -8,12 +8,20 @@ import graph.Graph;
 import graph.Loader;
 
 
+/**
+ * Entry point of simulation.
+ */
 public class Main {
 
+    /**
+     * Main method.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         Parser p = new Parser(
            "Pan Zmrzlik, syn a vnukove - diskretni simulace rozvozu zmrzliny", 
-           "usage: java -jar sim.jar [OPTION]... [ORDER]...");
+           "usage: java -jar zmrzlik.jar [OPTION]... [ORDER]...");
 
         p.addBooleanOption("quiet", "q", "don't print to screen");
         p.addIntegerOption("initial", "i", "number of initial orders", 300);
@@ -30,7 +38,14 @@ public class Main {
                                                        "test.graph");
         p.addStringOption("strategy", "s", "greedy or clarkewright", "greedy");
 
-        p.addParagraph(TimeConverter.TIME_HELP);
+        p.addParagraph(String.format("%s%n%s%n%s", 
+    TimeConverter.TIME_HELP, "Days and hours are optional.",
+    "'+' in the beginning specifies the time from current simulation time."));
+
+        p.addParagraph(String.format("%s%n%s", 
+"Orders can be inserted immediately.", 
+"Order format: CUSTOMER,AMOUNT,<TIME>"));
+
 
 
         String[] orders = loadArgs(p, args);
@@ -126,6 +141,12 @@ public class Main {
     }
 
 
+    /**
+     * Closes list of files.
+     *
+     * @param files files to close
+     * @return true on success.
+     */
     private static boolean closeFiles(OutputStream... files) {
         boolean success = true;
         if (files == null)
@@ -145,6 +166,12 @@ public class Main {
     }
 
 
+    /**
+     * Creates directory and files that will contain simulation report.
+      *
+     * @param reportDir file path of directory.
+     * @return list of opened report files: {customers,orders,trucks}.txt 
+     */
     private static OutputStream[] openReportFiles(String reportDir) {
         File reportDirectory = new File(reportDir);
         try {
@@ -184,6 +211,13 @@ public class Main {
     }
 
 
+    /**
+     * Opens file that will contain simulation log. 
+     * Exits the program on failure.
+     *
+     * @param logFileName file path of log file
+     * @return Opened log file.
+     */
     private static OutputStream openLogFile(String logFileName) {
         OutputStream file = null;
         try {
@@ -202,6 +236,14 @@ public class Main {
         return file;
     }
 
+
+    /**
+     * Loads and parses argument vector with given parser.
+     *
+     * @param p parser to parse the arguments
+     * @param args command line arguments
+     * @return Arguments, that were not parsed (leftovers).
+     */
     private static String[] loadArgs(Parser p, String [] args) {
         String[] leftOvers = null;
         try {

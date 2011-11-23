@@ -40,6 +40,10 @@ public class GreedyScheduler implements Scheduler {
 
 
     @Override
+    /**
+     * Does nothing. All trucks are already dispatched according to this
+     * strategy.
+     */
     public void
     releaseAll() {
         // done

@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Random;
 
 
-// TODO rename to ExponentialIntervalGenerator
 /**
- * Generates orders with exponential distribution.
+ * Generates orders with time interval between consecutive orders 
+ * satisfying exponential distribution.
  */
 public class ExponentialGenerator implements OrderGenerator {
     private double lambda;
@@ -41,7 +41,13 @@ public class ExponentialGenerator implements OrderGenerator {
         lastDay         = 0;
     }
 
+
     @Override
+    /**
+     * Generates order to be seen at specified time.
+     *
+     * @param time time this order will be sent by corresponding customer.
+     */
     public Order generateAt(int time) {
         int currentDay = time / DAY.time();
 
@@ -65,6 +71,12 @@ public class ExponentialGenerator implements OrderGenerator {
         return generated;
     }
 
+
+    /**
+     * Generate random gaussian ordered amount, according to specified 
+     * maxAmount parameter.
+     *
+     */
     private int normalAmount() {
         double normal = amountRand.nextGaussian();
 
@@ -78,6 +90,10 @@ public class ExponentialGenerator implements OrderGenerator {
 
 
     @Override
+    /**
+     * Generates next order. Interval between this and last generated order
+     * satisfies exponential distribution with provided interval mean.
+     */
     public Order generateNext() {
         double uniform = rand.nextDouble();
         // round up

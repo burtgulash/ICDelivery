@@ -10,6 +10,11 @@ import static constant.Times.*;
 import static constant.Costs.*;
 
 
+/**
+ * Handles incoming orders by Clarke-Wright algorithm.
+ * Expected running time is quadratic in number of received orders.
+ * 
+ */
 public class ClarkeWrightScheduler implements Scheduler {
     private final int HOME;
 
@@ -24,6 +29,11 @@ public class ClarkeWrightScheduler implements Scheduler {
 
 
 
+    /**
+     * Create strategy object for given graph.
+     *
+     * @param graph simulation graph to do routing in
+     */
     public ClarkeWrightScheduler(Graph graph) {
         HOME           = Simulator.HOME;
         toSatisfy      = new int[graph.vertices()];
@@ -79,6 +89,12 @@ public class ClarkeWrightScheduler implements Scheduler {
         }
     }
 
+
+    /**
+     * Core of Clarke-Wright algorithm. Computes all (n choose 2) savings
+     * which are then sorted and used for routing.
+     *
+     */
     private Saving[] computeSavings() {
         int[] d_HOME         = new int[toSatisfy.length];
         List<Saving> savings = new LinkedList<Saving>();
@@ -104,10 +120,15 @@ public class ClarkeWrightScheduler implements Scheduler {
         return (Saving[]) savings.toArray(new Saving[savings.size()]);
     }
 
+
+    /**
+     * Sorts (n choose 2) computed savings in descending order.
+     *
+     * @param savings list of savings to sort.
+     */
     private void sort(Saving[] savings) {
         java.util.Arrays.sort(savings, new java.util.Comparator<Saving>() {
                     // reverse Comparator
-                   @SuppressWarnings("unchecked")
                    public int compare(Saving s1, Saving s2) {
                        if (s1.savedCost == s2.savedCost)
                            return 0;
@@ -119,6 +140,12 @@ public class ClarkeWrightScheduler implements Scheduler {
                });
     }
 
+
+    /**
+     * Computes optimal load that can be put to first truck of the two.
+     *
+     * @param s compute the load according to this saving.
+     */
     private int computeLoad(Saving s) {
         if (toSatisfy[s.fst] < toSatisfy[s.snd])
             return Math.min(Truck.MAX_CAPACITY / 2, toSatisfy[s.fst]);
@@ -126,7 +153,13 @@ public class ClarkeWrightScheduler implements Scheduler {
         return Math.min(Truck.MAX_CAPACITY - secondLoad, toSatisfy[s.fst]);
     }
 
+
     @Override
+    /**
+     * This method is called when deadline event is reached.
+     * Releases all trucks that are currently held in queue.
+     *
+     */
     public void releaseAll() {
         // we've done our job, let greedy scheduler do the rest
         done = true;
@@ -256,8 +289,14 @@ public class ClarkeWrightScheduler implements Scheduler {
     }
 
 
-
-
+    /**
+     * Delay trip equivalent for two trips.
+     *
+     * @param fst first trip to delay
+     * @param snd second trip to delay
+     * @return true on successfuly shifted trips, false if this double-trip 
+     *     cannot be planned.
+     */
     private boolean shiftTrips(DeliveryTrip fst, DeliveryTrip snd) {
         int arrivalFst  = fst.arrivalTime() % DAY.time();
 
@@ -297,6 +336,9 @@ public class ClarkeWrightScheduler implements Scheduler {
     }
 
 
+    /**
+     * Data struct containing information about computed saving.
+     */
     private class Saving {
         int savedCost, fst, snd;
 
@@ -305,15 +347,14 @@ public class ClarkeWrightScheduler implements Scheduler {
             fst = f;
             snd = s;
         }
-
-        void swap() {
-            fst += snd;
-            snd = fst - snd;
-            fst = fst - snd;
-        }
     }
 
 
+    /**
+     * Data structure for customer, such that Customers in CustomerList
+     * don't need to be written to.
+     *
+     */
     private class AbstractCustomer {
         private List<Order> orderHistory;
         private List<Integer> orderRemainTons;

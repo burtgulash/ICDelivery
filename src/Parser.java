@@ -81,7 +81,7 @@ public class Parser {
 
             for (int i = 0; i < helpText.size(); i++) {
                 if (i != 0)
-                    System.out.print("\t");
+                    System.out.print("    ");
                 System.err.println(helpText.get(i));
                 System.out.println();
             }

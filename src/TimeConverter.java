@@ -76,7 +76,7 @@ public class TimeConverter {
             // minutes must be always present
             result += Integer.parseInt(m.group(3));
         } catch (NumberFormatException ex) {
-            System.err.println();
+            System.err.println("Time parsing error");
             return NIL;
         }
         return result;
