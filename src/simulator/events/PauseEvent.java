@@ -147,9 +147,11 @@ class PauseEvent extends Event {
     private void printHelp() {
         System.err.println();
         System.err.println("usage:");
-        System.err.printf("\t[t]ruck          [%d-%d]%n", 0, 
+        if (TruckStack.size() > 0)
+            System.err.printf("\t[t]ruck          [%d-%d]%n", 0, 
                                              TruckStack.size() - 1);
-        System.err.printf("\t[o]rder          [%d-%d]%n", 0, 
+        if (OrderStack.size() > 0)
+            System.err.printf("\t[o]rder          [%d-%d]%n", 0, 
                                              OrderStack.size() - 1);
         System.err.printf("\t[p]ause          TIME%n");
         System.err.printf("\t[i]insert order  [%d-%d] AMOUNT TIME%n", 0, 

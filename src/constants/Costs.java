@@ -1,5 +1,9 @@
 package constant;
 
+/**
+ * Enumerates all needed spending constants.
+ *
+ */
 public enum Costs {
 
     BASE       (5),

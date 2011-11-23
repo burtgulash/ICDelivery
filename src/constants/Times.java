@@ -1,5 +1,8 @@
 package constant;
 
+/**
+ * Enumerates all time related constants needed for truck scheduling.
+ */
 public enum Times {
 
     MINUTES_IN_HOUR (60),
