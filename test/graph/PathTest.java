@@ -30,7 +30,17 @@ public class PathTest {
                         new Path(3, 7,
                         new Path(4, 3, null))));
         Path reversed = Path.reversed(0, testPath);
-        assertEquals("(3, 18), (2, 15), (1, 11), (0, 6)", str(reversed));
+        assertEquals("(3, 18), (2, 15), (1, 11), (0, 6)", 
+                     str(reversed));
+
+        testPath = new Path(5, 144,
+                   new Path(3, 102,
+                   new Path(8, 83,
+                   new Path(2, 17,
+                   new Path(4, 9, null)))));
+        reversed = Path.reversed(7, testPath);
+        assertEquals("(2, 144), (8, 135), (3, 127), (5, 61), (7, 42)", 
+                     str(reversed));
     }
 
     // debugging toString method for Path
