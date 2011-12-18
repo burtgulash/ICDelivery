@@ -87,6 +87,9 @@ public class Order {
         return customer;
     }
 
+	public static void destroyLast() {
+		orderCount--;
+	}
 
     /**
      * Return amount of ordered containers in this order.

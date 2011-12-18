@@ -119,8 +119,10 @@ public class Initializer {
 
         while (true) {
             generated = gen.generateNext();
-            if (generated.received() >= simulationTime - HALF_DAY)
+            if (generated.received() >= simulationTime - HALF_DAY) {
+				Order.destroyLast();
                 break;
+			}
 
             Event orderEvent = new OrderEvent(generated.received(), generated);
             Calendar.addEvent(orderEvent);
